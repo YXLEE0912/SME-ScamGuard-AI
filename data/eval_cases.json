@@ -1,0 +1,114 @@
+[
+    {
+        "case_id": "TC_POS_BEC_01",
+        "test_category": "POSITIVE_SCAM_SUPPLY_CHAIN",
+        "scenario_title": "Supply Chain Homoglyph Invoice Diversion",
+        "sender": "finance@mega-bu1ld.com.my",
+        "subject": "URGENT: Revised Maybank Account for Invoice #MB-8821",
+        "body": "Dear Finance,\n\nOur standard Maybank account is under annual audit and temporarily frozen.\n\nPlease transfer the outstanding progress claim of RM 148,500.00 today to our backup account:\nBank: CIMB Bank\nAccount: 8009-4411-2299\n\nPayment must be made before 5:00 PM today to prevent work stoppage on site.\n\nRegards,\nAlex Tan\nFinance Manager\nMega Build Sdn Bhd",
+        "declared_bank_account": "8009-4411-2299",
+        "declared_amount": 148500.0,
+        "expected_is_scam": true,
+        "expected_cues": [
+            "LOOKALIKE_DOMAIN",
+            "UNVERIFIED_BANK_CHANGE",
+            "CISA_URGENCY"
+        ]
+    },
+    {
+        "case_id": "TC_POS_CEO_02",
+        "test_category": "POSITIVE_SCAM_EXECUTIVE_IMPERSONATION",
+        "scenario_title": "Executive Impersonation Acquisition Advance",
+        "sender": "boss.office@citygroup-corp.com",
+        "subject": "CONFIDENTIAL: Urgent Advance Deposit for Project Alpha",
+        "body": "Hi Finance,\n\nI am in back-to-back confidential meetings all day and cannot pick up phone calls.\n\nWe must disburse an immediate deposit of RM 75,000.00 today to secure exclusivity. Do not discuss this with other staff due to strict NDA.\n\nPay via Instant Transfer to:\nBank: Public Bank\nAccount: 3199-0022-8811\n\nSend me the payment receipt once done.\n\nRegards,\nDavid Lee\nManaging Director\nCity Group",
+        "declared_bank_account": "3199-0022-8811",
+        "declared_amount": 75000.0,
+        "expected_is_scam": true,
+        "expected_cues": [
+            "LOOKALIKE_DOMAIN",
+            "UNVERIFIED_BANK_CHANGE",
+            "CISA_URGENCY"
+        ]
+    },
+    {
+        "case_id": "TC_POS_TAX_03",
+        "test_category": "POSITIVE_SCAM_GOV_PHISHING",
+        "scenario_title": "Fake Tax Office Penalty Notice",
+        "sender": "notice@tax-enforce-gov.org",
+        "subject": "FINAL DEMAND: Corporate Tax Penalty Settlement Notice",
+        "body": "LEGAL ENFORCEMENT NOTICE\n\nYour company has an overdue tax penalty of RM 18,650.00.\n\nFailure to settle within 24 hours will result in immediate bank account freezing and director travel restrictions.\n\nRemit statutory penalty to designated collection agent:\nBank: RHB Bank\nAccount: 2144-8899-0011\n\nDirect queries to officer: Mr. Sam at 011-2899-4411.",
+        "declared_bank_account": "2144-8899-0011",
+        "declared_amount": 18650.0,
+        "expected_is_scam": true,
+        "expected_cues": [
+            "LOOKALIKE_DOMAIN",
+            "UNVERIFIED_BANK_CHANGE",
+            "CISA_URGENCY"
+        ]
+    },
+    {
+        "case_id": "TC_NEG_LEGIT_01",
+        "test_category": "NEGATIVE_LEGITIMATE_ROUTINE",
+        "scenario_title": "Routine IT Managed Services Billing",
+        "sender": "billing@alphatech.com.my",
+        "subject": "Invoice AT-2026-09: Monthly Cloud Support (August 2026)",
+        "body": "Hi Finance Team,\n\nPlease find attached our monthly invoice for August 2026 enterprise cloud support.\n\nTotal Due: RM 12,800.00\nTerms: 30 Days\nBank Details: Maybank 8001-2233-4455 (Unchanged)\n\nCall our accounts desk at +60-3-7722-8888 if you have any questions.\n\nThank you,\nFinance Department\nAlpha Tech Sdn Bhd",
+        "declared_bank_account": "8001-2233-4455",
+        "declared_amount": 12800.0,
+        "expected_is_scam": false,
+        "expected_cues": []
+    },
+    {
+        "case_id": "TC_NEG_LEGIT_02",
+        "test_category": "NEGATIVE_LEGITIMATE_CONSTRUCTION",
+        "scenario_title": "Verified Construction Supplier Progress Claim",
+        "sender": "finance@megabuild.com.my",
+        "subject": "Progress Claim #MB-2026-04 - Site Works Milestone 4",
+        "body": "Dear Finance Team,\n\nWe submit our progress claim for Milestone 4 concrete works.\n\nAmount: RM 98,200.00\nContract: MB-SUB-09\nRegistered Account: Maybank 5123-4567-8901\n\nArchitect certificates are attached. Standard 45-day payment cycle.\n\nRegards,\nAlex Tan\nFinance Manager\nMega Build Sdn Bhd",
+        "declared_bank_account": "5123-4567-8901",
+        "declared_amount": 98200.0,
+        "expected_is_scam": false,
+        "expected_cues": []
+    },
+    {
+        "case_id": "TC_EDGE_URGENT_CLEARANCE_01",
+        "test_category": "EDGE_CASE_FALSE_POSITIVE_STRESS_TEST",
+        "scenario_title": "Urgent Port Demurrage Payment (False Positive Test)",
+        "sender": "billing@fastcargo.com.my",
+        "subject": "CRITICAL URGENT: Port Klang Demurrage Clearance - Container #CK-991",
+        "body": "URGENT ATTENTION FINANCE:\n\nCustoms clearance requires immediate payment of RM 4,200.00 before 4:00 PM today to prevent extra container demurrage charges.\n\nPlease process directly into our registered corporate account:\nMaybank: 8001-2233-4455\n\nOfficial port voucher attached. Call ops desk at +60-3-7722-8888 to confirm receipt.\n\nFast Cargo Logistics",
+        "declared_bank_account": "8001-2233-4455",
+        "declared_amount": 4200.0,
+        "expected_is_scam": false,
+        "expected_cues": []
+    },
+    {
+        "case_id": "TC_EDGE_RECURRING_ADJUSTMENT_02",
+        "test_category": "EDGE_CASE_LEGIT_PRICE_VARIATION",
+        "scenario_title": "Annual Price Adjustment within Baseline",
+        "sender": "billing@alphatech.com.my",
+        "subject": "Notice of Annual Fee Adjustment (Invoice #AT-INDEX-26)",
+        "body": "Dear Customer,\n\nAs stated in our service agreement, monthly maintenance will reflect an annual 6% SST indexation starting this cycle.\n\nNew Total: RM 13,568.00\nPayment Account: Maybank 8001-2233-4455\n\nReach out to accounts at +60-3-7722-8888 for any questions.\n\nAlpha Tech Accounts Desk",
+        "declared_bank_account": "8001-2233-4455",
+        "declared_amount": 13568.0,
+        "expected_is_scam": false,
+        "expected_cues": []
+    },
+    {
+        "case_id": "TC_ADV_ZERO_WIDTH_TYPO_01",
+        "test_category": "ADVERSARIAL_EVASION_ATTACK",
+        "scenario_title": "Typosquatting with Obfuscated Bank Redirection",
+        "sender": "remit@mega-bu1ld.com.my",
+        "subject": "Re: Batch Settlement - Milestone Reconciliation",
+        "body": "Dear Accounts,\n\nFollowing our system migration, please send today's payment of RM 62,000.00 to our new secondary clearing account.\n\nBank: CIMB Bank\nAccount: 8009-4411-2299\n\nPlease expedite today so tomorrow's deliveries proceed on schedule.\n\nAccounts Team\nMega Build Sdn Bhd",
+        "declared_bank_account": "8009-4411-2299",
+        "declared_amount": 62000.0,
+        "expected_is_scam": true,
+        "expected_cues": [
+            "LOOKALIKE_DOMAIN",
+            "UNVERIFIED_BANK_CHANGE",
+            "CISA_URGENCY"
+        ]
+    }
+]

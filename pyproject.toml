@@ -1,0 +1,14 @@
+[project]
+name = "sme-scamguard-ai"
+version = "1.0.0"
+description = "Local-First Multi-Agent SME BEC Scam Defence & Invoice Protection"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.110.0",
+    "uvicorn>=0.28.0",
+    "pydantic>=2.6.0",
+    "pytest>=8.0.0",
+    "requests>=2.31.0",
+    "python-dotenv>=1.0.0",
+]
