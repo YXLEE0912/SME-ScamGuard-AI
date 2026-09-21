@@ -62,7 +62,7 @@ The system features a local **Model Context Protocol (MCP)** tool communicating 
 
 ## 4. Repository Structure
 
-
+```text
 sme-scamguard-ai/
 ├── app/
 │   ├── __init__.py
@@ -132,6 +132,12 @@ The evaluation dataset (data/eval_cases.json) models five realistic Malaysian en
 CASE_MY_BEC_01 (Critical): Homoglyph domain attack (sunway-c0nstruction) requesting an unverified CIMB redirection under the guise of an audit freeze.
 
 CASE_MY_CEO_FRAUD_02 (High): Impersonation of executive demanding confidential M&A escrow transfer via DuitNow while forbidding phone verification.
+
+CASE_MY_LEGIT_01 (Safe): Standard 30-day managed IT service billing matching historical procurement accounts.
+
+CASE_MY_EDGE_FALSE_POSITIVE_01 (Safe / Edge Case): Urgent Port Klang demurrage payment. Contains urgency phrasing, but passes all domain and banking checks, confirming resilience against naive keyword flagging.
+
+CASE_MY_TAX_PHISH_03 (High): Fraudulent tax notice from a .org address threatening corporate bank freezes and director travel bans.
 
 CASE_MY_LEGIT_01 (Safe): Standard 30-day managed IT service billing matching historical procurement accounts.
 
