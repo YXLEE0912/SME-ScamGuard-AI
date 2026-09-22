@@ -16,7 +16,7 @@ A local-first, zero-trust multi-agent defense system engineered to protect small
 
 SME-ScamGuard AI coordinates four specialized internal agents via a deterministic state machine to deliver fast, explainable, and tamper-proof evaluations:
 
-                  [ Inbound Message / Invoice ]
+                   [ Inbound Message / Invoice ]
                    (Local IMAP / Synthetic Case)
                                 │
                                 ▼
@@ -62,7 +62,6 @@ The system features a local **Model Context Protocol (MCP)** tool communicating 
 
 ## 4. Repository Structure
 
-```text
 sme-scamguard-ai/
 ├── app/
 │   ├── __init__.py
@@ -86,7 +85,9 @@ sme-scamguard-ai/
 ├── .env.example
 ├── pyproject.toml
 └── README.md
-5. Getting Started (Local Setup)
+---
+
+### 5. Getting Started (Local Setup)
 Prerequisites
 Python 3.11 or 3.12
 
@@ -144,3 +145,96 @@ CASE_MY_LEGIT_01 (Safe): Standard 30-day managed IT service billing matching his
 CASE_MY_EDGE_FALSE_POSITIVE_01 (Safe / Edge Case): Urgent Port Klang demurrage payment. Contains urgency phrasing, but passes all domain and banking checks, confirming resilience against naive keyword flagging.
 
 CASE_MY_TAX_PHISH_03 (High): Fraudulent tax notice from a .org address threatening corporate bank freezes and director travel bans.
+
+
+## 🛡️ Business Threat Context: Why SME Invoice Redirection & BEC?
+
+### The Vulnerability of Southeast Asian SMEs
+In B2B commerce, transactions cannot be settled with credit cards or consumer eWallets due to high merchant fees (1.5%–2%) and high transaction values (RM 10,000 to RM 200,000+). Instead, over 70% of Malaysian SMEs rely on:
+1. Inbound PDF invoices sent via email.
+2. Manual online banking transfers (Maybank2u Biz, CIMB BizChannel, DuitNow/IBG).
+3. Lean finance setups (a single clerk, accountant, or the business owner).
+
+Unlike multinational enterprises with strict multi-tier approval policies and dedicated treasury teams, an SME is highly vulnerable to **Business Email Compromise (BEC)** and **Vendor Impersonation Fraud**. Attackers use typosquatted lookalike domains (e.g., `mega-bu1ld.com.my` replacing `l` with `1`) or compromised vendor mailboxes to inject fraudulent bank accounts ("Our Maybank is under audit; please remit to this CIMB account"). A single 5-second lapse in attention can result in a loss of RM 150,000+, potentially causing an SME to collapse.
+
+---
+
+## 🤖 The 4-Agent Coordinated Forensic Architecture
+
+Rather than relying on unmanaged, slow LLM chains that risk runtime errors, `SME-ScamGuard-AI` deploys a fast, deterministic multi-agent investigation pipeline running locally in memory:
+
+[ Inbound Inbound Email / Invoice Data ]
+│
+▼
+[ Agent 0: Privacy & Compliance Agent ]
+• Local in-memory regex scrubbing (MyKad, Phone, Bank Accounts)
+• Generates PDPA audit log (PIIRedactionLog)
+│
+▼
+[ Agent 1: Identity & Wire Forensic Agent ]
+• Homoglyph / typosquatting domain detection
+• Bank account reconciliation against verified vendor baseline
+│
+▼
+[ Agent 2: Psycho-Social Forensic Agent (CISA Framework) ]
+• Scans for high-pressure deadlines, penalties, and communication isolation
+• Differentiates operational stress from criminal coercion
+│
+▼
+[ Agent 3: Chief Risk Arbiter & Action Agent ]
+• Calculates composite Risk Score (0 - 100)
+• Issues Out-of-Band Human Callback Voucher for scores >= 50
+• Triggers instant mobile circuit breaker (Telegram alert)
+
+
+### Agent Roles & Deliverables
+
+| Agent | Core Functionality | Enterprise / Rubric Justification |
+| :--- | :--- | :--- |
+| **Agent 0: Privacy & Compliance** | In-memory PII anonymization (`sanitize_text_in_memory`). Masks MyKad, phone numbers, and accounts before downstream analysis. | **PDPA Statutory Compliance:** Zero data leakage of proprietary payroll or financial records. |
+| **Agent 1: Identity & Wire** | Evaluates domain typosquatting (`SUSPICIOUS_DOMAINS`) and validates declared accounts against the internal verified vendor whitelist. | **MITRE ATT&CK T1566.002:** Stops homoglyph attacks and unauthorized payee diversion at the source. |
+| **Agent 2: Psycho-Social CISA** | Lexical heuristic scanner targeting artificial urgency, threats of operational disruption, and forced secrecy. | **CISA Social Engineering Framework:** Detects coercive manipulation designed to bypass dual controls. |
+| **Agent 3: Chief Risk Arbiter** | Synthesizes cues into an explainable 0–100 threat score and generates the Out-of-Band Telephone Verification Voucher. | **Human-in-the-Loop Governance:** Prevents false alarms while enforcing verified phone call verification on high-risk transfers. |
+
+---
+
+## 📊 Deterministic Composite Risk Scoring Model
+
+Our composite risk scoring model derives directly from **NIST SP 800-30**, **SpamAssassin heuristic baselines**, and the **CISA Social Engineering Threat Framework**:
+
+$$\text{Risk Score} = \text{Baseline (10.0)} + \text{Domain Anomaly (45.0)} + \text{Wire/Bank Anomaly (30.0)} + \text{Urgency Weight (10.0 or 15.0)}$$
+
+### Scoring Weights Rationale
+
+* **Baseline (10.0):** Standard external email metadata. In zero-trust architecture, no inbound external message carries 0 risk.
+* **Lookalike / Spoofed Domain (+45.0):** Homoglyph typosquatting is deliberate criminal forgery. It immediately elevates any email past the scam threshold (10 + 45 = 55.0).
+* **Unverified Bank Change (+30.0):** Mandate diversion represents direct fund exposure. When combined with baseline, it sits at 40.0 (Suspicious / Manual Review).
+* **CISA Urgency (+10.0 Standalone / +15.0 Combined):**
+  * *Standalone (+10.0):* Recognizes that legitimate business logistics (e.g., port demurrage penalties) can be urgent without being scams ($10 + 10 = \mathbf{20.0} \rightarrow \text{Safe}$).
+  * *Combined (+15.0):* When paired with a new bank or suspicious domain, urgency serves as a coercive forcing function ($10 + 45 + 30 + 15 = \mathbf{100.0} \rightarrow \text{Critical BEC}$).
+
+### 3-Tier Risk Threshold & Governance Matrix
+
+0                     40                     70                    100
+[────── Green ─────────][────── Yellow ────────][──────── Red ─────────]
+Auto-Pass             Human Review             Hard Lock &
+(Routine Queue)      (Discrepancy Sign-Off)     Human Callback
+
+
+| Score Range | Threat Level | Verdict (`is_scam`) | System Enforcement Action | Human Action Required |
+| :---: | :---: | :---: | :--- | :--- |
+| **0 – 39** | 🟢 **SAFE** | `False` | **Auto-Approved:** Proceeds to standard 30-day accounting queue. | None. Standard business flow continues. |
+| **40 – 69** | 🟡 **SUSPICIOUS** | `False` (Review) | **Payment Paused:** Generates side-by-side discrepancy card. | Accounts clerk verifies context and approves/escalates. |
+| **70 – 100** | 🔴 **CRITICAL BEC** | `True` | **Hard Lock & Circuit Breaker:** Freezes transaction and pushes instant Telegram alert. | **Mandatory Out-of-Band Call:** Must dial registered switchboard to confirm. |
+
+---
+
+## 🚫 Why We Never "Reply to Sender" (Out-of-Band Protocol)
+
+A common mistake in naive security tools is emailing the sender back to ask: *"Did you change your bank account?"*
+
+* **The Trap:** If an attacker has compromised the vendor's mailbox (Vendor Email Compromise) or spoofed the domain, **the attacker will respond to your email and confirm the fake bank account.**
+* **The Solution:** Agent 3 enforces an **Out-of-Band Telephone Verification Protocol**:
+  1. Payment is locked locally.
+  2. The system pulls the **verified telephone number** from internal procurement records (`+60-3-7722-8888`), completely ignoring any contact details inside the suspicious email.
+  3. The finance officer reads a pre-formatted verification prompt over the phone to confirm t
