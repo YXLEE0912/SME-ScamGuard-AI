@@ -273,3 +273,75 @@ def test_benchmark_endpoint_missing_file(client: TestClient) -> None:
         assert data["total_cases"] == 0
         assert data["passed_cases"] == 0
         assert data["accuracy_rate"] == 0.0
+
+
+# ======================================================================
+# 3. GmailWatcherService & /api/gmail/sync Endpoint Tests
+# ======================================================================
+
+def test_gmail_watcher_dummy_credentials() -> None:
+    """Verify GmailWatcherService safely returns empty list with dummy/missing credentials."""
+    from app.services.gmail import GmailWatcherService
+    service = GmailWatcherService("test_account@gmail.com", "abcd1234efgh5678")
+    assert service._has_credentials() is False
+    assert service.fetch_latest_unread_emails() == []
+
+
+def test_gmail_sync_endpoint_empty(client: TestClient) -> None:
+    """Verify POST /api/gmail/sync returns structured response with zero emails."""
+    response = client.post("/api/gmail/sync")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["fetched_count"] == 0
+    assert data["quarantined_count"] == 0
+    assert data["reports"] == []
+
+
+def test_gmail_sync_endpoint_with_mocked_inbox(client: TestClient) -> None:
+    """Verify POST /api/gmail/sync runs multi-agent inspection on fetched emails."""
+    mock_emails = [
+        EmailInput(
+            case_id="GMAIL-101",
+            sender="finance@mega-bu1ld.com.my",
+            subject="URGENT: Change of Beneficiary Bank Details",
+            body="Remit balance immediately to CIMB Bank 8009-4411-2299 before 5:00 PM today.",
+            declared_bank_account="8009-4411-2299",
+            declared_amount=148500.0,
+        ),
+        EmailInput(
+            case_id="GMAIL-102",
+            sender="billing@alphatech.com.my",
+            subject="Invoice AT-2026-09: Monthly Cloud Support",
+            body="Standard Net 30 payment to Maybank 8001-2233-4455.",
+            declared_bank_account="8001-2233-4455",
+            declared_amount=12800.0,
+        ),
+    ]
+
+    with patch("app.api.routes.gmail_service.fetch_latest_unread_emails", return_value=mock_emails):
+        with patch("app.services.telegram.TelegramAlertService.send_scam_alert", new_callable=AsyncMock) as mock_alert:
+            response = client.post("/api/gmail/sync")
+            assert response.status_code == 200
+            data = response.json()
+            assert data["fetched_count"] == 2
+            assert data["quarantined_count"] == 1
+            assert len(data["reports"]) == 2
+
+            # Assert first email was flagged and quarantined
+            report_map = {r["case_id"]: r for r in data["reports"]}
+            assert report_map["GMAIL-101"]["is_scam"] is True
+            assert report_map["GMAIL-102"]["is_scam"] is False
+
+
+def test_gemini_cognitive_agent_fallback() -> None:
+    """Verify GeminiCognitiveAgent offline heuristic fallback extracts threat cues."""
+    from app.services.gemini_agent import GeminiCognitiveAgent
+    agent = GeminiCognitiveAgent(api_key="dummy_key_for_test")
+    analysis = agent.analyze_correspondence(
+        sanitized_text="Kindly remit balance immediately to backup account today before 5:00 pm.",
+        subject="URGENT: Change of Bank Account Details",
+    )
+    assert analysis.is_suspicious is True
+    assert "CISA_URGENCY" in analysis.cues
+    assert analysis.confidence >= 0.6
+

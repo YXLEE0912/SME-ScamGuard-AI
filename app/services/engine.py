@@ -1,14 +1,14 @@
 """Multi-Agent Scam Guard Engine for SME Business Email Compromise (BEC) defense.
 
-Coordinates four deterministic, local-first forensic agents:
+Coordinates four defense agents:
 - AGENT 0: Privacy & Compliance Agent (In-memory zero-trust PII sanitization)
 - AGENT 1: Identity & Wire Forensic Agent (Typo-squatting, homoglyph, and bank whitelist verification)
-- AGENT 2: Psycho-Social Forensic Agent (CISA social-engineering coercion & urgency heuristic)
+- AGENT 2: Cognitive Cyber Threat Analyst (Google Gemini 2.5 Flash with structured outputs & fallback)
 - AGENT 3: Chief Risk Arbiter & Action Agent (Risk scoring, payout locking, and callback voucher issuance)
 """
 
 import re
-from typing import Dict, List, Optional, Set
+from typing import Dict, List, Optional
 from app.models.schema import (
     AuditForensicReport,
     EmailInput,
@@ -16,6 +16,7 @@ from app.models.schema import (
     HumanCallbackVoucher,
     PIIRedactionLog,
 )
+from app.services.gemini_agent import GeminiCognitiveAgent
 from app.services.pii import sanitize_text_in_memory
 
 # 1. Internal Baseline Whitelist (Verified Vendors)
@@ -45,21 +46,6 @@ SUSPICIOUS_SIGNATURES: List[str] = [
     "gmail-corp",
 ]
 
-# CISA Framework Urgency and Coercion Keywords
-CISA_KEYWORD_PATTERNS: Dict[str, str] = {
-    "urgent": r"\b(urgent|urgency|critical urgent)\b",
-    "immediately": r"\b(immediately|immediate)\b",
-    "frozen": r"\b(frozen|freezing|freeze)\b",
-    "penalty": r"\b(penalty|penalties)\b",
-    "confidential": r"\b(confidential)\b",
-    "nda": r"\b(nda)\b",
-    "stoppage": r"\b(stoppage)\b",
-    "24 hours": r"\b(24 hours|48 hours)\b",
-    "deadline_time": r"\b(5:00 pm|4:00 pm)\b",
-    "expedite": r"\b(expedite|expedited)\b",
-    "today": r"\b(today)\b",
-}
-
 
 def _normalize_account_number(acc: Optional[str]) -> str:
     """Normalize bank account string by stripping non-digit characters."""
@@ -71,13 +57,15 @@ def _normalize_account_number(acc: Optional[str]) -> str:
 class MultiAgentScamGuardEngine:
     """Deterministic Multi-Agent Engine orchestrating BEC and invoice scam defense."""
 
-    def __init__(self, risk_threshold: float = 50.0) -> None:
-        """Initialize the engine with an operational risk threshold.
+    def __init__(self, risk_threshold: float = 50.0, gemini_api_key: Optional[str] = None) -> None:
+        """Initialize the engine with risk threshold and cognitive Gemini agent.
 
         Args:
             risk_threshold: Minimum risk score (0.0 - 100.0) triggering scam classification.
+            gemini_api_key: Optional Gemini API key override.
         """
         self.risk_threshold = risk_threshold
+        self.gemini_agent = GeminiCognitiveAgent(api_key=gemini_api_key)
 
     @staticmethod
     def _extract_domain(sender: str) -> str:
@@ -101,9 +89,9 @@ class MultiAgentScamGuardEngine:
         evidence_trail: List[EvidenceCue] = []
 
         # ==================================================================
-        # AGENT 0: Privacy & Compliance Agent
+        # AGENT 0: Privacy & Compliance Agent (In-Memory Zero-Trust)
         # ==================================================================
-        _, pii_logs = sanitize_text_in_memory(email.body, field_name="body")
+        sanitized_body, pii_logs = sanitize_text_in_memory(email.body, field_name="body")
 
         # ==================================================================
         # AGENT 1: Identity & Wire Forensic Agent
@@ -198,28 +186,26 @@ class MultiAgentScamGuardEngine:
                 )
 
         # ==================================================================
-        # AGENT 2: Psycho-Social Forensic Agent (CISA Framework)
+        # AGENT 2: Cognitive Cyber Threat Analyst (Gemini 2.5 Flash)
         # ==================================================================
-        combined_text = f"{email.subject} {email.body}".lower()
-        matched_cisa_cues: Set[str] = set()
+        gemini_result = self.gemini_agent.analyze_correspondence(sanitized_body, email.subject)
+        cisa_urgency_flag = False
 
-        for cue_name, pattern in CISA_KEYWORD_PATTERNS.items():
-            if re.search(pattern, combined_text, re.IGNORECASE):
-                matched_cisa_cues.add(cue_name)
-
-        cisa_urgency_flag = len(matched_cisa_cues) >= 2
-        if cisa_urgency_flag:
-            evidence_trail.append(
-                EvidenceCue(
-                    cue_code="CISA_URGENCY",
-                    agent_source="Agent 2: Psycho-Social Forensic Agent",
-                    severity="HIGH",
-                    description=(
-                        f"Psychological coercion and artificial urgency triggers detected under CISA framework "
-                        f"(matched cues: {', '.join(sorted(matched_cisa_cues))})."
-                    ),
+        if gemini_result.is_suspicious and gemini_result.cues:
+            for cue in gemini_result.cues:
+                if cue == "CISA_URGENCY":
+                    cisa_urgency_flag = True
+                evidence_trail.append(
+                    EvidenceCue(
+                        cue_code=cue,
+                        agent_source="Agent 2: Cognitive Threat Analyst (Gemini 2.5 Flash)",
+                        severity="HIGH",
+                        description=(
+                            f"{gemini_result.threat_summary} "
+                            f"[Confidence: {int(gemini_result.confidence * 100)}%]"
+                        ),
+                    )
                 )
-            )
 
         # ==================================================================
         # AGENT 3: Chief Risk Arbiter & Action Agent
@@ -229,11 +215,14 @@ class MultiAgentScamGuardEngine:
             score += 45.0
         if unverified_bank_flag:
             score += 30.0
+
+        # Incorporate Agent 2 cognitive cues weighted by model confidence
         if cisa_urgency_flag:
-            if lookalike_flag or unverified_bank_flag:
-                score += 15.0
-            else:
-                score += 10.0
+            urgency_weight = 15.0 if (lookalike_flag or unverified_bank_flag) else 10.0
+            # Blend confidence: baseline full score scaled slightly by confidence
+            score += urgency_weight * max(0.8, min(1.0, gemini_result.confidence))
+        elif gemini_result.is_suspicious:
+            score += 10.0 * max(0.5, min(1.0, gemini_result.confidence))
 
         score = min(100.0, max(0.0, score))
 

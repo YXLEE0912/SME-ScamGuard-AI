@@ -6,6 +6,12 @@
     --foreground: #f8fafc;
   }
 
+  html.light,
+  :root[data-theme="light"] {
+    --background: #fafafa;
+    --foreground: #09090b;
+  }
+
   body {
     background-color: var(--background);
     color: var(--foreground);

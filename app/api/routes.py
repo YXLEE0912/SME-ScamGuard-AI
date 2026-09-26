@@ -15,6 +15,7 @@ from fastapi.responses import JSONResponse
 
 from app.models.schema import AuditForensicReport, EmailInput
 from app.services.engine import MultiAgentScamGuardEngine
+from app.services.gmail import GmailWatcherService
 from app.services.telegram import TelegramAlertService
 
 logger = logging.getLogger(__name__)
@@ -31,6 +32,9 @@ engine = MultiAgentScamGuardEngine(
 
 # Out-of-band Telegram alert notification client
 telegram_service = TelegramAlertService()
+
+# Gmail IMAP inbox watcher service
+gmail_service = GmailWatcherService()
 
 
 @router.post(
@@ -56,6 +60,36 @@ async def scan_email(
         background_tasks.add_task(telegram_service.send_scam_alert, report)
 
     return report
+
+
+@router.post(
+    "/gmail/sync",
+    status_code=status.HTTP_200_OK,
+    summary="Synchronize & Scan Latest Inbound Gmail Invoices",
+)
+async def sync_gmail_inbox(
+    background_tasks: BackgroundTasks,
+    max_count: int = 3,
+) -> Dict[str, Any]:
+    """Fetch unread emails from Gmail IMAP, scan via 4-agent pipeline, and quarantine scams."""
+    emails = gmail_service.fetch_latest_unread_emails(max_count=max_count)
+    reports: List[AuditForensicReport] = []
+    quarantined_count = 0
+
+    for email_in in emails:
+        report = engine.run_pipeline(email_in)
+        AUDIT_STORE.insert(0, report)
+        reports.append(report)
+
+        if report.is_scam:
+            quarantined_count += 1
+            background_tasks.add_task(telegram_service.send_scam_alert, report)
+
+    return {
+        "fetched_count": len(emails),
+        "quarantined_count": quarantined_count,
+        "reports": reports,
+    }
 
 
 @router.get(
