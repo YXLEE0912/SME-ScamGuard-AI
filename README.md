@@ -38,7 +38,7 @@ Malaysian SMEs lose millions to silent invoice bank account alterations and typo
    [ Dispatch & Alerting ] ────────────► Telegram mobile alerts + Next.js SOC Dashboard
 ```
 
-#⚡ Quickstart
+#Quickstart
 #### 1. Backend Setup
 
 ```bash
@@ -46,7 +46,7 @@ git clone [https://github.com/YXLEE0912/SME-ScamGuard-AI.git](https://github.com
 cd SME-ScamGuard-AI
 ```
 
-# Create virtual environment & install dependencies
+### Create virtual environment & install dependencies
 ```bash
 python -m venv venv
 source venv/bin/activate
