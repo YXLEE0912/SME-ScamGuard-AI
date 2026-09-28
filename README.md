@@ -38,15 +38,27 @@ Malaysian SMEs lose millions to silent invoice bank account alterations and typo
    [ Dispatch & Alerting ] ────────────► Telegram mobile alerts + Next.js SOC Dashboard
 ```
 
-###⚡ Quickstart1. Backend SetupBash# Clone and enter repo
+###⚡ Quickstart
+#### 1. Backend Setup
+
+```bash
 git clone [https://github.com/YXLEE0912/SME-ScamGuard-AI.git](https://github.com/YXLEE0912/SME-ScamGuard-AI.git)
 cd SME-ScamGuard-AI
+```
 
 # Create virtual environment & install dependencies
+```bash
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate
 pip install -e .
-2. Environment ConfigurationCreate a .env file in the project root:Code snippetRISK_THRESHOLD=50.0
+```
+
+#### 2. Environment Configuration
+
+Create a `.env` file in the project root:
+
+```env
+RISK_THRESHOLD=50.0
 ENVIRONMENT=development
 
 # Google Gemini API
@@ -59,8 +71,43 @@ GMAIL_APP_PASSWORD=""
 # Telegram Incident Bot (Optional)
 TELEGRAM_BOT_TOKEN=""
 TELEGRAM_CHAT_ID=""
-Note: If API keys are omitted, the system runs on its offline deterministic heuristic engine.3. Launch ServicesTerminal 1: Backend APIBashuvicorn app.main:app --reload --port 8000
-Terminal 2: Next.js FrontendBashcd frontend
+```
+> **Note:** If API keys are omitted, the system runs on its offline deterministic heuristic engine.
+
+#### 3. Launch Services
+
+**Terminal 1: Backend API**
+```bash
+uvicorn app.main:app --reload --port 8000
+```
+
+**Terminal 2: Next.js Frontend**
+```bash
+cd frontend
 npm install
 npm run dev
-Open http://localhost:3000 to access the SOC Dashboard.🔌 API EndpointsMethodEndpointDescriptionGET/api/healthService status checkPOST/api/scanSubmits email text for 4-agent analysisPOST/api/gmail/syncFetches unread inbox messages via IMAPPOST/api/eval/benchmarkRuns 8-case synthetic Malaysian BEC benchmarkGET/api/reportsRetrieves session audit records📊 Benchmark ResultsEvaluated against data/eval_cases.json (Malaysian synthetic BEC corpus):Classification Accuracy: 100% (8/8 cases)False Positive Rate: 0.0%Local Engine Latency: ~42ms
+```
+
+Open `http://localhost:3000` to access the SOC Dashboard.
+
+---
+
+### 🔌 API Endpoints
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/health` | Service status check |
+| `POST` | `/api/scan` | Submits email text for 4-agent analysis |
+| `POST` | `/api/gmail/sync` | Fetches unread inbox messages via IMAP |
+| `POST` | `/api/eval/benchmark` | Runs 8-case synthetic Malaysian BEC benchmark |
+| `GET` | `/api/reports` | Retrieves session audit records |
+
+---
+
+### 📊 Benchmark Results
+
+Evaluated against `data/eval_cases.json` (Malaysian synthetic BEC corpus):
+
+- **Classification Accuracy:** 100% (8/8 cases)
+- **False Positive Rate:** 0.0%
+- **Local Engine Latency:** ~42ms
