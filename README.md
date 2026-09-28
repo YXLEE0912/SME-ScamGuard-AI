@@ -38,7 +38,7 @@ Malaysian SMEs lose millions to silent invoice bank account alterations and typo
    [ Dispatch & Alerting ] ────────────► Telegram mobile alerts + Next.js SOC Dashboard
 ```
 
-###⚡ Quickstart
+#⚡ Quickstart
 #### 1. Backend Setup
 
 ```bash
