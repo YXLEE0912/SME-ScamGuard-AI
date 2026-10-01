@@ -8,34 +8,39 @@ Local-first, privacy-preserving multi-agent defense system against Business Emai
 
 Malaysian SMEs lose millions to silent invoice bank account alterations and typosquatted domains. Traditional spam filters miss these text-only attacks, while sending raw financial documents to cloud LLMs breaches statutory data privacy (PDPA).
 
-**SME-ScamGuard-AI** uses an in-memory, privacy-preserving 4-agent pipeline:
+**SME-ScamGuard-AI** combines hybrid in-memory document ingestion, statutory PII sanitization, deterministic ledger cross-verification, and structured cognitive reasoning into an asynchronous, local-first DAG pipeline:
 
-1. **Agent 0 (Privacy Barrier):** Locally redacts Malaysian statutory PII (IC numbers, phone numbers, bank accounts) in-memory before external processing.
-2. **Agent 1 (Identity & Ledger):** Performs sub-5ms Levenshtein typosquatting checks and internal vendor ledger matching.
-3. **Agent 2 (Cognitive Analyst):** Leverages **Google Gemini 2.5 Flash** to identify psychological urgency, audit secrecy, and executive coercion, backed by an offline heuristic fallback.
-4. **Agent 3 (Chief Risk Arbiter):** Halts suspicious wire payments and issues an **Out-of-Band Call Verification Voucher** pointing strictly to the vendor's pre-registered switchboard (`+60-3-7722-8888`).
+* **Stage 0 (Hybrid Ingestion & OCR Engine):** Ingests digital invoices (`.pdf`, `.txt`) in-memory via `pypdf` (<15ms). Automatically falls back to **Gemini 2.5 Flash Native Multimodal Vision** for scanned photocopies or mobile snapshots—zero bulky C++ OCR binaries required.
+* **Agent 0 (Statutory Privacy Barrier):** Locally redacts Malaysian statutory PII (NRIC, phone numbers, credit card credentials) in volatile memory prior to external inference.
+* **Agent 1 (Identity & Ledger Cross-Verifier):** Computes normalized Levenshtein typo-squatting distances and constructs a **Two-Way Discrepancy Matrix** comparing declared remittance accounts directly against the immutable `KNOWN_VENDORS` master ledger.
+* **Agent 2 (Cognitive Analyst — Dual-Engine):** Uses Google Gemini 2.5 Flash (`google-genai` SDK) with strict Pydantic schemas to detect subtle psychological coercion, audit secrecy pretexts, and artificial urgency. Automatically fails over to an offline sub-50ms deterministic heuristic engine if air-gapped.
+* **Agent 3 (Chief Risk Arbiter):** Computes a composite threat score (0–100), halts high-risk wire transfers, and generates an immutable **Out-of-Band Call Verification Voucher** pointing strictly to the vendor's pre-registered switchboard (`+60-3-7722-8888`).
+* **Async Orchestration Layer:** Leverages FastAPI `BackgroundTasks` to asynchronously push real-time Telegram incident alerts and persist forensic audit logs without blocking the UI.
 
 ---
 
 ### 🏗️ Architecture
 
 ```text
-[ Inbound Invoice / Gmail IMAP ]
-               │
-               ▼
-   [ Agent 0: PII Scrubber ] ──────────► In-memory local redaction (PDPA compliant)
-               │
-               ▼
-   [ Agent 1: Identity & Ledger ] ─────► Levenshtein domain checks & ledger matching
-               │
-               ▼ (Sanitized context)
-   [ Agent 2: Gemini 2.5 Flash ] ──────► Cognitive social engineering triage
-               │
-               ▼
-   [ Agent 3: Chief Risk Arbiter ] ────► Composite scoring & Out-of-Band Call Voucher
-               │
-               ▼
-   [ Dispatch & Alerting ] ────────────► Telegram mobile alerts + Next.js SOC Dashboard
+[ Inbound Email / PDF Attachment ]
+│
+▼
+[ Stage 0: Hybrid Ingestion & OCR ] ──► Digital: pypdf (<15ms) | Scanned: Gemini Vision
+│
+▼
+[ Agent 0: PII Scrubber ] ────────────► In-memory local redaction (PDPA compliant)
+│
+▼
+[ Agent 1: Identity & Ledger ] ───────► Domain typosquatting + Two-Way Discrepancy Matrix
+│
+▼ (Sanitized context)
+[ Agent 2: Gemini 2.5 Flash ] ────────► Cognitive social engineering triage (Dual-Engine)
+│
+▼
+[ Agent 3: Chief Risk Arbiter ] ──────► Threat Score (0-100) + Out-of-Band Call Voucher
+│
+▼
+[ Async Dispatch & Telemetry ] ───────► Telegram SOC alerts + Next.js DAG Status Monitors
 ```
 ---
 
