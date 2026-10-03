@@ -173,6 +173,26 @@ class DiscrepancyMatrix(BaseModel):
         default="MATCH",
         description="Discrepancy classification status.",
     )
+    vendor_status: Literal["VERIFIED", "UNKNOWN", "MISMATCH"] = Field(
+        default="UNKNOWN",
+        description="Deterministic vendor identity verification status.",
+    )
+    bank_status: Literal["EXACT_MATCH", "MISMATCH", "UNKNOWN", "AMBIGUOUS"] = Field(
+        default="UNKNOWN",
+        description="Deterministic bank account match status.",
+    )
+    registry_status: Literal["CONFIRMED_MULE", "CLEAN", "UNKNOWN", "UNAVAILABLE"] = Field(
+        default="UNKNOWN",
+        description="PDRM SemakMule / CCID registry status.",
+    )
+    forensic_status: Literal["CLEAN", "SUSPICIOUS", "UNKNOWN", "UNAVAILABLE"] = Field(
+        default="UNKNOWN",
+        description="PDF metadata and document forensics status.",
+    )
+    cti_status: Literal["ALIGNED", "NEUTRAL", "SUSPICIOUS", "UNAVAILABLE"] = Field(
+        default="NEUTRAL",
+        description="Cognitive threat intelligence alignment status.",
+    )
 
 
 class AuditChecklistItem(BaseModel):
@@ -184,9 +204,9 @@ class AuditChecklistItem(BaseModel):
         ...,
         description="Name of security checkpoint (e.g. 'Vendor Identity', 'Bank Account Ledger').",
     )
-    status: Literal["PASS", "FAIL"] = Field(
+    status: Literal["PASS", "FAIL", "UNKNOWN", "UNAVAILABLE", "SUSPICIOUS", "QUARANTINED"] = Field(
         ...,
-        description="PASS or FAIL status for checkpoint.",
+        description="Status for checkpoint (PASS, FAIL, UNKNOWN, UNAVAILABLE, SUSPICIOUS, or QUARANTINED).",
     )
     detail: str = Field(
         ...,
@@ -266,6 +286,40 @@ class DefensiveActions(BaseModel):
     status_badge: Optional[str] = Field(default=None, description="Status summary badge.")
 
 
+class FourEyesRecord(BaseModel):
+    """Dual-control four-eyes human verification and authorization record."""
+
+    model_config = ConfigDict(extra="ignore")
+
+    clerk_verified: bool = Field(default=False, description="Whether accounts clerk completed out-of-band call.")
+    clerk_actor: Optional[str] = Field(default=None, description="Identifier of the verifying accounts clerk.")
+    clerk_timestamp: Optional[str] = Field(default=None, description="Timestamp of clerk verification.")
+    clerk_notes: Optional[str] = Field(default=None, description="Notes on verbal telephone verification.")
+    verified_phone_used: Optional[str] = Field(default=None, description="Ledger phone number dialed for callback.")
+    manager_resolution: Optional[str] = Field(
+        default=None,
+        description="Secondary management decision: OVERRIDE_AUTHORIZED or FREEZE_PAYMENT_CONFIRMED.",
+    )
+    manager_actor: Optional[str] = Field(default=None, description="Identifier of the authorizing finance manager.")
+    manager_timestamp: Optional[str] = Field(default=None, description="Timestamp of management resolution.")
+    manager_notes: Optional[str] = Field(default=None, description="Management justification and rationale.")
+
+
+class FourEyesActionInput(BaseModel):
+    """Payload to record an out-of-band verification or management authorization step."""
+
+    model_config = ConfigDict(extra="ignore")
+
+    case_id: str = Field(..., description="Target incident or case ID.")
+    actor: str = Field(..., description="Name or staff ID of the person performing verification.")
+    role: Literal["ACCOUNTS_CLERK", "FINANCE_MANAGER"] = Field(..., description="Governance role.")
+    action: Literal["MARK_VERIFIED", "AUTHORIZE_OVERRIDE", "CONFIRM_FRAUD_FREEZE"] = Field(
+        ...,
+        description="The action being recorded.",
+    )
+    notes: Optional[str] = Field(default="", description="Verification explanation or callback notes.")
+
+
 class AuditForensicReport(BaseModel):
     """Final synthesized multi-agent forensic evaluation report."""
 
@@ -278,6 +332,16 @@ class AuditForensicReport(BaseModel):
     status: Literal["PROCESSED", "QUARANTINED"] = Field(
         default="PROCESSED",
         description="Firewall quarantine state: PROCESSED or QUARANTINED.",
+    )
+    risk_state: Literal[
+        "VERIFIED / LOW RISK",
+        "SUSPICIOUS / VERIFICATION REQUIRED",
+        "QUARANTINED",
+        "CRITICAL BEC DISCREPANCY",
+        "CRITICAL FRAUD INDICATORS",
+    ] = Field(
+        default="SUSPICIOUS / VERIFICATION REQUIRED",
+        description="Deterministic risk state.",
     )
     is_scam: bool = Field(
         ...,
@@ -356,4 +420,8 @@ class AuditForensicReport(BaseModel):
     defensive_actions: Optional[DefensiveActions] = Field(
         default=None,
         description="Automated defensive containment actions and incident dispatch.",
+    )
+    four_eyes_record: Optional[FourEyesRecord] = Field(
+        default=None,
+        description="Dual-control four-eyes governance sign-off trail.",
     )

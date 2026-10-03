@@ -345,3 +345,61 @@ def test_gemini_cognitive_agent_fallback() -> None:
     assert "CISA_URGENCY" in analysis.cues
     assert analysis.confidence >= 0.6
 
+
+def test_four_eyes_governance_workflow(client: TestClient) -> None:
+    """Verify Step 1 Clerk verification and Step 2 Manager secondary authorization via REST."""
+    case_id = "INC-GOV-TEST-001"
+    # Seed incident in audit store
+    client.post(
+        "/api/scan",
+        json={
+            "case_id": case_id,
+            "sender": "finance@mega-bu1ld.com.my",
+            "subject": "Payment Redirection",
+            "body": "Remit to CIMB 8009-4411-2299 immediately.",
+            "declared_bank_account": "8009-4411-2299",
+            "declared_amount": 50000.0,
+        },
+    )
+
+    # Step 1: Clerk marks verified
+    clerk_res = client.post(
+        "/api/audit/4-eyes-action",
+        json={
+            "case_id": case_id,
+            "actor": "Siti Nurhaliza (Accounts Clerk)",
+            "role": "ACCOUNTS_CLERK",
+            "action": "MARK_VERIFIED",
+            "notes": "Called verified vendor hotline (+60-3-7722-8888). They did not issue this change.",
+        },
+    )
+    assert clerk_res.status_code == 200
+    clerk_data = clerk_res.json()
+    assert clerk_data["four_eyes_record"]["clerk_verified"] is True
+    assert "Siti Nurhaliza" in clerk_data["four_eyes_record"]["clerk_actor"]
+
+    # Step 2: Manager freezes payment
+    mgr_res = client.post(
+        "/api/audit/4-eyes-action",
+        json={
+            "case_id": case_id,
+            "actor": "Tan Sri Ahmad (Finance Director)",
+            "role": "FINANCE_MANAGER",
+            "action": "CONFIRM_FRAUD_FREEZE",
+            "notes": "Fraud confirmed via out-of-band call. Transfer blocked and reported to NSRC 997.",
+        },
+    )
+    assert mgr_res.status_code == 200
+    mgr_data = mgr_res.json()
+    assert mgr_data["four_eyes_record"]["manager_resolution"] == "FREEZE_PAYMENT_CONFIRMED"
+    assert "Tan Sri Ahmad" in mgr_data["four_eyes_record"]["manager_actor"]
+
+
+def test_audit_verify_endpoint(client: TestClient) -> None:
+    """Verify GET /api/audit/verify returns cryptographic chain status."""
+    res = client.get("/api/audit/verify")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["status"] in ["VERIFIED", "TAMPER_DETECTED"]
+    assert "TAMPER-EVIDENT" in data["integrity_claim"]
+

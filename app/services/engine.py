@@ -139,11 +139,12 @@ class MultiAgentScamGuardEngine:
                 action_type="REQUIRE_HUMAN_CALLBACK",
                 protocol="OUT_OF_BAND_TELEPHONE_VERIFICATION",
                 target_vendor="Quarantined Counterparty",
-                authorized_phone_number="+60-3-7722-8888",
+                authorized_phone_number="NO VERIFIED CONTACT IN MASTER PROCUREMENT LEDGER",
                 security_instructions=(
                     "INTEGRITY FIREWALL ACTIVATED: The inbound document or transmission lacks a valid, "
                     "verifiable bank account number (fewer than 8 digits). Wire authorization is quarantined "
-                    "for mandatory physical document inspection and verbal verification."
+                    "for mandatory physical document inspection and verbal verification. "
+                    "CRITICAL: Do NOT dial any contact telephone or email found on the inbound document."
                 ),
                 verification_status="QUARANTINED_PENDING_PHYSICAL_INSPECTION",
             )
@@ -163,6 +164,7 @@ class MultiAgentScamGuardEngine:
             return AuditForensicReport(
                 case_id=email.case_id or "QUARANTINE_HOLD",
                 status="QUARANTINED",
+                risk_state="QUARANTINED",
                 is_scam=True,
                 risk_score=80.0,
                 threat_level="CRITICAL",
@@ -173,7 +175,12 @@ class MultiAgentScamGuardEngine:
                         cue_code="MISSING_BANK_IDENTIFIER",
                         agent_source="Agent 1: Identity & Wire Forensic",
                         severity="CRITICAL",
-                        description="Bank account number was absent, obscured, or fewer than 8 digits.",
+                        description=(
+                            "OBSERVATION: Missing or invalid financial identifier. "
+                            "EVIDENCE: Bank account number was absent, obscured, or fewer than 8 digits. "
+                            "IMPLICATION: Cannot perform deterministic ledger or SemakMule verification. "
+                            "RECOMMENDED ACTION: Quarantine invoice for physical inspection; do not release funds."
+                        ),
                     )
                 ],
                 pii_redaction_trail=[],
@@ -186,6 +193,11 @@ class MultiAgentScamGuardEngine:
                     account_match=False,
                     is_mule=False,
                     status="DISCREPANCY_DETECTED",
+                    vendor_status="UNKNOWN",
+                    bank_status="UNKNOWN",
+                    registry_status="UNKNOWN",
+                    forensic_status="SUSPICIOUS" if pdf_forensics.get("is_tampered") else "CLEAN",
+                    cti_status="NEUTRAL",
                 ),
                 audit_checklist=[
                     AuditChecklistItem(
@@ -200,18 +212,18 @@ class MultiAgentScamGuardEngine:
                     ),
                     AuditChecklistItem(
                         check="PDRM SemakMule Registry",
-                        status="PASS",
-                        detail="Check bypassed due to missing account digits.",
+                        status="UNKNOWN",
+                        detail="Check unavailable due to missing/invalid account digits (Fail-Closed).",
                     ),
                     AuditChecklistItem(
                         check="Trending Modus Operandi (CTI)",
-                        status="PASS",
-                        detail="Quarantined before cognitive inference.",
+                        status="QUARANTINED",
+                        detail="Quarantined at schema firewall prior to cognitive inference.",
                     ),
                     AuditChecklistItem(
                         check="Urgency & Coercion Level",
-                        status="PASS",
-                        detail="Quarantined at firewall barrier.",
+                        status="QUARANTINED",
+                        detail="Quarantined at schema firewall barrier.",
                     ),
                     AuditChecklistItem(
                         check="Document Metadata & Anti-Tamper Forensics",
@@ -341,6 +353,7 @@ class MultiAgentScamGuardEngine:
         # SemakMule Blacklist Registry Lookup
         semak_res = check_semakmule_blacklist(clean_bank)
         is_mule = bool(semak_res.get("is_mule", False))
+        registry_status = semak_res.get("registry_status", "UNKNOWN")
 
         if is_mule:
             evidence_trail.append(
@@ -349,8 +362,10 @@ class MultiAgentScamGuardEngine:
                     agent_source="Agent 1: Identity & Wire Forensic (PDRM SemakMule)",
                     severity="CRITICAL",
                     description=(
-                        f"CRITICAL FRAUD: Declared account {clean_bank} is listed on the "
-                        f"PDRM SemakMule / JSJK CCID Blacklist as a known illicit money mule account."
+                        f"OBSERVATION: Illicit money mule account detected. "
+                        f"EVIDENCE: Declared account {clean_bank} is listed on the PDRM SemakMule / JSJK CCID Blacklist. "
+                        f"IMPLICATION: High certainty of fraudulent recipient siphon. "
+                        f"RECOMMENDED ACTION: Freeze wire transfer immediately, report to NSRC 997, and notify SecOps."
                     ),
                 )
             )
@@ -370,18 +385,22 @@ class MultiAgentScamGuardEngine:
         )
         cisa_urgency_flag = False
         cti_trend_match_flag = False
+        prompt_injection_flag = False
 
         if gemini_result.is_suspicious and gemini_result.cues:
             for cue in gemini_result.cues:
                 if cue == "CISA_URGENCY":
                     cisa_urgency_flag = True
-                if cue == "CTI_TREND_MATCH":
+                elif cue == "CTI_TREND_MATCH":
                     cti_trend_match_flag = True
+                elif cue == "PROMPT_INJECTION_ATTEMPT":
+                    prompt_injection_flag = True
+
                 evidence_trail.append(
                     EvidenceCue(
                         cue_code=cue,
                         agent_source="Agent 2: Cognitive Threat Analyst (Gemini 2.5 Flash)",
-                        severity="HIGH",
+                        severity="CRITICAL" if cue == "PROMPT_INJECTION_ATTEMPT" else "HIGH",
                         description=(
                             f"{gemini_result.threat_summary} "
                             f"[Confidence: {int(gemini_result.confidence * 100)}%]"
@@ -423,6 +442,10 @@ class MultiAgentScamGuardEngine:
         if is_domain_verified and account_matched and not pdf_forensics.get("is_tampered"):
             score = 10.0
 
+        # Prompt injection attack escalation
+        if prompt_injection_flag:
+            score = max(score, 85.0)
+
         # PDF Document Metadata & Forensics Anti-Tamper Escalation
         if pdf_forensics.get("is_tampered") is True:
             score = min(100.0, score + 25.0)
@@ -435,8 +458,11 @@ class MultiAgentScamGuardEngine:
                     cue_code="PDF_METADATA_TAMPERED",
                     agent_source="Agent 1: Digital Forensics & Metadata Inspector",
                     severity="CRITICAL",
-                    description=pdf_forensics.get(
-                        "evidence", "Altered via consumer editing suite."
+                    description=(
+                        f"OBSERVATION: Document modification indicator detected in PDF metadata. "
+                        f"EVIDENCE: {pdf_forensics.get('evidence', 'Altered via consumer editing suite.')} "
+                        f"IMPLICATION: Document modified post-export from core ERP billing system. "
+                        f"RECOMMENDED ACTION: Corroborate with verified vendor via master ledger switchboard."
                     ),
                 )
             )
@@ -447,7 +473,12 @@ class MultiAgentScamGuardEngine:
                     cue_code="DUPLICATE_ARTIFACT_REPLAY",
                     agent_source="Artifact Forensics & Replay Guard",
                     severity="HIGH",
-                    description="Duplicate invoice artifact detected (Previous submission found).",
+                    description=(
+                        "OBSERVATION: Duplicate invoice artifact replay detected. "
+                        "EVIDENCE: SHA-256 byte fingerprint matches a previous submission. "
+                        "IMPLICATION: Potential duplicate billing or replayed wire instruction. "
+                        "RECOMMENDED ACTION: Cross-check payment records to avoid duplicate disbursement."
+                    ),
                 )
             )
 
@@ -462,6 +493,16 @@ class MultiAgentScamGuardEngine:
         else:
             threat_level = "SAFE"
 
+        # Deterministic Risk State
+        if is_mule:
+            risk_state = "CRITICAL FRAUD INDICATORS"
+        elif not account_matched or lookalike_flag:
+            risk_state = "CRITICAL BEC DISCREPANCY"
+        elif score >= self.risk_threshold:
+            risk_state = "SUSPICIOUS / VERIFICATION REQUIRED"
+        else:
+            risk_state = "VERIFIED / LOW RISK"
+
         # Discrepancy Matrix status
         if is_mule:
             matrix_status = "CRITICAL_MULE_DETECTED"
@@ -470,6 +511,35 @@ class MultiAgentScamGuardEngine:
         else:
             matrix_status = "MATCH"
 
+        # Determine granular evidence status tokens
+        if is_domain_verified and not lookalike_flag:
+            vendor_status_val = "VERIFIED"
+        elif lookalike_flag and vendor_profile:
+            vendor_status_val = "MISMATCH"
+        else:
+            vendor_status_val = "UNKNOWN"
+
+        if account_matched:
+            bank_status_val = "EXACT_MATCH"
+        elif vendor_profile:
+            bank_status_val = "MISMATCH"
+        else:
+            bank_status_val = "UNKNOWN"
+
+        if pdf_forensics.get("is_tampered") is True:
+            forensic_status_val = "SUSPICIOUS"
+        elif pdf_forensics.get("producer") == "Corrupted/Unreadable":
+            forensic_status_val = "UNAVAILABLE"
+        else:
+            forensic_status_val = "CLEAN"
+
+        if cti_trend_match_flag:
+            cti_status_val = "ALIGNED"
+        elif gemini_result.is_suspicious:
+            cti_status_val = "SUSPICIOUS"
+        else:
+            cti_status_val = "NEUTRAL"
+
         discrepancy_matrix = DiscrepancyMatrix(
             ledger_vendor_name=target_vendor_name if (vendor_profile or lookalike_flag) else None,
             ledger_bank_account=ledger_bank_display,
@@ -477,9 +547,27 @@ class MultiAgentScamGuardEngine:
             account_match=account_matched,
             is_mule=is_mule,
             status=matrix_status,
+            vendor_status=vendor_status_val,
+            bank_status=bank_status_val,
+            registry_status=registry_status,
+            forensic_status=forensic_status_val,
+            cti_status=cti_status_val,
         )
 
-        # Audit Checklist (6 itemized gap analysis points)
+        # Audit Checklist (6 itemized gap analysis points with fail-closed semantics)
+        if is_mule:
+            semak_chk_status = "FAIL"
+            semak_chk_detail = f"CRITICAL: Account {clean_bank} flagged in PDRM SemakMule CCID database!"
+        elif registry_status == "CLEAN":
+            semak_chk_status = "PASS"
+            semak_chk_detail = "Deterministic lookup returned clean (no mule flags detected)."
+        elif registry_status == "UNAVAILABLE":
+            semak_chk_status = "UNAVAILABLE"
+            semak_chk_detail = "PDRM SemakMule registry lookup unavailable (Failed closed; manual verification required)."
+        else:
+            semak_chk_status = "UNKNOWN"
+            semak_chk_detail = "Registry status unknown; account unverified."
+
         audit_checklist = [
             AuditChecklistItem(
                 check="Vendor Identity",
@@ -501,12 +589,8 @@ class MultiAgentScamGuardEngine:
             ),
             AuditChecklistItem(
                 check="PDRM SemakMule Registry",
-                status="FAIL" if is_mule else "PASS",
-                detail=(
-                    f"CRITICAL: Account {clean_bank} flagged in PDRM SemakMule CCID database!"
-                    if is_mule
-                    else "Deterministic lookup returned clean (no mule flags detected)."
-                ),
+                status=semak_chk_status,
+                detail=semak_chk_detail,
             ),
             AuditChecklistItem(
                 check="Trending Modus Operandi (CTI)",
@@ -537,16 +621,26 @@ class MultiAgentScamGuardEngine:
         primary_cues: List[str] = []
         if is_scam:
             primary_cues = [cue.cue_code for cue in evidence_trail]
+            if authorized_phone == "NO VERIFIED CONTACT IN MASTER PROCUREMENT LEDGER":
+                voucher_instructions = (
+                    f"CIRCUIT BREAKER ACTIVATED: Suspected invoice redirection or impersonation. "
+                    f"NO VERIFIED CONTACT EXISTS IN MASTER PROCUREMENT LEDGER for '{target_vendor_name}'. "
+                    f"CRITICAL: Do NOT dial any phone number or email printed on the inbound document. "
+                    f"Perform physical procurement verification before releasing any funds."
+                )
+            else:
+                voucher_instructions = (
+                    f"CIRCUIT BREAKER ACTIVATED: Suspected invoice redirection or executive BEC scam. "
+                    f"Do NOT release funds or modify accounting vendor records. Contact {target_vendor_name} "
+                    f"via verified telephone line ({authorized_phone}) to verbally authenticate this payment request."
+                )
+
             safe_next_step = HumanCallbackVoucher(
                 action_type="REQUIRE_HUMAN_CALLBACK",
                 protocol="OUT_OF_BAND_TELEPHONE_VERIFICATION",
                 target_vendor=target_vendor_name,
                 authorized_phone_number=authorized_phone,
-                security_instructions=(
-                    f"CIRCUIT BREAKER ACTIVATED: Suspected invoice redirection or executive BEC scam. "
-                    f"Do NOT release funds or modify accounting vendor records. Contact {target_vendor_name} "
-                    f"via verified telephone line ({authorized_phone}) to verbally authenticate this payment request."
-                ),
+                security_instructions=voucher_instructions,
                 verification_status="PAYMENT_LOCKED_PENDING_CALL",
             )
             if is_mule:
@@ -623,6 +717,7 @@ class MultiAgentScamGuardEngine:
         return AuditForensicReport(
             case_id=email.case_id or "MANUAL_INPUT",
             status="PROCESSED",
+            risk_state=risk_state,
             is_scam=is_scam,
             risk_score=score,
             threat_level=threat_level,

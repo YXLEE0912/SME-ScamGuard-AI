@@ -74,20 +74,34 @@ def check_semakmule_blacklist(bank_account: str) -> Dict[str, Any]:
         bank_account: Raw or formatted bank account string.
 
     Returns:
-        Dictionary with boolean `is_mule` flag and authoritative `source`.
+        Dictionary with boolean `is_mule` flag, `registry_status` ("CONFIRMED_MULE", "CLEAN", "UNKNOWN", "UNAVAILABLE"),
+        and authoritative `source`.
     """
     clean_account = re.sub(r"\D", "", bank_account or "")
-    if not clean_account:
+    if not clean_account or len(clean_account) < 8:
         return {
             "is_mule": False,
+            "registry_status": "UNKNOWN",
             "source": "PDRM SemakMule / JSJK CCID Blacklist",
+            "detail": "Account number missing or too short for registry lookup",
         }
 
-    intel = load_threat_intelligence()
-    known_mules = intel.get("known_mule_accounts", DEFAULT_KNOWN_MULE_ACCOUNTS)
-
-    is_mule = clean_account in known_mules
-    return {
-        "is_mule": is_mule,
-        "source": "PDRM SemakMule / JSJK CCID Blacklist",
-    }
+    try:
+        intel = load_threat_intelligence()
+        known_mules = intel.get("known_mule_accounts", DEFAULT_KNOWN_MULE_ACCOUNTS)
+        is_mule = clean_account in known_mules
+        status = "CONFIRMED_MULE" if is_mule else "CLEAN"
+        return {
+            "is_mule": is_mule,
+            "registry_status": status,
+            "source": "PDRM SemakMule / JSJK CCID Blacklist",
+            "detail": "Account flagged in PDRM CCID blacklist" if is_mule else "Clean in PDRM CCID blacklist",
+        }
+    except Exception as exc:
+        logger.error("SemakMule registry lookup failure: %s", exc)
+        return {
+            "is_mule": False,
+            "registry_status": "UNAVAILABLE",
+            "source": "PDRM SemakMule / JSJK CCID Blacklist",
+            "detail": f"Registry temporarily unavailable: {exc}",
+        }

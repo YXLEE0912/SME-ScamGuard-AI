@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${jetbrainsMono.variable} font-sans min-h-screen antialiased bg-slate-50 text-slate-900 selection:bg-indigo-500/20 selection:text-indigo-900 transition-colors duration-200`}
+        className={`${inter.variable} ${jetbrainsMono.variable} font-sans min-h-screen antialiased bg-[#0B111E] text-[#F1F5F9] selection:bg-[#C5A880]/20 selection:text-[#F1F5F9]`}
       >
         {children}
       </body>

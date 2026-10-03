@@ -2,34 +2,37 @@
 
 @layer base {
   :root {
-    --background: #f8fafc;
-    --foreground: #0f172a;
+    --background: #0b111e;
+    --foreground: #f1f5f9;
+    --card: #111a2e;
+    --border: #1e2d4a;
+    --gold: #c5a880;
   }
 
   body {
-    background-color: var(--background);
-    color: var(--foreground);
+    background-color: #0b111e;
+    color: #f1f5f9;
     overflow-x: hidden;
   }
 }
 
-/* Custom SOC scrollbar */
+/* Custom restrained scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #0b111e;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 3px;
+  background: #1e2d4a;
+  border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #334a73;
 }
 
 /* Radar pulse animation for online status beacon */
