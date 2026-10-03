@@ -88,20 +88,42 @@ class TelegramAlertService:
             )
             return True
 
-        cues_text = ", ".join(report.primary_cues) if report.primary_cues else "None"
+        vendor_name = (
+            (report.safe_next_step.target_vendor if report.safe_next_step else None)
+            or (report.discrepancy_matrix.ledger_vendor_name if report.discrepancy_matrix else None)
+            or "Unknown Counterparty"
+        )
+        inbound_acc = (
+            report.discrepancy_matrix.invoice_bank_account
+            if report.discrepancy_matrix
+            else "Unverified Account"
+        )
+        ledger_acc = (
+            report.discrepancy_matrix.ledger_bank_account
+            if report.discrepancy_matrix and report.discrepancy_matrix.ledger_bank_account
+            else "None Registered"
+        )
+        mule_status = (
+            "Flagged Mule (PDRM SemakMule)"
+            if (report.discrepancy_matrix and report.discrepancy_matrix.is_mule)
+            else "Clean"
+        )
+
         lines = [
-            "🚨 *CRITICAL SCAM DETECTED — PAYMENT QUARANTINED*",
+            "🚨 *SME-ScamGuard Alert: BEC Wire Fraud Intercepted* (CRITICAL SCAM DETECTED)",
             f"*Case ID:* `{report.case_id}`",
-            f"*Risk Score:* `{report.risk_score:.1f}/100.0` ({report.threat_level})",
-            f"*Primary Cues:* {cues_text}",
+            f"*Vendor:* `{vendor_name}`",
+            f"*Risk Score:* `{int(report.risk_score)}/100` ({report.threat_level})",
+            f"*Discrepancy:* Inbound [{inbound_acc}] does not match ledger [{ledger_acc}]",
+            f"*SemakMule Status:* [{mule_status}]",
+            "*Action:* Wire transfer frozen. Verification voucher issued.",
         ]
 
         if report.safe_next_step:
             lines.extend(
                 [
-                    "*Action Required:* DO NOT REPLY VIA EMAIL.",
-                    f"*Authorized Verification Call:* `{report.safe_next_step.authorized_phone_number}`",
                     f"*Target Vendor:* `{report.safe_next_step.target_vendor}`",
+                    f"*Authorized Verification Call:* `{report.safe_next_step.authorized_phone_number}`",
                     f"*Protocol:* `{report.safe_next_step.protocol}`",
                 ]
             )

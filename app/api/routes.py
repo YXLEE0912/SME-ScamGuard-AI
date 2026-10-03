@@ -1,19 +1,34 @@
 """FastAPI REST routing endpoints for SME-ScamGuard-AI forensic inspection.
 
-Provides endpoints for email scanning, historical audit report retrieval,
+Provides endpoints for email scanning, multi-format invoice attachment ingestion,
+instant messaging channel triage (WhatsApp), historical audit reports,
 synthetic benchmark evaluation, and platform health telemetry.
 """
 
+from datetime import datetime
 import json
 import logging
 import os
 from pathlib import Path
-from typing import Any, Dict, List
+import time
+from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, BackgroundTasks, status
+from fastapi import APIRouter, BackgroundTasks, File, Form, UploadFile, status
 from fastapi.responses import JSONResponse
 
-from app.models.schema import AuditForensicReport, EmailInput
+from app.models.schema import (
+    AuditForensicReport,
+    ChannelMessageInput,
+    EmailInput,
+)
+from app.services.audit_service import (
+    append_local_audit as persist_audit_ledger,
+    check_and_register_artifact,
+)
+from app.services.document_parser import (
+    extract_financial_fields,
+    parse_invoice_attachment,
+)
 from app.services.engine import MultiAgentScamGuardEngine
 from app.services.gmail import GmailWatcherService
 from app.services.telegram import TelegramAlertService
@@ -37,6 +52,11 @@ telegram_service = TelegramAlertService()
 gmail_service = GmailWatcherService()
 
 
+def append_local_audit(report: AuditForensicReport) -> None:
+    """Append audit record locally to ./data/audits.json with SHA-256 hash chaining."""
+    persist_audit_ledger(report.model_dump())
+
+
 @router.post(
     "/scan",
     response_model=AuditForensicReport,
@@ -50,16 +70,150 @@ async def scan_email(
     """Execute the multi-agent forensic inspection pipeline on an inbound email.
 
     - Runs 4-agent deterministic pipeline (Privacy, Identity, Psycho-Social, Risk Arbiter).
+    - Computes artifact SHA-256 hash and checks replay cache.
     - Stores synthesized audit forensic report at the front of in-memory AUDIT_STORE.
     - If scam is detected (risk score >= threshold), dispatches out-of-band Telegram alert via BackgroundTasks.
+    - Appends audit entry locally to ./data/audits.json asynchronously with hash chaining.
     """
-    report = engine.run_pipeline(email)
+    body_bytes = email.body.encode("utf-8")
+    artifact_tracking = check_and_register_artifact(body_bytes, f"{email.case_id or 'EMAIL'}.eml")
+
+    report = engine.coordinate_agents(
+        email=email,
+        artifact_tracking=artifact_tracking,
+    )
     AUDIT_STORE.insert(0, report)
 
     if report.is_scam:
         background_tasks.add_task(telegram_service.send_scam_alert, report)
+    background_tasks.add_task(append_local_audit, report)
 
     return report
+
+
+@router.post(
+    "/scan/invoice-file",
+    response_model=AuditForensicReport,
+    status_code=status.HTTP_200_OK,
+    summary="Scan Inbound Multi-Format Invoice Attachment (PDF/DOCX/TXT/Images)",
+)
+async def scan_invoice_file(
+    background_tasks: BackgroundTasks,
+    file: UploadFile = File(...),
+    sender: str = Form("billing@megabuild.com.my"),
+    subject: str = Form("Inbound Invoice Attachment"),
+) -> AuditForensicReport:
+    """Ingest, parse, and verify an uploaded invoice attachment via hybrid OCR and multi-agent pipeline."""
+    file_bytes = await file.read()
+    artifact_tracking = check_and_register_artifact(file_bytes, file.filename or "invoice.pdf")
+    parsed_data = parse_invoice_attachment(file_bytes=file_bytes, filename=file.filename or "invoice.pdf")
+
+    case_id = f"INV-{int(time.time())}"
+    extracted_text = parsed_data.get("extracted_text", "")
+    extracted_bank = parsed_data.get("extracted_bank")
+    extracted_amount = parsed_data.get("extracted_amount")
+    ocr_used = parsed_data.get("ocr_used", False)
+    total_pages = parsed_data.get("total_pages", 1)
+    pdf_forensics = parsed_data.get("pdf_forensics")
+
+    email_in = EmailInput(
+        case_id=case_id,
+        sender=sender,
+        subject=subject,
+        body=extracted_text or f"Attachment: {file.filename}",
+        declared_bank_account=extracted_bank,
+        declared_amount=extracted_amount,
+        pdf_forensics=pdf_forensics,
+        artifact_tracking=artifact_tracking,
+    )
+
+    report = engine.coordinate_agents(
+        email=email_in,
+        ocr_used=ocr_used,
+        total_pages=total_pages,
+        filename=file.filename,
+        pdf_forensics=pdf_forensics,
+        artifact_tracking=artifact_tracking,
+    )
+    AUDIT_STORE.insert(0, report)
+
+    if report.is_scam:
+        background_tasks.add_task(telegram_service.send_scam_alert, report)
+    background_tasks.add_task(append_local_audit, report)
+
+    return report
+
+
+@router.post(
+    "/scan/file",
+    response_model=AuditForensicReport,
+    status_code=status.HTTP_200_OK,
+    summary="Scan Inbound File (Alias for /scan/invoice-file)",
+)
+async def scan_file(
+    background_tasks: BackgroundTasks,
+    file: UploadFile = File(...),
+    sender: str = Form("billing@megabuild.com.my"),
+    subject: str = Form("Inbound Invoice Attachment"),
+) -> AuditForensicReport:
+    """Alias for invoice file scanning endpoint."""
+    return await scan_invoice_file(background_tasks, file, sender, subject)
+
+
+@router.post(
+    "/scan/channel-message",
+    response_model=AuditForensicReport,
+    status_code=status.HTTP_200_OK,
+    summary="Scan Inbound Instant Messaging Channel Payment Request (WhatsApp/Telegram)",
+)
+async def scan_channel_message(
+    payload: ChannelMessageInput,
+    background_tasks: BackgroundTasks,
+) -> AuditForensicReport:
+    """Scan and verify instant messaging chat text (e.g. WhatsApp) for BEC and urgent redirection."""
+    case_id = f"MSG-{int(time.time())}"
+    extracted_bank, extracted_amount = extract_financial_fields(payload.message)
+    msg_bytes = payload.message.encode("utf-8")
+    artifact_tracking = check_and_register_artifact(msg_bytes, "chat_message.txt")
+
+    email_in = EmailInput(
+        case_id=case_id,
+        sender=payload.sender or "whatsapp:+60123456789",
+        subject=payload.subject or "Instant Messaging Channel Dispatch",
+        body=payload.message,
+        declared_bank_account=extracted_bank,
+        declared_amount=extracted_amount,
+        artifact_tracking=artifact_tracking,
+    )
+
+    report = engine.coordinate_agents(
+        email=email_in,
+        ocr_used=False,
+        total_pages=1,
+        filename="whatsapp_chat.txt",
+        artifact_tracking=artifact_tracking,
+    )
+    AUDIT_STORE.insert(0, report)
+
+    if report.is_scam:
+        background_tasks.add_task(telegram_service.send_scam_alert, report)
+    background_tasks.add_task(append_local_audit, report)
+
+    return report
+
+
+@router.post(
+    "/scan/text",
+    response_model=AuditForensicReport,
+    status_code=status.HTTP_200_OK,
+    summary="Scan Inbound Text / Message (Alias for /scan/channel-message)",
+)
+async def scan_text(
+    payload: ChannelMessageInput,
+    background_tasks: BackgroundTasks,
+) -> AuditForensicReport:
+    """Alias for message text scanning endpoint."""
+    return await scan_channel_message(payload, background_tasks)
 
 
 @router.post(
@@ -77,13 +231,14 @@ async def sync_gmail_inbox(
     quarantined_count = 0
 
     for email_in in emails:
-        report = engine.run_pipeline(email_in)
+        report = engine.coordinate_agents(email_in)
         AUDIT_STORE.insert(0, report)
         reports.append(report)
 
         if report.is_scam:
             quarantined_count += 1
             background_tasks.add_task(telegram_service.send_scam_alert, report)
+        background_tasks.add_task(append_local_audit, report)
 
     return {
         "fetched_count": len(emails),
@@ -109,11 +264,7 @@ async def get_audit_reports() -> List[AuditForensicReport]:
     summary="Run Synthetic Malaysian BEC Evaluation Benchmark",
 )
 async def run_benchmark_evaluation() -> Dict[str, Any]:
-    """Load benchmark cases from data/eval_cases.json and execute end-to-end evaluation.
-
-    Returns structured evaluation performance metrics including total cases,
-    passed cases, accuracy rate, and per-case forensic breakdowns.
-    """
+    """Load benchmark cases from data/eval_cases.json and execute end-to-end evaluation."""
     base_dir = Path(__file__).resolve().parent.parent.parent
     eval_file = base_dir / "data" / "eval_cases.json"
 
@@ -165,7 +316,7 @@ async def run_benchmark_evaluation() -> Dict[str, Any]:
             declared_amount=item.get("declared_amount"),
         )
 
-        report = engine.run_pipeline(email_in)
+        report = engine.coordinate_agents(email_in)
         expected_is_scam = bool(item.get("expected_is_scam", False))
         case_passed = report.is_scam == expected_is_scam
 

@@ -2,14 +2,8 @@
 
 @layer base {
   :root {
-    --background: #020617;
-    --foreground: #f8fafc;
-  }
-
-  html.light,
-  :root[data-theme="light"] {
-    --background: #fafafa;
-    --foreground: #09090b;
+    --background: #f8fafc;
+    --foreground: #0f172a;
   }
 
   body {
@@ -26,19 +20,19 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #cbd5e1;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #94a3b8;
 }
 
-/* Radar pulse animation for online beacon */
+/* Radar pulse animation for online status beacon */
 @keyframes beacon-pulse {
   0% {
     transform: scale(0.95);
@@ -56,4 +50,32 @@
 
 .animate-beacon {
   animation: beacon-pulse 2s infinite;
+}
+
+/* Forensic Dossier Print Stylesheet */
+@media print {
+  body {
+    background: white !important;
+    color: #0f172a !important;
+    font-size: 11pt !important;
+  }
+
+  .no-print,
+  button,
+  input,
+  form,
+  details,
+  select,
+  textarea {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .print-break-inside-avoid {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
 }

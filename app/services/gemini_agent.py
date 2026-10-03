@@ -68,17 +68,32 @@ class GeminiCognitiveAgent:
             return False
         return len(key) >= 15
 
-    def analyze_correspondence(self, sanitized_text: str, subject: str) -> GeminiAnalysis:
+    def analyze_correspondence(
+        self,
+        sanitized_text: str,
+        subject: str,
+        active_threat_trends: Optional[List[str]] = None,
+    ) -> GeminiAnalysis:
         """Analyze sanitized email text and subject for BEC, CEO fraud, urgency, and invoice fraud.
 
         Uses gemini-2.5-flash with structured JSON output matching GeminiAnalysis.
         Falls back to local heuristic keyword analysis if API key is absent or an error occurs.
         """
+        trends = active_threat_trends or []
         if not self._client:
             return self._heuristic_fallback(
                 sanitized_text,
                 subject,
+                active_threat_trends=trends,
                 reason="GEMINI_API_KEY not configured or offline demo mode",
+            )
+
+        trends_context = ""
+        if trends:
+            trends_context = (
+                "\n\nCURRENT ACTIVE LOCAL THREAT INTELLIGENCE (PDRM / NSRC ADVISORIES):\n"
+                + "\n".join(f"- {t}" for t in trends)
+                + "\nNote: Compare correspondence against these active modus operandi trends."
             )
 
         prompt = (
@@ -87,10 +102,11 @@ class GeminiCognitiveAgent:
             "cyber threats: Business Email Compromise (BEC), CEO/Executive fraud, invoice redirection, "
             "artificial urgency, coercive language, confidential/secrecy pretexts, and bank detail modification.\n\n"
             f"EMAIL SUBJECT: {subject}\n"
-            f"SANITIZED EMAIL BODY:\n{sanitized_text}\n\n"
+            f"SANITIZED EMAIL BODY:\n{sanitized_text}"
+            f"{trends_context}\n\n"
             "Evaluate whether this correspondence is suspicious. List specific forensic cue codes in 'cues' "
             "(include 'CISA_URGENCY' if artificial pressure/deadlines exist, 'INVOICE_REDIRECT' if bank swap is requested, "
-            "'CEO_FRAUD' if executive coercion or secrecy pretext is used). "
+            "'CEO_FRAUD' if executive coercion or secrecy pretext is used, 'CTI_TREND_MATCH' if aligned with trending MO). "
             "Provide a crisp threat summary and a confidence score between 0.0 and 1.0."
         )
 
@@ -122,9 +138,20 @@ class GeminiCognitiveAgent:
 
         except Exception as exc:
             logger.warning("Gemini analysis error (%s). Gracefully falling back to offline heuristics.", exc)
-            return self._heuristic_fallback(sanitized_text, subject, reason=f"Gemini API fallback: {exc}")
+            return self._heuristic_fallback(
+                sanitized_text,
+                subject,
+                active_threat_trends=trends,
+                reason=f"Gemini API fallback: {exc}",
+            )
 
-    def _heuristic_fallback(self, sanitized_text: str, subject: str, reason: str = "") -> GeminiAnalysis:
+    def _heuristic_fallback(
+        self,
+        sanitized_text: str,
+        subject: str,
+        active_threat_trends: Optional[List[str]] = None,
+        reason: str = "",
+    ) -> GeminiAnalysis:
         """Deterministic offline fallback analyzing CISA urgency, invoice redirection, and CEO fraud keywords."""
         content = f"{subject} {sanitized_text}".lower()
         cues: List[str] = []
@@ -143,7 +170,7 @@ class GeminiCognitiveAgent:
         redirect_patterns = [
             r"\b(change of (beneficiary |bank )?details|migration|migrated|audit settlement)\b",
             r"\b(new bank account|backup account|remit.*immediately|updated account details|banking operations)\b",
-            r"\b(supplier account swap|payment instructions|wire.*promptly|clearing account)\b",
+            r"\b(supplier account swap|payment instructions|wire.*promptly|clearing account|alternate account)\b",
         ]
         if any(re.search(pat, content) for pat in redirect_patterns):
             cues.append("INVOICE_REDIRECT")
@@ -156,6 +183,15 @@ class GeminiCognitiveAgent:
         ]
         if any(re.search(pat, content) for pat in exec_patterns):
             cues.append("CEO_FRAUD")
+
+        # CTI Trending Modus Operandi Matching
+        cti_patterns = [
+            r"\b(migration|branch maintenance|under maintenance|maintenance|secondary account)\b",
+            r"\b(tax penalty|sst audit|lhdn penalty|penalty settlement)\b",
+            r"\b(cash flow freeze|freeze bypass|urgent remit)\b",
+        ]
+        if any(re.search(pat, content) for pat in cti_patterns):
+            cues.append("CTI_TREND_MATCH")
 
         is_suspicious = len(cues) > 0
         if is_suspicious:
@@ -175,3 +211,4 @@ class GeminiCognitiveAgent:
             threat_summary=threat_summary,
             confidence=confidence,
         )
+
