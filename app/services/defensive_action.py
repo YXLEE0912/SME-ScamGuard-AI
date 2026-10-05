@@ -93,13 +93,13 @@ def generate_defensive_actions(assessment: Dict[str, Any]) -> Dict[str, Any]:
         },
     }
 
-    # Action B: Simulated Secure Telegram Security Bot Broadcast payload
+    # Action B: Corporate Dispute Reply Notice & Formal Payment Freeze
     action_b = {
-        "channel": "Telegram SecOps Feed (@SME_CyberAlert_Bot)",
-        "status": "DISPATCHED",
+        "channel": "Corporate AP Dispute Response (Gmail / SMTP)",
+        "status": "DISPATCH_READY",
         "message_preview": (
-            f"🚨 [CRITICAL ALERT] Payment Hold Triggered for {alleged_vendor}. "
-            f"Inbound account {target_account} rejected. Tamper/BEC evidence detected."
+            f"Formal Payment Hold Notice issued for {alleged_vendor}. "
+            f"Remittance to account {target_account} frozen pending 4-Eyes switchboard verification."
         ),
     }
 

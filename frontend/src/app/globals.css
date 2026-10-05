@@ -1,58 +1,56 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   :root {
-    --background: #0b111e;
-    --foreground: #f1f5f9;
-    --card: #111a2e;
-    --border: #1e2d4a;
-    --gold: #c5a880;
+    --background: #f9fafb;
+    --foreground: #111827;
+    --card: #ffffff;
+    --border: #e5e7eb;
+    --primary: #3D5A80;
+  }
+
+  .dark {
+    --background: #0b0f17;
+    --foreground: #f8fafc;
+    --card: #111827;
+    --border: #1f2937;
+    --primary: #3b82f6;
   }
 
   body {
-    background-color: #0b111e;
-    color: #f1f5f9;
+    background-color: var(--background);
+    color: var(--foreground);
     overflow-x: hidden;
   }
 }
 
 /* Custom restrained scrollbar */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0b111e;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1e2d4a;
-  border-radius: 2px;
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #334a73;
+  background: #94a3b8;
 }
 
-/* Radar pulse animation for online status beacon */
-@keyframes beacon-pulse {
-  0% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
-  }
-  70% {
-    transform: scale(1);
-    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
-  }
-  100% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-  }
-}
-
-.animate-beacon {
-  animation: beacon-pulse 2s infinite;
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
 }
 
 /* Forensic Dossier Print Stylesheet */
@@ -64,6 +62,9 @@
   }
 
   .no-print,
+  header,
+  aside,
+  nav,
   button,
   input,
   form,

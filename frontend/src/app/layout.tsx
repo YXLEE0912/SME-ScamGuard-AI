@@ -13,9 +13,9 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SME-ScamGuard-AI | Autonomous SOC & BEC Defense Platform",
+  title: "ScamGuard.AI | AP Fraud & BEC Verification Platform",
   description:
-    "Deterministic local-first multi-agent defense system against SME Business Email Compromise, invoice redirection fraud, and social engineering.",
+    "Enterprise-grade Accounts Payable reconciliation, Master Procurement Ledger parity cross-referencing, and BEC wire interdiction for Malaysian SMEs.",
 };
 
 export default function RootLayout({
@@ -24,9 +24,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                const storedTheme = localStorage.getItem('scamguard_theme');
+                if (storedTheme === 'dark') {
+                  document.documentElement.classList.add('dark');
+                } else {
+                  document.documentElement.classList.remove('dark');
+                }
+              } catch (_) {}
+            `,
+          }}
+        />
+      </head>
       <body
-        className={`${inter.variable} ${jetbrainsMono.variable} font-sans min-h-screen antialiased bg-[#0B111E] text-[#F1F5F9] selection:bg-[#C5A880]/20 selection:text-[#F1F5F9]`}
+        className={`${inter.variable} ${jetbrainsMono.variable} font-sans min-h-screen antialiased bg-[#F9FAFB] dark:bg-[#0B0F17] text-neutral-900 dark:text-slate-100 selection:bg-blue-600/20 selection:text-blue-700 dark:selection:text-blue-300`}
       >
         {children}
       </body>
