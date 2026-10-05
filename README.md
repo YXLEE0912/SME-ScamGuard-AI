@@ -5,8 +5,8 @@
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11+-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
 [![Next.js 14+](https://img.shields.io/badge/Next.js-14+-000000?style=flat&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688?style=flat&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![Google Gemini 2.5 Flash](https://img.shields.io/badge/LLM-Gemini%202.5%20Flash-4285F4?style=flat&logo=google&logoColor=white)](https://ai.google.dev/)[cite: 4]
-[![Statutory Compliance](https://img.shields.io/badge/Compliance-PDPA%202010%20%7C%20AMLA%202001-blue.svg)](https://www.pdp.gov.my/)[cite: 4]
+[![Google Gemini 2.5 Flash](https://img.shields.io/badge/LLM-Gemini%202.5%20Flash-4285F4?style=flat&logo=google&logoColor=white)](https://ai.google.dev/)
+[![Statutory Compliance](https://img.shields.io/badge/Compliance-PDPA%202010%20%7C%20AMLA%202001-blue.svg)](https://www.pdp.gov.my/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ---
 
