@@ -30,58 +30,69 @@ Agent 1 (Deterministic Binary Forensics & Ledger Verifier): Performs ISO 32000-1
 ### 🏗️ Architecture
 
 ```text
+┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  🛡️ SME-ScamGuard-AI: ZERO-TRUST AP INTEGRITY & BEC INTERDICTION PIPELINE                                        │
+│     Autonomous Agentic Financial Defense Grounded on PDPA 2010 & PDRM CCID Threat Intelligence                   │
+└──────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 
-[ Inbound Email Stream / Multi-Part Invoice Upload ]
-│
-▼
-┌──────────────────────────────────────────────────────────┐
-│ STAGE 0: Volatile In-Memory PII Scrubber (<5ms)          │
-│ • Scoped RAM buffer (0 disk writes to /tmp)              │
-│ • Redacts MyKad (\b\d{6}-\d{2}-\d{4}\b) & MSISDN contacts│
-│ • Enforces Malaysian PDPA 2010 Section 10 compliance     │
-└──────────────────────────┬───────────────────────────────┘
-│
-▼
-┌──────────────────────────────────────────────────────────┐
-│ STAGE 1: Deterministic Binary & Metadata Forensics (<35ms)│
-│ • ISO 32000-1 byte parsing & %EOF trailer validation     │
-│ • Identifies consumer web editors (iLovePDF, Canva)       │
-│ • Flags timestamp desync: |T_ModDate - T_CreationDate| > 1h│
-└──────────────────────────┬───────────────────────────────┘
-│
-▼
-┌──────────────────────────────────────────────────────────┐
-│ STAGE 2: Ground-Truth Registry & SemakMule Cache (<2ms)  │
-│ • Two-Way Discrepancy Matrix vs. KNOWN_VENDORS ledger    │
-│ • Exact-match query to PDRM CCID SemakMule threat cache  │
-│ • Suppresses invoice contact; retrieves official landline│
-└──────────────────────────┬───────────────────────────────┘
-│ (Sanitized Briefing Payload)
-▼
-┌──────────────────────────────────────────────────────────┐
-│ STAGE 3: Cognitive Agent Analysis (Gemini 2.5 Flash)     │
-│ • Sandboxed prompt delimited by <UNTRUSTED_INBOUND_DOC>  │
-│ • Analyzes social engineering: urgency, authority, audit │
-│ • Zero financial clearance authority (Diagnostic JSON)   │
-└──────────────────────────┬───────────────────────────────┘
-│
-▼
-┌──────────────────────────────────────────────────────────┐
-│ STAGE 4: Declarative Risk Arbiter & Fail-Closed Safety   │
-│ • R = max(S_SemakMule, min(100, 80·I_Ledger + 20·I_Tamper│
-│        + 15·I_Urgency + 25·I_AuthFailure))               │
-│ • Fail-Closed: AI timeouts trigger AI_COGNITIVE_UNAVAIL  │
-└──────────────────────────┬───────────────────────────────┘
-│
-▼
-┌──────────────────────────────────────────────────────────┐
-│ STAGE 5: Runtime Containment & Statutory Artifacts       │
-│ • Automated ERP Disbursement Lock (PAYMENT_LOCKED)       │
-│ • 4-Eyes Governance: Step 1 (Clerk Call) -> Step 2 (Sign)│
-│ • 1-Click PDRM CCID / NSRC 997 Police Complaint Dossier  │
-│ • Append-only SHA-256 audit trail under Evidence Act 1950│
-└──────────────────────────────────────────────────────────┘
+ ROW 1: INGESTION & PRIVACY BOUNDARY (Local Serverless Heap Memory — 0 Disk Writes)
+ ┌───────────────────────────────────────────────┐     ┌────────────────────────────────────────────────────────┐
+ │ GATEWAY INGESTION                             │     │ CHECKPOINT 0: IN-MEMORY PII SANITIZER (<5ms)           │
+ │ • Channel 1: Google OAuth (Gmail REST)        │ ──► │ • Volatile RAM buffer (zero disk writes to /tmp)       │
+ │ • Channel 2: Ad-Hoc Upload (PDF / XLSX)       │     │ • MyKad Regex Redaction: [REDACTED_MYKAD_IDENTIFIER]   │
+ │ • Evaluator Sandbox: ?mode=demo (Zero Quota)  │     │ • Phone MSISDN Redaction: [REDACTED_PHONE_NUMBER]      │
+ └───────────────────────────────────────────────┘     └────────────────────────────────────────────────────────┘
+                                                                           │
+ ─────────────────────────────────────────────────────────────────────────┼────────────────────────────────────────
+                                                                           ▼
+ ROW 2: DETERMINISTIC FACT ENGINE (Runs locally BEFORE AI in <40ms — Zero API Cost)
+ ┌───────────────────────────────────────────────┐     ┌────────────────────────────────────────────────────────┐
+ │ CHECKPOINT 1: BINARY FORENSICS (<35ms)        │     │ CHECKPOINT 2: REGISTRY & THREAT CACHE (<2ms)           │
+ │ • ISO 32000-1 byte parsing & %EOF validation  │ ──► │ • Master Ledger Lookup: Expected Bank & BIC Matching   │
+ │ • Consumer Editor Blacklist (iLovePDF, Canva) │     │ • PDRM CCID SemakMule: In-memory Mule Account Registry │
+ │ • Timestamp Desync: |T_Mod - T_Create| > 1hr  │     │ • Callback Shield: Suppress mobile; expose landline    │
+ └───────────────────────────────────────────────┘     └────────────────────────────────────────────────────────┘
+                                                                           │
+ ─────────────────────────────────────────────────────────────────────────┼────────────────────────────────────────
+                                                                           ▼
+ ROW 3: COGNITIVE INVESTIGATION & DUAL-PATH POLICY ARBITRATION
+ ┌──────────────────────────────────────────────────────────────────────────────────────────────────────
+ │ CHECKPOINT 3: ISOLATED AI INVESTIGATOR (Gemini 2.5 Flash, 1.2s)                                      │
+ │ • Sandboxed prompt delimited by <UNTRUSTED_INBOUND_DOCUMENT> tags (Zero prompt injection bypass)     │
+ │ • Detects manufactured urgency ("pay within 2h"), authority intimidation & audit secrecy excuses     │
+ │ • Diagnostic JSON output only (Zero direct financial disbursement authority)                         │
+ └───────────────────────────────────────────────────────────────────────────────────────────────────────
+                         │                                                 │
+            [ NORMAL EXECUTION PATH ]                           [ EXCEPTION / TIMEOUT / HTTP 429 ]
+                         ▼                                                 ▼
+ ┌───────────────────────────────────────────────┐     ┌────────────────────────────────────────────────────────┐
+ │ CHECKPOINT 4A: POLICY RISK ARBITER            │     │ CHECKPOINT 4B: FAIL-CLOSED SAFETY RECOVERY             │
+ │ • Formula: R = max(S_Mule, min(100, ∑ wi·Ii)) │     │ • AI API timeout or rate limit triggered               │
+ │ • Ledger Mismatch (80) | SemakMule Hit (99)   │     │ • Tags: AI_COGNITIVE_UNAVAILABLE                       │
+ │ • Tamper Desync (20)   | Coercive Urgency (15)│     │ • Deterministic fail-closed: FORCES LOCKED_CRITICAL    │
+ └───────────────────────────────────────────────┘     └────────────────────────────────────────────────────────┘
+                         │                                                 │
+                         └───────────────────────┬─────────────────────────┘
+ ────────────────────────────────────────────────┼─────────────────────────────────────────────────────────
+                                                 ▼
+ ROW 4: CONTAINMENT, DUAL GOVERNANCE & STATUTORY ARTIFACTS
+ ┌──────────────────────────────────────────────────────────────────────────────────────────────────────┐
+ │ CHECKPOINT 5: RUNTIME CONTAINMENT & DUAL-AUTHORIZATION GOVERNANCE                                    │
+ │                                                                                                      │
+ │  🔒 AUTOMATED ERP PAYMENT LOCK                                                                       │
+ │     • Immediate voucher freeze (PAYMENT_LOCKED) in ERP database layer                                │
+ │                                                                                                      │
+ │  👥 4-EYES SEGREGATION OF DUTIES (SoD)                                                               │
+ │     • Step 1: AP Clerk verbal callback to verified landline (+60 3-7722 8888)                        │
+ │     • Step 2: Finance Manager cryptographic override (Disabled in UI until Step 1 completes)         │
+ │                                                                                                      │
+ │  📑 AUTONOMOUS STATUTORY ARTIFACT SYNTHESIS                                                          │
+ │     • 1-Click PDRM CCID / NSRC 997 Police Complaint Dossier (AMLA 2001 Section 44 Freeze Window)    │
+ │     • In-Reply Gmail Dispute Challenge Draft (Places invoice on formal compliance hold)              │
+ │     • Append-Only SHA-256 Audit Trail: H = SHA-256(PDF_Bytes || Audit_State) (Evidence Act 1950)     │
+ └──────────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
+```text
 ---
 ## ⚡ Key Features
 
