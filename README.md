@@ -22,6 +22,7 @@ Malaysian Small and Medium Enterprises (SMEs) face severe financial risks from s
 ### 🏗️ System Architecture
 
 ```text
+
 ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 │  🛡️ SME-ScamGuard-AI: SYSTEM ARCHITECTURE                                                                       │
 │     Autonomous In-Memory Accounts Payable Integrity & Business Email Compromise (BEC) Interdiction              │
@@ -50,7 +51,11 @@ Malaysian Small and Medium Enterprises (SMEs) face severe financial risks from s
   • PDRM CCID SemakMule Cache: In-memory lookup against commercial crime mule registry
   • Out-of-Band Phone Shield: Redact invoice phone; expose registered switchboard (+60 3-XXXX XXXX)
                           │
-                          ▼
+  ------------------------┴--------------------------------------------------------
+   ► KNOWLEDGE BASE & FORENSIC DIGEST: Packages {ledger_facts, police_mule_hit, tamper_flags}
+   ► PROMPT INJECTION SHIELD: Document text bounded by <UNTRUSTED_INBOUND_DOC> tags
+  ------------------------┬--------------------------------------------------------
+                          │
              ┌────────────┴────────────┐
              ▼                         ▼
    [ NORMAL EXECUTION ]     [ EXCEPTION / TIMEOUT / HTTP 429 ]
@@ -58,7 +63,8 @@ Malaysian Small and Medium Enterprises (SMEs) face severe financial risks from s
              ▼                         ▼
 [ LAYER 4: Cognitive Investigation ]   [ LAYER 5B: Fail-Closed Safety Net ]
   • Driven by Agent 4 (Gemini Flash)    • Tag: AI_COGNITIVE_UNAVAILABLE
-  • Sandboxed prompt inspection         • Deterministic Tri-Factor takes over
+  • Grounded by Knowledge Base Digest   • Deterministic Tri-Factor takes over
+  • Detects coercion, urgency & excuses • Bypasses AI; uses Knowledge Base facts directly
   • Diagnostic JSON output only         • FORCES STATUS: LOCKED_CRITICAL
              │                         │
              ▼                         │
@@ -80,6 +86,7 @@ Malaysian Small and Medium Enterprises (SMEs) face severe financial risks from s
 ```
 ### 🏗️ Agent Workflow
 ```text
+
 ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 │  🤖 SME-ScamGuard-AI: AGENT WORKFLOW                                                                            │
 │     Autonomous Multi-Agent Architecture for Business Email Compromise (BEC) Defense                             │
