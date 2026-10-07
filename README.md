@@ -1,563 +1,577 @@
 # 🛡️ SME-ScamGuard-AI
 
-### Autonomous Accounts Payable Integrity & Business Email Compromise (BEC) Defense Platform
+### Autonomous Accounts Payable Integrity & BEC Defense Platform
 
-**Empowering Malaysian SMEs with zero-trust, privacy-first financial fraud defense.**
+> **Stop payment fraud before the money moves.**
 
-<p align="center">
+SME-ScamGuard-AI is an AI-powered financial fraud defense platform designed for Malaysian SMEs.
 
-[![Next.js](https://img.shields.io/badge/Next.js-14_App_Router-black?style=flat&logo=next.js)](https://nextjs.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.110_Async-009688?style=flat&logo=fastapi)](https://fastapi.tiangolo.com/)
-[![Gemini](https://img.shields.io/badge/Google_Gemini-2.5_Flash-4285F4?style=flat&logo=google)](https://ai.google.dev/)
-[![Compliance](https://img.shields.io/badge/Compliance-PDPA_2010_%7C_BNM_RMiT-blue)](#-statutory--regulatory-compliance)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-
-</p>
+It protects Accounts Payable workflows against **Business Email Compromise (BEC), invoice bank-account redirection, supplier impersonation, payment manipulation, and suspicious vendor activity** — combining deterministic security controls, AI-assisted analysis, threat intelligence, and human-in-the-loop verification.
 
 <p align="center">
 
-**Zero-Disk Processing • Deterministic Risk Controls • Human-in-the-Loop Governance**
+**🔍 Detect &nbsp; • &nbsp; 🧠 Investigate &nbsp; • &nbsp; 🛡️ Verify &nbsp; • &nbsp; 🔒 Contain**
 
 </p>
 
 ---
 
-## 🔗 Links & Resources
+## 🚨 The Problem
 
-| Resource | Link |
+Traditional email security protects the **inbox**.
+
+But modern payment fraud attacks the **payment process**.
+
+An attacker who compromises a legitimate supplier's mailbox can send an invoice that appears completely authentic:
+
+```text
+Legitimate Supplier Email
+        ↓
+Compromised Mailbox
+        ↓
+Fraudulent Invoice
+        ↓
+Changed Bank Account
+        ↓
+AP Clerk Approves Payment
+        ↓
+💸 Financial Loss
+```
+
+### Why traditional email security is not enough
+
+| Problem | Why it matters |
 |---|---|
-| 📽️ **Demo Video** | [Watch System Demonstration](https://drive.google.com/drive/folders/YOUR_DEMO_FOLDER_LINK) |
-| 📊 **Presentation Slides** | [View Canva Presentation Deck](https://www.canva.com/design/DAG5KB75PwE/pYzvfDQ8524BDjRDIAS-8A/edit) |
-| 🌐 **Live Verification Cockpit** | [sme-scamguard.vercel.app](https://sme-scamguard.vercel.app) |
+| **SPF / DKIM / DMARC pass** | A compromised legitimate mailbox can still pass email authentication |
+| **Bank details changed** | Traditional spam filters do not understand financial relationships |
+| **Invoice phone number replaced** | Attackers can control the verification channel |
+| **PDF modified or regenerated** | Metadata and document structure can contain useful forensic signals |
+| **SMEs lack dedicated security teams** | AP staff often become the final security barrier |
+| **Consumer PDF tools create false alarms** | Legitimate SMEs frequently use Canva, iLovePDF and similar tools |
 
----
+The critical security gap is therefore:
 
-## 📑 Table of Contents
-
-- [🎯 The Challenge](#-the-challenge)
-- [💡 Our Solution](#-our-solution)
-- [🏗️ Technical Architecture](#️-technical-architecture)
-- [🛠️ Key Technologies](#️-key-technologies)
-- [🌟 Key Features](#-key-features)
-- [📊 Empirical Evaluation](#-empirical-evaluation-400-scenarios)
-- [🚀 Getting Started](#-getting-started)
-- [📖 Operational Walkthrough](#-operational-walkthrough)
-- [🗂️ Project Structure](#️-project-structure)
-- [⚖️ Statutory & Regulatory Compliance](#️-statutory--regulatory-compliance)
-- [🚧 Roadmap](#-roadmap)
-- [👥 Contributors](#-contributors)
-- [📄 License](#-license)
-
----
-
-# 🎯 The Challenge
-
-Malaysian Small & Medium Enterprises (SMEs) face critical solvency risks from **silent invoice bank-redirection and supplier thread-hijacking fraud**.
-
-### 💸 The 8-Minute Laundering Window
-
-Once an Accounts Payable (AP) clerk releases a payment via **DuitNow or Interbank GIRO (IBG)**, funds can be rapidly dispersed across multiple organized-crime mule tiers.
-
-### 🛑 Perimeter Filters Fail
-
-Traditional email authentication mechanisms such as **SPF, DKIM and DMARC** cannot determine whether an otherwise authentic supplier account has been compromised.
-
-When attackers control the legitimate supplier mailbox:
-
-- SPF can still pass.
-- DKIM can still pass.
-- DMARC can still pass.
-- The malicious invoice can still arrive from a trusted account.
-
-The problem therefore moves beyond **email authenticity** into **financial transaction integrity**.
-
-### 📞 The Printed Phone Number Trap
-
-Attackers can replace the contact number printed on an invoice with a fraudulent mobile number.
-
-When an AP clerk calls the number shown on the invoice, the attacker can simply confirm the fraudulent bank account.
-
-### ⚖️ Data Privacy Risk
-
-Corporate invoices may contain sensitive information such as:
-
-- MyKad / national identification numbers
-- Phone numbers
-- Employee or vendor information
-- Banking information
-
-Sending unredacted documents to public commercial AI services can introduce additional privacy and governance risks.
-
-### 🎨 The Micro-SME False-Alarm Problem
-
-Many Malaysian micro-vendors create or compress invoices using consumer tools such as:
-
-- Canva
-- iLovePDF
-- Other PDF conversion/compression software
-
-Rigid enterprise fraud systems may interpret unusual PDF metadata or production tools as malicious activity, creating unnecessary false alarms and disrupting legitimate commerce.
-
----
-
-## 🌍 The Real-World Impact
-
-### 🏢 Zero-SOC Reality
-
-Many SMEs operate without a dedicated security operations team.
-
-### 👤 Single Point of Failure
-
-A single AP clerk may need to manually review dozens of invoices under tight payment-clearing deadlines.
-
-This creates a dangerous gap between:
-
-> **Email delivery → Invoice verification → Payment authorization**
-
-SME-ScamGuard-AI is designed to close this gap **before funds are released**.
+> **Email authenticity ≠ Payment authenticity**
 
 ---
 
 # 💡 Our Solution
 
-**SME-ScamGuard-AI** functions as an automated virtual security analyst for Accounts Payable workflows.
+SME-ScamGuard-AI creates a security layer **between invoice receipt and payment approval**.
 
-The platform operates using a **zero-disk, in-memory processing model** and intercepts suspicious invoices before payment disbursement.
+Instead of asking only:
 
-The system is built around three core defense pillars:
+> "Is this email legitimate?"
+
+the platform asks:
+
+> **"Does this payment request make sense when compared against all available evidence?"**
+
+The system combines three defense layers:
 
 ```text
-┌──────────────────────────────────────────────────────────────────────────────┐
-│                         SME-SCAMGUARD-AI SOLUTION                            │
-├──────────────────────────────┬──────────────────────────┬────────────────────┤
-│ 🔍 1. Forensic Guard         │ ⚡ 2. Velocity & Context  │ 🛡️ 3. HITL 4-Eyes  │
-│                              │                          │    Cockpit         │
-│ • ISO 32000-1 binary parser  │ • 7-day spend window     │ • Burner number    │
-│ • In-memory PDPA redaction   │ • >180-day dormancy      │   suppression      │
-│ • PDRM CCID SemakMule check  │ • PO binding validation  │ • Verified         │
-│ • Canva/iLovePDF heuristic   │ • AutoCount CSV sync     │   landline call    │
-│                              │   in RAM                 │ • Visual           │
-│                              │                          │   strikethrough    │
-│                              │                          │ • NSRC 997 dossier │
-└──────────────────────────────┴──────────────────────────┴────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│                    SME-SCAMGUARD-AI                         │
+├──────────────────────┬──────────────────────┬───────────────┤
+│ 🔍 FORENSIC GUARD   │ ⚡ CONTEXT ENGINE     │ 🛡️ HITL       │
+│                      │                      │               │
+│ PDF forensics        │ Spend velocity      │ 4-Eyes        │
+│ PII sanitization     │ Vendor dormancy     │ verification  │
+│ Bank reconciliation  │ PO validation       │ Landline      │
+│ Threat intelligence  │ Payment behaviour   │ callback      │
+│                      │                      │ Human approval│
+└──────────────────────┴──────────────────────┴───────────────┘
 ```
 
 ---
 
-# 🔍 1. Forensic Guard
+# 🔍 01 — Forensic Guard
 
-### Deterministic Binary & Threat Intelligence Layer
+### Deterministic document & threat analysis
 
-#### 🔒 Zero-Disk PII Sanitizer
+The Forensic Guard examines the technical and financial characteristics of an incoming payment request.
 
-Redacts Malaysian MyKad identifiers:
+### 📄 PDF Forensics
+
+The system inspects PDF-level signals such as:
+
+- PDF structural information
+- `%EOF` trailer characteristics
+- Creation metadata
+- `/Producer` information
+- Document anomalies
+
+These signals are treated as **supporting evidence**, rather than automatic proof of fraud.
+
+### 🔐 Privacy Sanitization
+
+Sensitive information can be sanitized in memory before being processed by external AI services.
+
+Examples include:
+
+- Malaysian MyKad identifiers
+- Mobile numbers
+- Sensitive invoice information
+
+### 🛡️ Threat Intelligence
+
+Known suspicious bank accounts can be compared against a locally indexed threat-intelligence cache based on the project's SemakMule workflow.
+
+### 🎨 False-Positive Protection
+
+Consumer PDF creation tools are **not automatically classified as malicious**.
+
+Instead:
 
 ```text
-\d{6}-\d{2}-\d{4}
+PDF Tool Anomaly
+       +
+Matching Trusted Financial Record
+       ↓
+Potentially Legitimate
+       ↓
+Continue Verification
 ```
 
-and mobile numbers directly in volatile heap memory.
-
-The intended design avoids temporary `/tmp` persistence.
-
-#### 📄 ISO 32000-1 Binary Forensics
-
-Inspects PDF structural and metadata indicators including:
-
-- `%EOF` trailer information
-- Creation dates
-- `/Producer` tool tags
-- PDF structural characteristics
-
-#### 🛡️ PDRM CCID SemakMule Check
-
-Performs lookup against an indexed registry/cache of known police-flagged commercial-crime mule accounts.
-
-#### 🎨 Dual-Factor Benign Tooling Rule
-
-Consumer PDF tools such as Canva/iLovePDF are not automatically treated as malicious.
-
-The system combines:
-
-```text
-PDF Tool Indicator
-        +
-Matching Ledger Bank Account
-        ↓
-CONSUMER_PDF_TOOL_BENIGN
-```
-
-This prevents legitimate invoice-generation tools from becoming automatic fraud verdicts.
+This helps protect micro-SMEs from unnecessary fraud alerts.
 
 ---
 
-# ⚡ 2. Velocity & Procurement Context Engine
+# ⚡ 02 — Velocity & Context Engine
 
-### Financial Behavior & Procurement Validation
+Fraud is rarely just about one invoice.
 
-#### 📊 In-Memory Spend Window
+The Context Engine looks at **behaviour over time**.
 
-Tracks cumulative spending over a **7-day sliding window** to identify:
+### 📊 Payment Velocity
 
-- Payment bursts
-- Micro-structuring
-- Attempts to remain below approval thresholds
+Tracks cumulative payment activity over a rolling window to identify suspicious bursts or micro-structuring.
 
-#### 🕒 Dormancy Recency Monitor
+```text
+Normal Activity
+      ↓
+Normal Activity
+      ↓
+Normal Activity
+      ↓
+Sudden Payment Burst
+      ↓
+⚠️ NEEDS_REVIEW
+```
 
-Vendor accounts that have been inactive for more than **180 days** can be flagged when they suddenly attempt new payment activity.
+### 🕒 Dormant Vendor Detection
+
+A vendor that has been inactive for an extended period and suddenly requests payment can trigger additional investigation.
 
 Example:
 
 ```text
+>180 Days Inactive
+        ↓
+Sudden Payment Request
+        ↓
 DORMANT_VENDOR_ACTIVITY_DETECTED
 ```
 
-#### 📦 Ghost Goods Interdiction
+### 📦 Purchase Order Validation
 
-Invoices must satisfy canonical Purchase Order requirements.
+The system validates whether payment requests satisfy expected procurement rules such as canonical PO prefixes.
 
 Example:
 
 ```text
+Expected:
 PO-ML-XXXXXX
+
+Missing / Invalid PO
+        ↓
+⚠️ Additional Review
 ```
-
-Missing or invalid PO references can trigger additional review.
-
-#### 🔐 Zero-Disk CSV Ingestion
-
-AutoCount and SQL Account vendor exports are streamed into memory.
-
-SHA-256 fingerprinting is used to help detect registry changes or unexpected data drift.
 
 ---
 
-# 🛡️ 3. HITL 4-Eyes Verification Cockpit
+# 🧠 03 — AI Investigation Layer
 
-### Human-in-the-Loop Governance
+AI is used as an **investigation assistant**, not the final payment authority.
 
-The system deliberately keeps final payment authorization under human control.
+Google Gemini is used to help normalize and interpret unstructured information such as:
 
-#### 📞 Out-of-Band Switchboard Shield
+- Invoice fields
+- Email content
+- Urgency language
+- Pressure tactics
+- Vendor information
+- Financial entities
 
-Attacker-controlled mobile numbers printed on invoices are suppressed.
+### 🔒 Prompt Injection Protection
 
-The cockpit instead surfaces the verified corporate switchboard stored in the master ledger.
-
-Example:
+Inbound documents are treated as **untrusted content**.
 
 ```text
-+60 3-XXXX XXXX
+<UNTRUSTED_INBOUND_DOC>
+    External Email / Invoice Content
+</UNTRUSTED_INBOUND_DOC>
 ```
 
-#### ✏️ Inline Field Correction
+The AI does not receive payment approval authority.
 
-AP clerks can correct OCR/extraction results only with a mandatory verification justification.
+Instead:
 
-The interface preserves the original machine-extracted value using visual strikethrough:
+```text
+Untrusted Document
+        ↓
+AI Extraction / Analysis
+        ↓
+Structured Evidence
+        ↓
+Deterministic Policy Engine
+        ↓
+Risk Decision
+```
+
+This prevents an invoice from directly instructing the AI to override security controls.
+
+---
+
+# 🛡️ 04 — Human-in-the-Loop 4-Eyes Verification
+
+High-risk financial decisions should not depend entirely on automation.
+
+SME-ScamGuard-AI therefore introduces a **4-eyes verification model**.
+
+### 📞 Out-of-Band Verification
+
+If an invoice contains a suspicious phone number:
+
+```text
+Invoice Phone Number
+        ↓
+❌ Do Not Trust
+```
+
+The system instead uses the independently stored corporate contact information:
+
+```text
+Trusted Corporate Contact
+        ↓
+Independent Verification
+        ↓
+AP Clerk Confirmation
+```
+
+This prevents an attacker from controlling both:
+
+> **The invoice + the verification channel**
+
+### ✏️ Controlled Field Correction
+
+Human corrections are not silently overwritten.
+
+The system preserves:
 
 ```text
 Verified Value
-~~Machine Extracted Value~~
+~~Original Extracted Value~~
 • Corrected
 ```
 
-#### 🚨 1-Click Police Dossier Synthesis
-
-The platform can compile a structured incident dossier for emergency escalation workflows involving:
-
-- NSRC 997
-- PDRM
-- Relevant AMLA incident information
-
-#### 📧 Automated Dispute Drafting
-
-The system can prepare formal dispute notifications for active Gmail threads.
+and records the justification as part of the audit trail.
 
 ---
 
-# 🏗️ Technical Architecture
+# 🔒 Fail-Closed Security
+
+One of the core design principles is:
+
+> **When security intelligence becomes unavailable, do not automatically approve the payment.**
+
+For example:
 
 ```text
-┌───────────────────────────────────────────────────────────────────────────────┐
-│                         SME-SCAMGUARD-AI PIPELINE                             │
-├───────────────────────────────────────────────────────────────────────────────┤
-│                                                                               │
-│  [ INGESTION GATEWAY ]                                                       │
-│                                                                               │
-│  ├─ Gmail REST API (RFC 5322 Inbound MIME Stream)                            │
-│  ├─ AutoCount / SQL Account CSV Ingestion                                    │
-│  │  └─ Volatile Heap Memory Buffer                                           │
-│  └─ Interactive Enterprise Mailbox                                           │
-│     └─ 50 Pre-Staged SME Invoices                                            │
-│                                                                               │
-│  [ TIER 1: DETERMINISTIC IN-MEMORY FORENSICS ]                              │
-│                                                                               │
-│  ├─ Stage 0: PDPA 2010 PII Sanitizer                                         │
-│  │           └─ MyKad & Mobile Regex Token Scrubbers                        │
-│  │                                                                           │
-│  ├─ Stage 1: ISO 32000-1 Binary Structural & Metadata Inspector              │
-│  │                                                                           │
-│  ├─ Stage 2: 3-Way Relational Match                                          │
-│  │           └─ Email Body vs Invoice PDF vs Master Ledger                   │
-│  │                                                                           │
-│  ├─ Stage 3: PDRM CCID SemakMule Syndicate Cache Lookup                      │
-│  │                                                                           │
-│  └─ Stage 4: In-Memory Velocity Tracker                                      │
-│             └─ 7-Day Sliding Window + >180d Dormancy Check                   │
-│                                                                               │
-│  [ TIER 2: COGNITIVE INVESTIGATION & POLICY ARBITRATION ]                    │
-│                                                                               │
-│  ├─ Stage 5: Google Gemini 2.5 Flash                                         │
-│  │           └─ Sandboxed Untrusted Document Analysis                        │
-│  │           └─ Extracts urgency & pressure cues                             │
-│  │           └─ No payment approval authority                                │
-│  │                                                                           │
-│  └─ Stage 6: Deterministic Risk Formula Arbiter                              │
-│             └─ R = 0 to 100                                                  │
-│             └─ Fail-Closed Safety Net                                        │
-│                                                                               │
-│  [ TIER 3: HITL GOVERNANCE & CONTAINMENT ]                                   │
-│                                                                               │
-│  ├─ Stage 7: Dual-Authorization Approval Gate                                │
-│  │           └─ Clerk landline callback + Manager override                   │
-│  │                                                                           │
-│  ├─ Stage 8: Automated ERP Payment Lock                                      │
-│  │           └─ Drops line from Maybank2E/CIMB batch files                    │
-│  │                                                                           │
-│  └─ Stage 9: NSRC 997 Police Dossier                                         │
-│             └─ SHA-256 Audit Trail                                           │
-│                                                                               │
-└───────────────────────────────────────────────────────────────────────────────┘
-                                      │
-                                      ▼
-┌───────────────────────────────────────────────────────────────────────────────┐
-│                  ENTERPRISE VERIFICATION COCKPIT                             │
-│                              NEXT.JS 14                                      │
-├───────────────────────────────────────────────────────────────────────────────┤
-│                                                                               │
-│ 📥 Triage Queue                                                              │
-│    520 All Invoices | 27 Review | 18 Locked | 475 Verified                   │
-│                                                                               │
-│ ⏱️ Mailbox Ingestion Loading / Skeleton Hydration                            │
-│                                                                               │
-│ 🔍 Side-by-Side Reconciliation Inspector                                     │
-│    Ledger Truth vs Invoice Draft                                             │
-│                                                                               │
-│ ✏️ Field Correction Modal                                                    │
-│    Mandatory Landline Justification + Strikethrough                          │
-│                                                                               │
-│ 📤 Two-Tier Document Ingestion                                                │
-│    Local Regex → Multimodal Vision Fallback                                  │
-│                                                                               │
-│ 📜 Tamper-Evident Session Audit Trail                                        │
-│    CSV / JSON Export                                                         │
-│                                                                               │
-└───────────────────────────────────────────────────────────────────────────────┘
+AI Service Unavailable
+        ↓
+AI_COGNITIVE_UNAVAILABLE
+        ↓
+LOCKED_CRITICAL
+        ↓
+Human Verification Required
+```
+
+The system therefore follows a **fail-closed** model instead of failing open.
+
+---
+
+# 🏗️ System Architecture
+
+```text
+                         SME-SCAMGUARD-AI
+                                │
+                                ▼
+                    ┌─────────────────────┐
+                    │   INGESTION LAYER   │
+                    │                     │
+                    │ Email / Documents   │
+                    │ Financial Records   │
+                    └──────────┬──────────┘
+                               │
+                               ▼
+              ┌────────────────────────────────┐
+              │ TIER 1 — DETERMINISTIC ENGINE │
+              │                                │
+              │ • Privacy Sanitization        │
+              │ • PDF Forensics                │
+              │ • Financial Reconciliation     │
+              │ • Threat Intelligence         │
+              │ • Velocity Monitoring         │
+              └───────────────┬────────────────┘
+                              │
+                              ▼
+              ┌────────────────────────────────┐
+              │ TIER 2 — AI INVESTIGATION      │
+              │                                │
+              │ • Entity Extraction            │
+              │ • Document Understanding       │
+              │ • Pressure / Urgency Analysis  │
+              │ • Untrusted Content Isolation  │
+              └───────────────┬────────────────┘
+                              │
+                              ▼
+              ┌────────────────────────────────┐
+              │ TIER 3 — POLICY ARBITRATION    │
+              │                                │
+              │ Deterministic Risk Engine      │
+              │ Risk Score: R = 0 → 100        │
+              │ Fail-Closed Safety Controls    │
+              └───────────────┬────────────────┘
+                              │
+                              ▼
+              ┌────────────────────────────────┐
+              │ HUMAN-IN-THE-LOOP GOVERNANCE   │
+              │                                │
+              │ • 4-Eyes Verification          │
+              │ • Independent Callback         │
+              │ • Manager Override             │
+              │ • Payment Lock                 │
+              │ • Audit Trail                  │
+              └───────────────┬────────────────┘
+                              │
+                    ┌─────────┴─────────┐
+                    ▼                   ▼
+              ✅ VERIFIED          🚨 LOCKED
 ```
 
 ---
 
-# 🛠️ Key Technologies
+# 🎯 Risk Decision Model
 
-| Component | Technology | Purpose |
-|---|---|---|
-| **Backend API** | FastAPI + Uvicorn / Python 3.12 | Asynchronous, low-latency service pipeline |
-| **Cognitive Vision AI** | Google Gemini 2.5 Flash | Unstructured invoice normalization & coercion detection |
-| **Binary Forensics** | Python `pypdf` + binary scanners | PDF structural & metadata inspection |
-| **In-Memory Store** | Python `defaultdict` / volatile heap | Sliding-window spend tracking & token scrubbing |
-| **Threat Intelligence** | PDRM CCID SemakMule cache | Commercial-crime mule detection |
-| **Frontend Cockpit** | Next.js 14 + TypeScript | Enterprise AP verification cockpit |
-| **Styling & UI** | Tailwind CSS + Lucide Icons | Responsive enterprise interface |
-| **Dossier Generator** | Python ReportLab | Structured incident dossier generation |
-| **Audit Hashing** | Python `hashlib` / SHA-256 HMAC | Tamper-evident audit integrity |
-
----
-
-# 🌟 Key Features
-
-## 🔒 Zero-Disk In-Memory Processing
-
-The platform is designed to process sensitive invoice information in volatile memory.
-
-Capabilities include:
-
-- Malaysian MyKad redaction
-- Phone-number redaction
-- In-memory ledger ingestion
-- No intentional temporary `/tmp` persistence
-
----
-
-## 🛡️ Prompt Injection Shield
-
-Inbound invoice content is treated as **untrusted input**.
+The platform uses a deterministic policy layer to combine multiple security signals.
 
 Conceptually:
 
 ```text
-<UNTRUSTED_INBOUND_DOC>
-    Invoice / Email / OCR Content
-</UNTRUSTED_INBOUND_DOC>
+                    ┌──────────────────┐
+                    │ Incoming Request │
+                    └────────┬─────────┘
+                             │
+          ┌──────────────────┼──────────────────┐
+          ▼                  ▼                  ▼
+    Document Signals   Financial Signals   Threat Signals
+          │                  │                  │
+          └──────────────────┼──────────────────┘
+                             ▼
+                  ┌────────────────────┐
+                  │ Deterministic Risk │
+                  │      Arbiter        │
+                  └──────────┬─────────┘
+                             │
+                      Risk Score 0–100
+                             │
+             ┌───────────────┼───────────────┐
+             ▼               ▼               ▼
+          VERIFIED      NEEDS_REVIEW   LOCKED_CRITICAL
 ```
 
-Gemini operates as an **entity and context extraction layer**.
-
-The final payment decision remains under deterministic application logic rather than being delegated to the LLM.
+AI can provide **evidence**, but the final policy decision remains deterministic.
 
 ---
 
-## 📞 Out-of-Band Landline Switchboard Shield
+# 🌟 Key Security Features
 
-The platform separates:
-
-```text
-Attacker-Controlled Invoice Contact
-                ↓
-          DO NOT TRUST
-                │
-                ▼
-Verified Corporate Switchboard
-                ↓
-       Independent Verification
-```
-
-This prevents an attacker from controlling both the invoice and the verification channel.
-
----
-
-## ⏱️ Fail-Closed Safety Architecture
-
-If the cognitive AI service becomes unavailable, times out, or returns an error such as HTTP `429`:
-
-```text
-AI unavailable
-      ↓
-AI_COGNITIVE_UNAVAILABLE
-      ↓
-LOCKED_CRITICAL
-      ↓
-Human verification required
-```
-
-The system therefore does **not** automatically fail open and release the payment.
+| Security Layer | Protection |
+|---|---|
+| 🔐 **Privacy Sanitization** | Removes sensitive identifiers before external AI processing |
+| 📄 **PDF Forensics** | Detects document-level anomalies |
+| 🏦 **Financial Reconciliation** | Detects mismatched financial information |
+| 🛡️ **Threat Intelligence** | Identifies known suspicious accounts |
+| 📊 **Velocity Monitoring** | Detects unusual payment bursts |
+| 🕒 **Dormancy Detection** | Identifies sudden activity from inactive vendors |
+| 📦 **PO Validation** | Detects procurement inconsistencies |
+| 🧠 **AI Investigation** | Extracts contextual and semantic evidence |
+| 🚫 **Prompt Injection Shield** | Treats external documents as untrusted |
+| 📞 **Out-of-Band Verification** | Prevents attacker-controlled contact verification |
+| 👥 **4-Eyes Approval** | Keeps humans in control of high-risk decisions |
+| 🔒 **Fail-Closed Architecture** | Prevents automatic approval when critical services fail |
+| 📜 **Tamper-Evident Audit** | Preserves security decision history |
 
 ---
 
-## 📊 In-Cell Audit Strikethrough
+# 📊 Benchmark Evaluation
 
-Corrected values preserve the original machine extraction.
+SME-ScamGuard-AI was evaluated against **400 synthetic operational and adversarial scenarios** using a 40-vendor test dataset.
 
-Example:
+> **These results represent the controlled benchmark environment and are not a claim of production-world accuracy.**
 
-```text
-Verified:
-MAYBANK — 5142XXXXXX
+### Results
 
-Original extraction:
-~~CIMB — 5142XXXXXX~~
+| Metric | Result |
+|---|---:|
+| Total Scenarios | **400** |
+| Evaluation Completion | **100%** |
+| Classification Accuracy | **100%** |
+| Adversarial Recall | **100%** |
+| Threat Vectors Intercepted | **250 / 250** |
+| Legitimate / Benign Scenarios | **150 / 150** |
+| False Positives in Benchmark | **0 / 150** |
+| Average Deterministic Core Latency | **0.021 ms / invoice** |
 
-Status:
-• Corrected
-```
+### Test Coverage
 
-This improves traceability and helps auditors understand what was changed and why.
+| Scenario | Volume | Result |
+|---|---:|---|
+| Legitimate Clean Invoices | 100 | ✅ Cleared |
+| Canva / iLovePDF Bills | 50 | ✅ Cleared |
+| BEC Redirection Attacks | 50 | 🚨 Blocked |
+| Tampered Invoices | 50 | 🚨 Blocked |
+| Threat-Intelligence Hits | 50 | 🚨 Blocked |
+| Dormant Vendor Activity | 35 | ⚠️ Flagged |
+| Payment Velocity Bursts | 35 | ⚠️ Flagged |
+| Invalid / Missing PO | 30 | ⚠️ Flagged |
 
 ---
 
-# 📊 Empirical Evaluation — 400 Scenarios
+# 🛠️ Technology Stack
 
-The defense pipeline was evaluated against an automated test suite of **400 synthetic operational and adversarial scenarios** based on an authentic 40-vendor Malaysian ledger.
+| Layer | Technology |
+|---|---|
+| **Frontend** | Next.js 14, TypeScript |
+| **Backend** | FastAPI, Uvicorn, Python 3.12 |
+| **AI** | Google Gemini 2.5 Flash |
+| **Document Analysis** | `pypdf` + Binary Byte Scanners |
+| **Data Processing** | Python In-Memory Structures |
+| **Threat Intelligence** | PDRM CCID SemakMule Cache |
+| **UI** | Tailwind CSS + Lucide Icons |
+| **Dossier Generation** | ReportLab |
+| **Integrity** | SHA-256 / HMAC |
+| **Development** | Node.js + Python |
 
-> **Important:** These metrics represent the project's controlled benchmark evaluation and should not be interpreted as production-world fraud detection accuracy.
+---
 
-### Benchmark Summary
+# 🔐 Security Philosophy
 
-```text
-================================================================================
-SME-SCAMGUARD-AI: 400-SCENARIO BENCHMARK SUMMARY
-================================================================================
+SME-ScamGuard-AI follows five core principles:
 
-Total Scenarios Evaluated : 400 / 400
-Evaluation Completion     : 100.00%
+### 1. Never Trust the Invoice Alone
 
-Classification Accuracy   : 100.00%
+An invoice is evidence — not truth.
 
-Adversarial Attack Recall : 100.00%
-                            250 / 250 threat vectors intercepted
+### 2. Never Let AI Make the Final Payment Decision
 
-False Positive Rate       : 0.00%
-                            0 / 150 legitimate invoices falsely blocked
+AI assists investigation.
 
-Average Core Engine
-Latency                    : 0.021 ms / invoice
+Deterministic policy controls the decision.
 
-================================================================================
-```
+### 3. Never Trust an Attacker-Controlled Verification Channel
 
-### Detailed Results
+The phone number printed on an invoice may be part of the attack.
 
-| # | Test Cohort | Volume | Target Verdict | Actual Result | Success Rate | Primary Interdiction Engine |
-|:-:|---|---:|---|---|---:|---|
-| **1** | Legitimate Clean Invoices | 100 | `VERIFIED` | 100 Cleared | 100.0% | 3-Way Relational Ledger Match |
-| **2** | Micro-SME Canva / iLovePDF Bills | 50 | `VERIFIED` | 50 Cleared | 100.0% | Dual-Factor Benign Tooling Rule |
-| **3** | In-Transit BEC Redirection Attacks | 50 | `LOCKED_CRITICAL` | 50 Blocked | 100.0% | Email Body vs PDF Bank Cross-Check |
-| **4** | Tampered Invoices / PDF Bank Splicing | 50 | `LOCKED_CRITICAL` | 50 Blocked | 100.0% | Master Ledger Mismatch + Metadata Skew |
-| **5** | PDRM CCID SemakMule Blacklist Hits | 50 | `LOCKED_CRITICAL` | 50 Blocked | 100.0% | CCID Threat Intelligence Match |
-| **6** | Dormant Vendor Resurrections >180d | 35 | `NEEDS_REVIEW` | 35 Flagged | 100.0% | Inactivity Recency Delta Trigger |
-| **7** | Micro-Structuring / Velocity Bursts | 35 | `NEEDS_REVIEW` | 35 Flagged | 100.0% | 7-Day Spend Cap & Burst Tracker |
-| **8** | Ghost Goods / Missing or Bad PO | 30 | `NEEDS_REVIEW` | 30 Flagged | 100.0% | Mandatory PO Prefix Validation |
-| **∑** | **TOTAL BENCHMARK BATTERY** | **400** | — | **400 Passed** | **100.00%** | **Zero-Defect Baseline** |
+### 4. Never Fail Open
+
+If critical security intelligence is unavailable, payment approval stops.
+
+### 5. Keep Humans in Control
+
+High-risk financial decisions require human verification.
+
+---
+
+# ⚖️ Compliance & Governance
+
+SME-ScamGuard-AI incorporates technical controls designed around relevant Malaysian privacy, cybersecurity and financial-crime governance considerations.
+
+### 🇲🇾 PDPA 2010
+
+Privacy-by-design principles are supported through:
+
+- Data minimization
+- In-memory processing
+- PII sanitization
+- Reduced exposure of sensitive invoice information
+
+### 🏦 BNM RMiT Principles
+
+The architecture incorporates security practices including:
+
+- Segregation of duties
+- Access control
+- Human authorization
+- Auditability
+- Incident response
+- Fail-closed controls
+
+### 📜 Evidence Integrity
+
+Security events and authorization actions can be preserved through cryptographic hashing to support tamper-evident audit records.
+
+### 🚨 Scam Response
+
+The platform provides structured incident information to support emergency scam-response workflows.
+
+> **SME-ScamGuard-AI is a technical security prototype and does not represent formal regulatory certification or legal advice.**
 
 ---
 
 # 🚀 Getting Started
 
-## Prerequisites
+## Requirements
 
-- **Python 3.10+**  
-  Python 3.12 recommended
-- **Node.js 18+**
-- **npm**
-- Optional: Google Gemini API key
+- Python 3.10+
+- Python 3.12 recommended
+- Node.js 18+
+- npm
+- Optional Gemini API key
 
-> If no Gemini API key is provided, the project can operate using its offline deterministic heuristic engine and in-memory ledger database.
-
----
-
-## Installation
-
-### 1. Clone the repository
+## Clone
 
 ```bash
 git clone https://github.com/YXLEE0912/SME-ScamGuard-AI.git
 cd SME-ScamGuard-AI
 ```
 
-### 2. Create the Python virtual environment
-
-#### Windows
+## Backend
 
 ```bash
 python -m venv venv
+```
+
+### Windows
+
+```bash
 venv\Scripts\activate
 ```
 
-#### macOS / Linux
+### macOS / Linux
 
 ```bash
-python -m venv venv
 source venv/bin/activate
 ```
 
-### 3. Install backend dependencies
+Install dependencies:
 
 ```bash
 pip install -e .
 ```
 
-### 4. Install frontend dependencies
+## Frontend
 
 ```bash
 cd frontend
@@ -565,32 +579,34 @@ npm install
 cd ..
 ```
 
----
+## Environment
 
-# ⚙️ Environment Configuration
-
-Create a `.env` file in the project root:
+Create `.env`:
 
 ```env
 ENVIRONMENT=development
 RISK_THRESHOLD=50.0
-
-# Optional: Google Gemini API
-# Required for multimodal scan normalization
 GEMINI_API_KEY="your_gemini_api_key_here"
-
-# Optional: Gmail REST API / IMAP Listener
-GMAIL_USER=""
-GMAIL_APP_PASSWORD=""
 ```
 
-If `GEMINI_API_KEY` is omitted, the system executes using the offline deterministic heuristic engine and in-memory ledger database.
+The system can operate using its deterministic processing path when the Gemini API is unavailable.
+
+## Run Backend
+
+```bash
+uvicorn app.main:app --reload --port 8000
+```
+
+## Run Frontend
+
+```bash
+cd frontend
+npm run dev
+```
 
 ---
 
-# 🧪 Run Benchmark Suite
-
-Verify system integrity and rule enforcement across all 400 benchmark scenarios:
+# 🧪 Run the Benchmark
 
 ```bash
 python backend/scripts/benchmark_eval.py
@@ -598,304 +614,57 @@ python backend/scripts/benchmark_eval.py
 
 ---
 
-# ▶️ Run Development Servers
+# 🗺️ Roadmap
 
-### Terminal 1 — FastAPI Backend
+### ✅ Phase 1 — Core Defense
 
-```bash
-uvicorn app.main:app --reload --port 8000
-```
+- Email/document ingestion
+- Privacy sanitization
+- Deterministic document analysis
+- AI-assisted extraction
+- Financial reconciliation
 
-### Terminal 2 — Next.js Enterprise Cockpit
+### ✅ Phase 2 — Fraud Intelligence
 
-```bash
-cd frontend
-npm run dev
-```
+- Threat-intelligence cache
+- Vendor dormancy detection
+- Payment velocity monitoring
+- PO validation
+- 400-scenario benchmark suite
 
-Then open:
+### 🚧 Phase 3 — Enterprise Integration
 
-```text
-http://localhost:3000
-```
+- Microsoft 365 / Exchange integration
+- AutoCount Cloud
+- SQL Account
+- Xero
+- Enterprise ERP integrations
+- Enhanced banking verification
 
----
+### 📅 Phase 4 — Advanced Computer Vision
 
-# 📖 Operational Walkthrough
-
-## 1. Inbound Triage Queue
-
-Navigate to:
-
-```text
-/queue
-```
-
-Select:
-
-> **Continue with demo mailbox**
-
-The demo mailbox contains **50 pre-staged Malaysian corporate invoices**.
-
-Users can:
-
-- Search invoices
-- Filter by category
-- Filter by triage status
-- Observe the mailbox ingestion interface
-- Review suspicious invoices
-
-Example categories:
-
-```text
-Logistics
-Packaging
-Hardware
-Utilities
-```
+- Error Level Analysis (ELA)
+- Advanced invoice manipulation detection
+- Image-level document forensics
 
 ---
 
-## 2. Side-by-Side Reconciliation Inspector
+# 🏆 Competition
 
-Navigate to:
+### UTAR Agentic AI Cybersecurity Hackathon 2026
 
-```text
-/queue/[id]
-```
+**Track: Scam Defence & Awareness**
 
-The inspector compares:
+SME-ScamGuard-AI focuses on one critical principle:
 
-| Field | Master Ledger | Invoice |
-|---|---|---|
-| Vendor Name | ✅ | 🔍 |
-| Bank Name | ✅ | 🔍 |
-| Account Number | ✅ | 🔍 |
-| Official Landline | ✅ | 🔍 |
-| Amount | ✅ | 🔍 |
-| PO Number | ✅ | 🔍 |
-
-Users can trigger:
-
-```text
-⚡ Extract with Gemini
-```
-
-to perform live AI entity normalization.
+> ### **Don't just detect the scam. Stop the payment.**
 
 ---
 
-## 3. Human-in-the-Loop Field Correction
+<p align="center">
 
-Click:
+**🛡️ SME-ScamGuard-AI**
 
-```text
-✏️ Correct...
-```
+**AI-assisted. Deterministic by design. Human-controlled.**
 
-on a flagged field.
-
-The user must:
-
-1. Enter the verified value.
-2. Provide the required landline callback justification.
-3. Confirm the correction.
-4. Review the visual audit trail.
-
-The interface preserves the original extracted value using strikethrough notation.
-
----
-
-## 4. Containment & Statutory Response
-
-For blocked fraud invoices, users can review the generated:
-
-```text
-PDRM CCID / NSRC 997 Incident Dossier
-```
-
-The system also provides:
-
-- Dispute email drafting
-- Incident evidence
-- Audit history
-- CSV / JSON audit export
-
-Navigate to:
-
-```text
-/audit
-```
-
-to inspect the session audit trail.
-
----
-
-# 🗂️ Project Structure
-
-```text
-SME-ScamGuard-AI/
-│
-├── backend/
-│   ├── app/
-│   │   ├── routers/
-│   │   │   ├── demo.py
-│   │   │   │   └── Demo mailbox, re-extraction & HITL correction endpoints
-│   │   │   │
-│   │   │   ├── ledger.py
-│   │   │   │   └── AutoCount / SQL Account CSV ingestion
-│   │   │   │
-│   │   │   └── scan.py
-│   │   │       └── Email MIME & document verification endpoints
-│   │   │
-│   │   ├── schemas/
-│   │   │   ├── invoice.py
-│   │   │   └── ledger.py
-│   │   │
-│   │   └── main.py
-│   │       └── FastAPI service entrypoint
-│   │
-│   ├── services/
-│   │   ├── binary_forensics.py
-│   │   │   └── ISO 32000-1 PDF byte scanner
-│   │   │
-│   │   ├── document_extractor.py
-│   │   │   └── Gemini multimodal vision normalizer
-│   │   │
-│   │   ├── ledger_sync.py
-│   │   │   └── Volatile CSV streaming & SHA-256 drift guard
-│   │   │
-│   │   ├── privacy_sanitizer.py
-│   │   │   └── In-memory MyKad & phone redaction
-│   │   │
-│   │   ├── reconciliation.py
-│   │   │   └── 3-way match, SemakMule & policy arbiter
-│   │   │
-│   │   └── velocity_store.py
-│   │       └── 7-day spend tracker & dormancy checker
-│   │
-│   ├── data/
-│   │   ├── demo_mailbox.json
-│   │   ├── semakmule_cache.json
-│   │   └── vendor_ledger.csv
-│   │
-│   └── scripts/
-│       ├── benchmark_eval.py
-│       └── generate_demo_mailbox.py
-│
-├── frontend/
-│   ├── app/
-│   │   ├── queue/
-│   │   │   ├── [id]/
-│   │   │   │   └── page.tsx
-│   │   │   └── page.tsx
-│   │   │
-│   │   ├── audit/
-│   │   │   └── page.tsx
-│   │   │
-│   │   ├── login/
-│   │   │   └── page.tsx
-│   │   │
-│   │   └── layout.tsx
-│   │
-│   ├── components/
-│   │   ├── CorrectFieldModal.tsx
-│   │   ├── NewVerificationModal.tsx
-│   │   └── ReconciliationTable.tsx
-│   │
-│   └── tailwind.config.ts
-│
-├── .env.example
-├── pyproject.toml
-├── requirements.txt
-├── LICENSE
-└── README.md
-```
-
----
-
-# ⚖️ Statutory & Regulatory Compliance
-
-> **Note:** The controls below are implemented as technical design mappings and should not be interpreted as legal certification or formal regulatory approval.
-
-### 🇲🇾 Personal Data Protection Act 2010
-
-The platform applies data-minimization controls by scrubbing MyKad identifiers and phone numbers in volatile processing buffers.
-
-### 🏦 Bank Negara Malaysia Risk Management in Technology
-
-The architecture incorporates controls aligned with principles such as:
-
-- Segregation of duties
-- Human approval
-- Out-of-band verification
-- Access control
-- Auditability
-- Fail-closed behavior
-
-### 📜 Evidence Act 1950
-
-Diagnostic events, clerk justifications and manager overrides are recorded in the application's audit trail with cryptographic integrity mechanisms.
-
-### 🚨 Anti-Money Laundering Act 2001
-
-The system supports structured incident information and emergency response dossier generation for suspected fraudulent payment incidents.
-
----
-
-# 🚧 Roadmap
-
-## Phase 1 — Ingestion Expansion ✅
-
-- Gmail REST API inbound MIME stream parser
-- In-memory CSV synchronization for AutoCount / SQL Account
-- Two-tier parsing:
-  - Local deterministic regex
-  - Multimodal Gemini 2.5 Flash
-
----
-
-## Phase 2 — Forensic Hardening ✅
-
-- ISO 32000-1 binary inspection
-- Dual-factor Canva/iLovePDF exception
-- PDRM CCID SemakMule threat cache
-- Rolling 7-day velocity tracking
-- Dormancy detection
-- PO prefix validation
-- 400-scenario automated benchmark suite
-
----
-
-## Phase 3 — Enterprise Integrations 🚧
-
-- Microsoft 365 Exchange Online Graph API adapter
-- Native bi-directional ERP webhooks
-- AutoCount Cloud integration
-- SQL Account integration
-- Xero integration
-- PayNet Zero-Knowledge Proof verification for bank-account queries
-
----
-
-## Phase 4 — Advanced Computer Vision 📅
-
-- Computer Vision Error Level Analysis (ELA)
-- Detection of potentially spliced text in printed and rescanned invoices
-
----
-
-zz
-## 🏆 Competition
-
-**Submitted for the UTAR Agentic AI Cybersecurity Hackathon 2026**
-
-**Track:** Scam Defence & Awareness
-
----
-
-# 📄 License
-
-This project is licensed under the **MIT License**.
-
-See the [`LICENSE`](LICENSE) file for details.
+</p>
