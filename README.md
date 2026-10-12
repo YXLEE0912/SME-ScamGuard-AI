@@ -360,6 +360,16 @@ The system therefore follows a **fail-closed** model instead of failing open.
               ✅ VERIFIED          🚨 LOCKED
 ```
 
+
+### 🤖 7-Agent Defense Architecture
+1. **Agent 1: In-Memory Privacy Sanitizer** — Strips MyKad (`\b\d{6}-\d{2}-\d{4}\b`) and Malaysian mobile numbers in volatile heap memory (<5ms SLA, PDPA 2010 Section 10 compliant).
+2. **Agent 2: Deterministic Binary Forensics** — Inspects PDF byte structures, trailer dictionaries, `/Producer` indicators, and applies dual-factor consumer tooling exceptions (Canva/iLovePDF).
+3. **Agent 3: Ground-Truth Registry & Threat Cache** — Validates remittance instructions against approved Master Procurement Ledger and SemakMule threat cache (<2ms SLA).
+4. **Agent 4: Cognitive Behavioral Investigator** — Leverages Google Gemini 2.5 Flash to analyze linguistic urgency, coercion tactics, and adversarial prompt injections within sandboxed `<UNTRUSTED_INBOUND_DOC>` wrappers.
+5. **Agent 5: Declarative Policy Arbiter & Fail-Closed Safety Net** — Computes deterministic multi-factor risk scores ($R \in [0, 100]$) and enforces automatic fail-closed locking upon upstream AI timeout.
+6. **Agent 6: Containment & Statutory Artifact Synthesis** — Produces court-admissible forensic dossiers, NSRC 997 / AMLA 2001 emergency incident reports, and cryptographic HMAC-SHA256 audit chains.
+7. **Agent 7: OSINT Police Threat Intelligence Ingestion Agent** — Ingests real-time PDRM CCID scam news alerts via 2-stage authenticity verification gate, canonicalizing bank names and updating local SemakMule threat caches atomically.
+
 ---
 
 # 🎯 Risk Decision Model
@@ -425,6 +435,7 @@ SME-ScamGuard-AI was evaluated against **400 synthetic operational and adversari
 
 | Metric | Result |
 |---|---:|
+| Automated Security Unit Tests | **94 / 94 Passed (100%)** |
 | Total Scenarios | **400** |
 | Evaluation Completion | **100%** |
 | Classification Accuracy | **100%** |
@@ -594,7 +605,7 @@ The system can operate using its deterministic processing path when the Gemini A
 ## Run Backend
 
 ```bash
-uvicorn app.main:app --reload --port 8000
+uv run uvicorn backend.app.main:app --reload --port 8000
 ```
 
 ## Run Frontend
@@ -606,10 +617,16 @@ npm run dev
 
 ---
 
-# 🧪 Run the Benchmark
+# 🧪 Verification & Testing
 
+### 1. Run Automated Security Unit Tests (94 Tests)
 ```bash
-python backend/scripts/benchmark_eval.py
+uv run pytest
+```
+
+### 2. Run 400-Scenario AP Forensic Benchmark
+```bash
+uv run python benchmark_eval.py
 ```
 
 ---
@@ -653,7 +670,8 @@ python backend/scripts/benchmark_eval.py
 
 ### UTAR Agentic AI Cybersecurity Hackathon 2026
 
-**Track: Scam Defence & Awareness**
+- **Team:** Team halo
+- **Track:** Scam Defence & Awareness
 
 SME-ScamGuard-AI focuses on one critical principle:
 

@@ -41,6 +41,10 @@ def load_semakmule_cache() -> Set[str]:
                     acc = normalize_account_number(item.get("account_no", ""))
                     if acc:
                         accounts.add(acc)
+                for item in data.get("records", []):
+                    acc = normalize_account_number(item.get("account_no", ""))
+                    if acc:
+                        accounts.add(acc)
             except Exception:
                 pass
             break

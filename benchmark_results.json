@@ -1,11 +1,11 @@
 {
   "benchmark_metadata": {
     "test_suite": "SME-ScamGuard-AI AP Forensic Audit Benchmark (400 Scenarios)",
-    "timestamp": "2026-10-12 21:10:09",
+    "timestamp": "2026-10-12 21:33:04",
     "vendor_ledger_count": 40,
     "total_cases_run": 400,
-    "total_duration_sec": 0.0338,
-    "avg_latency_ms": 0.0846
+    "total_duration_sec": 0.0228,
+    "avg_latency_ms": 0.0571
   },
   "metrics": {
     "overall_accuracy_pct": 100.0,
@@ -13,7 +13,7 @@
     "precision_rate_pct": 100.0,
     "benign_false_positive_rate_pct": 0.0,
     "canva_informal_false_positive_pct": 0.0,
-    "mean_core_latency_ms": 0.0846
+    "mean_core_latency_ms": 0.0571
   },
   "breakdown": {
     "Legitimate Clean Invoices": {

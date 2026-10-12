@@ -16,7 +16,8 @@ def run_scamguard_pipeline(
     simulate_ai_error: bool = False,
 ) -> Dict[str, Any]:
     """
-    End-to-End Orchestrator for the 6-Layer SME-ScamGuard-AI Multi-Agent Architecture.
+    End-to-End Orchestrator for the 7-Agent SME-ScamGuard-AI Architecture
+    (Agents 1-6 AP Interdiction Pipeline + Agent 7 OSINT Threat Intel Ingestion).
     """
     start_total = time.perf_counter()
     
