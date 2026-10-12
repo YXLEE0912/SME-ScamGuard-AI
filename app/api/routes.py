@@ -224,12 +224,17 @@ async def scan_text(
     status_code=status.HTTP_200_OK,
     summary="Synchronize & Scan Latest Inbound Gmail Invoices",
 )
+@router.post(
+    "/v1/google/sync",
+    status_code=status.HTTP_200_OK,
+    summary="Synchronize & Scan Latest Inbound Gmail Invoices (v1 Alias)",
+)
 async def sync_gmail_inbox(
     background_tasks: BackgroundTasks,
-    max_count: int = 3,
+    max_count: int = 15,
 ) -> Dict[str, Any]:
-    """Fetch unread emails from Gmail IMAP, scan via 4-agent pipeline, and quarantine scams."""
-    emails = gmail_service.fetch_latest_unread_emails(max_count=max_count)
+    """Fetch unread emails strictly filtered for invoices, scan via pipeline, and quarantine scams."""
+    emails = gmail_service.fetch_latest_unread_emails(max_count=min(max_count, 15))
     reports: List[AuditForensicReport] = []
     quarantined_count = 0
 
@@ -244,10 +249,14 @@ async def sync_gmail_inbox(
         background_tasks.add_task(append_local_audit, report)
 
     return {
+        "status": "success",
+        "count": len(emails),
         "fetched_count": len(emails),
         "quarantined_count": quarantined_count,
         "reports": reports,
+        "messages": [r.model_dump() for r in reports],
     }
+
 
 
 @router.get(

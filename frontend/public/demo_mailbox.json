@@ -1,0 +1,2715 @@
+[
+  {
+    "id": "inv_001",
+    "subject": "Invoice #ML-2026-8812 - Container Haulage (Port Klang to Shah Alam)",
+    "sender_name": "Mega Logistics Billing",
+    "sender_email": "billing@megalogistics.com.my",
+    "category": "Logistics",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-07 09:15",
+    "files": [
+      "invoice_ML2026_8812.pdf",
+      "email_thread.eml"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Mega Logistics Sdn Bhd",
+        "draft": "Mega Logistics Sdn Bhd",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "Maybank",
+        "draft": "Maybank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "514012345678",
+        "draft": "514012345678",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-7722 8888",
+        "draft": "+60 3-7722 8888",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "\u2264 RM 25,000.00",
+        "draft": "RM 18,500.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-ML-",
+        "draft": "PO-ML-8812",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger.",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_002",
+    "subject": "Invoice #ML-2026-8820 - Container Haulage (Port Klang to Shah Alam)",
+    "sender_name": "Mega Logistics Billing",
+    "sender_email": "billing@megalogistics.com.my",
+    "category": "Logistics",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-07 09:45",
+    "files": [
+      "invoice_ML2026_8820.pdf",
+      "email_thread.eml"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Mega Logistics Sdn Bhd",
+        "draft": "Mega Logistics Sdn Bhd",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "Maybank",
+        "draft": "Maybank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "514012345678",
+        "draft": "514012345678",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-7722 8888",
+        "draft": "+60 3-7722 8888",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "\u2264 RM 25,000.00",
+        "draft": "RM 22,400.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-ML-",
+        "draft": "PO-ML-8820",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger.",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_003",
+    "subject": "Invoice #ML-2026-8835 - Container Haulage (Port Klang to Shah Alam)",
+    "sender_name": "Mega Logistics Billing",
+    "sender_email": "billing@megalogistics.com.my",
+    "category": "Logistics",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-07 10:20",
+    "files": [
+      "invoice_ML2026_8835.pdf",
+      "email_thread.eml"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Mega Logistics Sdn Bhd",
+        "draft": "Mega Logistics Sdn Bhd",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "Maybank",
+        "draft": "Maybank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "514012345678",
+        "draft": "514012345678",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-7722 8888",
+        "draft": "+60 3-7722 8888",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "\u2264 RM 25,000.00",
+        "draft": "RM 16,800.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-ML-",
+        "draft": "PO-ML-8835",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger.",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_004",
+    "subject": "Invoice #ML-2026-8849 - Container Haulage (Port Klang to Shah Alam)",
+    "sender_name": "Mega Logistics Billing",
+    "sender_email": "billing@megalogistics.com.my",
+    "category": "Logistics",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-07 11:05",
+    "files": [
+      "invoice_ML2026_8849.pdf",
+      "email_thread.eml"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Mega Logistics Sdn Bhd",
+        "draft": "Mega Logistics Sdn Bhd",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "Maybank",
+        "draft": "Maybank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "514012345678",
+        "draft": "514012345678",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-7722 8888",
+        "draft": "+60 3-7722 8888",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "\u2264 RM 25,000.00",
+        "draft": "RM 24,000.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-ML-",
+        "draft": "PO-ML-8849",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger.",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_005",
+    "subject": "Shipment Tranche Invoice #SS-9940 - Rebar & Structural Steel",
+    "sender_name": "Southern Steel Sales",
+    "sender_email": "sales@southernsteel.com.my",
+    "category": "Raw Materials",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-07 08:30",
+    "files": [
+      "invoice_SS_9940.pdf",
+      "delivery_order.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Southern Steel Supplies Sdn Bhd",
+        "draft": "Southern Steel Supplies Sdn Bhd",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "CIMB Bank",
+        "draft": "CIMB Bank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "8001234567",
+        "draft": "8001234567",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-3344 5566",
+        "draft": "+60 3-3344 5566",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "\u2264 RM 45,000.00",
+        "draft": "RM 38,200.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-SS-",
+        "draft": "PO-SS-9940",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger.",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_006",
+    "subject": "Shipment Tranche Invoice #SS-9952 - Rebar & Structural Steel",
+    "sender_name": "Southern Steel Sales",
+    "sender_email": "sales@southernsteel.com.my",
+    "category": "Raw Materials",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-07 09:50",
+    "files": [
+      "invoice_SS_9952.pdf",
+      "delivery_order.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Southern Steel Supplies Sdn Bhd",
+        "draft": "Southern Steel Supplies Sdn Bhd",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "CIMB Bank",
+        "draft": "CIMB Bank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "8001234567",
+        "draft": "8001234567",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-3344 5566",
+        "draft": "+60 3-3344 5566",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "\u2264 RM 45,000.00",
+        "draft": "RM 41,500.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-SS-",
+        "draft": "PO-SS-9952",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger.",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_007",
+    "subject": "Shipment Tranche Invoice #SS-9968 - Rebar & Structural Steel",
+    "sender_name": "Southern Steel Sales",
+    "sender_email": "sales@southernsteel.com.my",
+    "category": "Raw Materials",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-07 10:40",
+    "files": [
+      "invoice_SS_9968.pdf",
+      "delivery_order.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Southern Steel Supplies Sdn Bhd",
+        "draft": "Southern Steel Supplies Sdn Bhd",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "CIMB Bank",
+        "draft": "CIMB Bank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "8001234567",
+        "draft": "8001234567",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-3344 5566",
+        "draft": "+60 3-3344 5566",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "\u2264 RM 45,000.00",
+        "draft": "RM 34,800.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-SS-",
+        "draft": "PO-SS-9968",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger.",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_008",
+    "subject": "Batch Delivery Tax Invoice #AP-3108 - Corrugated Cartons",
+    "sender_name": "Apex Packaging Billing",
+    "sender_email": "accounts@apexpack.com.my",
+    "category": "Packaging",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-07 08:45",
+    "files": [
+      "invoice_AP_3108.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Apex Packaging Industries",
+        "draft": "Apex Packaging Industries",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "Public Bank",
+        "draft": "Public Bank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "3123456789",
+        "draft": "3123456789",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-8921 7788",
+        "draft": "+60 3-8921 7788",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "\u2264 RM 15,000.00",
+        "draft": "RM 12,200.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-AP-",
+        "draft": "PO-AP-3108",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger.",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_009",
+    "subject": "Batch Delivery Tax Invoice #AP-3120 - Corrugated Cartons",
+    "sender_name": "Apex Packaging Billing",
+    "sender_email": "accounts@apexpack.com.my",
+    "category": "Packaging",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-07 10:15",
+    "files": [
+      "invoice_AP_3120.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Apex Packaging Industries",
+        "draft": "Apex Packaging Industries",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "Public Bank",
+        "draft": "Public Bank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "3123456789",
+        "draft": "3123456789",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-8921 7788",
+        "draft": "+60 3-8921 7788",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "\u2264 RM 15,000.00",
+        "draft": "RM 14,600.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-AP-",
+        "draft": "PO-AP-3120",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger.",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_010",
+    "subject": "Batch Delivery Tax Invoice #AP-3135 - Corrugated Cartons",
+    "sender_name": "Apex Packaging Billing",
+    "sender_email": "accounts@apexpack.com.my",
+    "category": "Packaging",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-07 11:25",
+    "files": [
+      "invoice_AP_3135.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Apex Packaging Industries",
+        "draft": "Apex Packaging Industries",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "Public Bank",
+        "draft": "Public Bank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "3123456789",
+        "draft": "3123456789",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-8921 7788",
+        "draft": "+60 3-8921 7788",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "\u2264 RM 15,000.00",
+        "draft": "RM 9,800.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-AP-",
+        "draft": "PO-AP-3135",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger.",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_011",
+    "subject": "Bulk Cement Delivery Run #RC-5510 (Klang Valley Batching)",
+    "sender_name": "Rawang Cement Dispatch",
+    "sender_email": "dispatch@rawangcement.com.my",
+    "category": "Raw Materials",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-07 07:40",
+    "files": [
+      "invoice_RC_5510.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Rawang Cement Industries",
+        "draft": "Rawang Cement Industries",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "AmBank",
+        "draft": "AmBank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "888102345678",
+        "draft": "888102345678",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-6091 6677",
+        "draft": "+60 3-6091 6677",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "\u2264 RM 48,000.00",
+        "draft": "RM 36,000.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-RC-",
+        "draft": "PO-RC-5510",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger.",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_012",
+    "subject": "Bulk Cement Delivery Run #RC-5524 (Klang Valley Batching)",
+    "sender_name": "Rawang Cement Dispatch",
+    "sender_email": "dispatch@rawangcement.com.my",
+    "category": "Raw Materials",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-07 09:10",
+    "files": [
+      "invoice_RC_5524.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Rawang Cement Industries",
+        "draft": "Rawang Cement Industries",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "AmBank",
+        "draft": "AmBank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "888102345678",
+        "draft": "888102345678",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-6091 6677",
+        "draft": "+60 3-6091 6677",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "\u2264 RM 48,000.00",
+        "draft": "RM 42,000.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-RC-",
+        "draft": "PO-RC-5524",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger.",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_013",
+    "subject": "Bulk Cement Delivery Run #RC-5539 (Klang Valley Batching)",
+    "sender_name": "Rawang Cement Dispatch",
+    "sender_email": "dispatch@rawangcement.com.my",
+    "category": "Raw Materials",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-07 10:55",
+    "files": [
+      "invoice_RC_5539.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Rawang Cement Industries",
+        "draft": "Rawang Cement Industries",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "AmBank",
+        "draft": "AmBank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "888102345678",
+        "draft": "888102345678",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-6091 6677",
+        "draft": "+60 3-6091 6677",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "\u2264 RM 48,000.00",
+        "draft": "RM 39,500.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-RC-",
+        "draft": "PO-RC-5539",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger.",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_014",
+    "subject": "Industrial Gas Cylinder Refill Invoice #SI-1044",
+    "sender_name": "Shah Alam Gas Orders",
+    "sender_email": "orders@shahalamgases.com.my",
+    "category": "Utilities",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-07 08:15",
+    "files": [
+      "invoice_SI_1044.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Shah Alam Industrial Gases",
+        "draft": "Shah Alam Industrial Gases",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "Public Bank",
+        "draft": "Public Bank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "3812345678",
+        "draft": "3812345678",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-5510 6677",
+        "draft": "+60 3-5510 6677",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "\u2264 RM 16,000.00",
+        "draft": "RM 11,200.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-SI-",
+        "draft": "PO-SI-1044",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger.",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_015",
+    "subject": "Industrial Gas Cylinder Refill Invoice #SI-1055",
+    "sender_name": "Shah Alam Gas Orders",
+    "sender_email": "orders@shahalamgases.com.my",
+    "category": "Utilities",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-07 10:05",
+    "files": [
+      "invoice_SI_1055.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Shah Alam Industrial Gases",
+        "draft": "Shah Alam Industrial Gases",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "Public Bank",
+        "draft": "Public Bank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "3812345678",
+        "draft": "3812345678",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-5510 6677",
+        "draft": "+60 3-5510 6677",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "\u2264 RM 16,000.00",
+        "draft": "RM 13,400.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-SI-",
+        "draft": "PO-SI-1055",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger.",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_016",
+    "subject": "Industrial Gas Cylinder Refill Invoice #SI-1067",
+    "sender_name": "Shah Alam Gas Orders",
+    "sender_email": "orders@shahalamgases.com.my",
+    "category": "Utilities",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-07 11:40",
+    "files": [
+      "invoice_SI_1067.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Shah Alam Industrial Gases",
+        "draft": "Shah Alam Industrial Gases",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "Public Bank",
+        "draft": "Public Bank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "3812345678",
+        "draft": "3812345678",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-5510 6677",
+        "draft": "+60 3-5510 6677",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "\u2264 RM 16,000.00",
+        "draft": "RM 12,900.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-SI-",
+        "draft": "PO-SI-1067",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger.",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_017",
+    "subject": "TM Corporate Unifi Fiber Multi-Site Statement (Sep 2026)",
+    "sender_name": "Telekom Malaysia e-Billing",
+    "sender_email": "ebill@tm.com.my",
+    "category": "Utilities",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-05 14:00",
+    "files": [
+      "tm_bill_sep2026.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Telekom Malaysia Berhad",
+        "draft": "Telekom Malaysia Berhad",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "Maybank",
+        "draft": "Maybank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "514011223344",
+        "draft": "514011223344",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-2240 1234",
+        "draft": "+60 3-2240 1234",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "\u2264 RM 3,000.00",
+        "draft": "RM 2,480.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-TM-",
+        "draft": "PO-TM-UTIL-2026",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger.",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_018",
+    "subject": "TNB Factory High-Tension Electricity Bill - Acc #2201994",
+    "sender_name": "Tenaga Nasional Billing",
+    "sender_email": "billing@tnb.com.my",
+    "category": "Utilities",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-04 11:20",
+    "files": [
+      "tnb_factory_sep2026.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Tenaga Nasional Berhad",
+        "draft": "Tenaga Nasional Berhad",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "Maybank",
+        "draft": "Maybank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "514011998877",
+        "draft": "514011998877",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-2296 5566",
+        "draft": "+60 3-2296 5566",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "\u2264 RM 12,000.00",
+        "draft": "RM 9,845.50",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-TN-",
+        "draft": "PO-TN-ELEC-0926",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger.",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_019",
+    "subject": "Air Selangor / Syabas Commercial Meter Billing (Meter #B-9921)",
+    "sender_name": "Syabas Water Invoicing",
+    "sender_email": "invoices@airselangor.com",
+    "category": "Utilities",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-03 09:10",
+    "files": [
+      "syabas_water_sep2026.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Syabas Water Works",
+        "draft": "Syabas Water Works",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "CIMB Bank",
+        "draft": "CIMB Bank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "8009876543",
+        "draft": "8009876543",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-2088 5400",
+        "draft": "+60 3-2088 5400",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "\u2264 RM 2,000.00",
+        "draft": "RM 1,210.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-SY-",
+        "draft": "PO-SY-WATER-26",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger.",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_020",
+    "subject": "Cheras Security Systems - Facility Guarding & Alarm Retainer (Oct 2026)",
+    "sender_name": "Cheras Security Admin",
+    "sender_email": "billing@cherassecurity.com.my",
+    "category": "Facilities",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-02 16:30",
+    "files": [
+      "cheras_guarding_oct2026.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Cheras Security Systems",
+        "draft": "Cheras Security Systems",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "CIMB Bank",
+        "draft": "CIMB Bank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "8004567890",
+        "draft": "8004567890",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-9130 2233",
+        "draft": "+60 3-9130 2233",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "\u2264 RM 11,000.00",
+        "draft": "RM 8,500.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-CS-",
+        "draft": "PO-CS-SEC-1026",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger.",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_021",
+    "subject": "Marketing Collateral & Brochures #PM-4401",
+    "sender_name": "PrintMaster Solutions Accounts",
+    "sender_email": "sales@printmaster.com.my",
+    "category": "Printing",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-06 14:15",
+    "files": [
+      "invoice_canva_export.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "PrintMaster Solutions",
+        "draft": "PrintMaster Solutions",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "RHB Bank",
+        "draft": "RHB Bank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "21401234567890",
+        "draft": "21401234567890",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-7981 3344",
+        "draft": "+60 3-7981 3344",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "Baseline Verified",
+        "draft": "RM 3,200.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-PM",
+        "draft": "PO-PM-4401",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger. (Canva export verified benign against ledger)",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_022",
+    "subject": "Corporate Banners & Expo Signage #PM-4409",
+    "sender_name": "PrintMaster Solutions Accounts",
+    "sender_email": "sales@printmaster.com.my",
+    "category": "Printing",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-06 14:15",
+    "files": [
+      "invoice_canva_export.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "PrintMaster Solutions",
+        "draft": "PrintMaster Solutions",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "RHB Bank",
+        "draft": "RHB Bank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "21401234567890",
+        "draft": "21401234567890",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-7981 3344",
+        "draft": "+60 3-7981 3344",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "Baseline Verified",
+        "draft": "RM 4,100.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-PM",
+        "draft": "PO-PM-4409",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger. (Canva export verified benign against ledger)",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_023",
+    "subject": "Monthly Pantry & Stationery Supply #SO-1120",
+    "sender_name": "Sunway Office Solutions Accounts",
+    "sender_email": "orders@sunwayoffice.com.my",
+    "category": "Office Supplies",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-06 14:15",
+    "files": [
+      "invoice_canva_export.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Sunway Office Solutions",
+        "draft": "Sunway Office Solutions",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "AmBank",
+        "draft": "AmBank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "888101234567",
+        "draft": "888101234567",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-5639 2200",
+        "draft": "+60 3-5639 2200",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "Baseline Verified",
+        "draft": "RM 2,850.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-SO",
+        "draft": "PO-SO-1120",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger. (Canva export verified benign against ledger)",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_024",
+    "subject": "Ergonomic Chairs & Desk Organizers #SO-1135",
+    "sender_name": "Sunway Office Solutions Accounts",
+    "sender_email": "orders@sunwayoffice.com.my",
+    "category": "Office Supplies",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-06 14:15",
+    "files": [
+      "invoice_canva_export.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Sunway Office Solutions",
+        "draft": "Sunway Office Solutions",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "AmBank",
+        "draft": "AmBank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "888101234567",
+        "draft": "888101234567",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-5639 2200",
+        "draft": "+60 3-5639 2200",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "Baseline Verified",
+        "draft": "RM 4,400.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-SO",
+        "draft": "PO-SO-1135",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger. (Canva export verified benign against ledger)",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_025",
+    "subject": "Customs Clearance & Haulage Claim #BF-7711",
+    "sender_name": "Bintang Forwarding Agencies AP",
+    "sender_email": "billing@bintangforwarding.com.my",
+    "category": "Logistics",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-06 11:30",
+    "files": [
+      "invoice_compressed_ilovepdf.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Bintang Forwarding Agencies",
+        "draft": "Bintang Forwarding Agencies",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "AmBank",
+        "draft": "AmBank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "888100223344",
+        "draft": "888100223344",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-3168 9900",
+        "draft": "+60 3-3168 9900",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "Baseline Verified",
+        "draft": "RM 14,200.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-BF",
+        "draft": "PO-BF-7711",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger. (iLovePDF compressed doc verified benign)",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_026",
+    "subject": "Warehouse Kraft Paper Rolls Delivery #SP-9902",
+    "sender_name": "Selangor Paper Products AP",
+    "sender_email": "sales@selangorpaper.com.my",
+    "category": "Manufacturing",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-06 11:30",
+    "files": [
+      "invoice_compressed_ilovepdf.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Selangor Paper Products",
+        "draft": "Selangor Paper Products",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "RHB Bank",
+        "draft": "RHB Bank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "21201299887766",
+        "draft": "21201299887766",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-8736 1122",
+        "draft": "+60 3-8736 1122",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "Baseline Verified",
+        "draft": "RM 9,600.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-SP",
+        "draft": "PO-SP-9902",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger. (iLovePDF compressed doc verified benign)",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_027",
+    "subject": "Pallet Wrapping & Film Cartons #SP-9915",
+    "sender_name": "Selangor Paper Products AP",
+    "sender_email": "sales@selangorpaper.com.my",
+    "category": "Manufacturing",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-06 11:30",
+    "files": [
+      "invoice_compressed_ilovepdf.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Selangor Paper Products",
+        "draft": "Selangor Paper Products",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "RHB Bank",
+        "draft": "RHB Bank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "21201299887766",
+        "draft": "21201299887766",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-8736 1122",
+        "draft": "+60 3-8736 1122",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "Baseline Verified",
+        "draft": "RM 8,400.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-SP",
+        "draft": "PO-SP-9915",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger. (iLovePDF compressed doc verified benign)",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_028",
+    "subject": "Emergency Circuit Breaker Replacement #PE-109",
+    "sender_name": "Petaling Electrical Works Field Office",
+    "sender_email": "service@petalingelectrical.com.my",
+    "category": "Maintenance",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-05 16:45",
+    "files": [
+      "scanned_mobile_invoice.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Petaling Electrical Works",
+        "draft": "Petaling Electrical Works",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "Maybank",
+        "draft": "Maybank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "514013456789",
+        "draft": "514013456789",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-7781 4455",
+        "draft": "+60 3-7781 4455",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "Baseline Verified",
+        "draft": "RM 4,800.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-PE",
+        "draft": "PO-PE-109",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger. (Physical camera scan verified)",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_029",
+    "subject": "Distribution Board Wiring Inspection #PE-115",
+    "sender_name": "Petaling Electrical Works Field Office",
+    "sender_email": "service@petalingelectrical.com.my",
+    "category": "Maintenance",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-05 16:45",
+    "files": [
+      "scanned_mobile_invoice.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Petaling Electrical Works",
+        "draft": "Petaling Electrical Works",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "Maybank",
+        "draft": "Maybank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "514013456789",
+        "draft": "514013456789",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-7781 4455",
+        "draft": "+60 3-7781 4455",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "Baseline Verified",
+        "draft": "RM 3,600.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-PE",
+        "draft": "PO-PE-115",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger. (Physical camera scan verified)",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_030",
+    "subject": "Chiller Compressor Chemical Servicing #SA-802",
+    "sender_name": "Subang Air Conditioning Services Field Office",
+    "sender_email": "ops@subangaircond.com.my",
+    "category": "Maintenance",
+    "status": "VERIFIED",
+    "risk_score": 0,
+    "received_date": "2026-10-05 16:45",
+    "files": [
+      "scanned_mobile_invoice.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Subang Air Conditioning Services",
+        "draft": "Subang Air Conditioning Services",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "Public Bank",
+        "draft": "Public Bank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "3145678901",
+        "draft": "3145678901",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-5634 7788",
+        "draft": "+60 3-5634 7788",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "Baseline Verified",
+        "draft": "RM 5,500.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-SA",
+        "draft": "PO-SA-802",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "All verified fields match the Master Procurement Ledger. (Physical camera scan verified)",
+    "defect_fields": 0,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_031",
+    "subject": "Expedited Packaging Label Run #1 (48h Urgent Batch)",
+    "sender_name": "PrintMaster Solutions Billing",
+    "sender_email": "sales@printmaster.com.my",
+    "category": "Printing",
+    "status": "NEEDS_REVIEW",
+    "risk_score": 75,
+    "received_date": "2026-10-07 10:50",
+    "files": [
+      "invoice_rush_order.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "PrintMaster Solutions",
+        "draft": "PrintMaster Solutions",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "RHB Bank",
+        "draft": "RHB Bank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "21401234567890",
+        "draft": "21401234567890",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-7981 3344",
+        "draft": "+60 3-7981 3344",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "\u2264 RM 5,000.00 (Weekly Cap Exceeded)",
+        "draft": "RM 4,200.00",
+        "status": "defect",
+        "score": 70
+      },
+      "po_number": {
+        "truth": "PO-PM-",
+        "draft": "PO-PM-901",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "\u26a0\ufe0f Procurement velocity threshold breach. Transaction frequency exceeded weekly limit.",
+    "defect_fields": 1,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_032",
+    "subject": "Expedited Packaging Label Run #2 (48h Urgent Batch)",
+    "sender_name": "PrintMaster Solutions Billing",
+    "sender_email": "sales@printmaster.com.my",
+    "category": "Printing",
+    "status": "NEEDS_REVIEW",
+    "risk_score": 75,
+    "received_date": "2026-10-07 10:50",
+    "files": [
+      "invoice_rush_order.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "PrintMaster Solutions",
+        "draft": "PrintMaster Solutions",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "RHB Bank",
+        "draft": "RHB Bank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "21401234567890",
+        "draft": "21401234567890",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-7981 3344",
+        "draft": "+60 3-7981 3344",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "\u2264 RM 5,000.00 (Weekly Cap Exceeded)",
+        "draft": "RM 4,500.00",
+        "status": "defect",
+        "score": 70
+      },
+      "po_number": {
+        "truth": "PO-PM-",
+        "draft": "PO-PM-902",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "\u26a0\ufe0f Procurement velocity threshold breach. Transaction frequency exceeded weekly limit.",
+    "defect_fields": 1,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_033",
+    "subject": "Expedited Packaging Label Run #3 (Weekly Cap Breach)",
+    "sender_name": "PrintMaster Solutions Billing",
+    "sender_email": "sales@printmaster.com.my",
+    "category": "Printing",
+    "status": "NEEDS_REVIEW",
+    "risk_score": 75,
+    "received_date": "2026-10-07 10:50",
+    "files": [
+      "invoice_rush_order.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "PrintMaster Solutions",
+        "draft": "PrintMaster Solutions",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "RHB Bank",
+        "draft": "RHB Bank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "21401234567890",
+        "draft": "21401234567890",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-7981 3344",
+        "draft": "+60 3-7981 3344",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "\u2264 RM 5,000.00 (Weekly Cap Exceeded)",
+        "draft": "RM 4,900.00",
+        "status": "defect",
+        "score": 70
+      },
+      "po_number": {
+        "truth": "PO-PM-",
+        "draft": "PO-PM-903",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "\u26a0\ufe0f Procurement velocity threshold breach. Transaction frequency exceeded weekly limit.",
+    "defect_fields": 1,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_034",
+    "subject": "CNC Milled Aluminium Casings Batch Delivery #PE-8801",
+    "sender_name": "Penang Precision Engineering Sales",
+    "sender_email": "sales@penangprecision.com.my",
+    "category": "Engineering",
+    "status": "NEEDS_REVIEW",
+    "risk_score": 70,
+    "received_date": "2026-10-07 11:10",
+    "files": [
+      "delivery_without_po.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Penang Precision Engineering",
+        "draft": "Penang Precision Engineering",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "Maybank",
+        "draft": "Maybank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "507012345678",
+        "draft": "507012345678",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 4-6441 2233",
+        "draft": "+60 4-6441 2233",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "\u2264 RM 35,000.00",
+        "draft": "RM 28,000.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-PP- (Required for GRN)",
+        "draft": "MISSING",
+        "status": "defect",
+        "score": 60
+      }
+    },
+    "banner_message": "\u26a0\ufe0f Physical goods delivery missing Purchase Order matching prefix. Requires GRN.",
+    "defect_fields": 1,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_035",
+    "subject": "Custom Steel Flanges & Fasteners #PE-8809",
+    "sender_name": "Penang Precision Engineering Sales",
+    "sender_email": "sales@penangprecision.com.my",
+    "category": "Engineering",
+    "status": "NEEDS_REVIEW",
+    "risk_score": 70,
+    "received_date": "2026-10-07 11:10",
+    "files": [
+      "delivery_without_po.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Penang Precision Engineering",
+        "draft": "Penang Precision Engineering",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "Maybank",
+        "draft": "Maybank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "507012345678",
+        "draft": "507012345678",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 4-6441 2233",
+        "draft": "+60 4-6441 2233",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "\u2264 RM 35,000.00",
+        "draft": "RM 24,500.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-PP- (Required for GRN)",
+        "draft": "INVALID-REF-992",
+        "status": "defect",
+        "score": 60
+      }
+    },
+    "banner_message": "\u26a0\ufe0f Physical goods delivery missing Purchase Order matching prefix. Requires GRN.",
+    "defect_fields": 1,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_036",
+    "subject": "URGENT: Temporary Audit Remittance Update - Invoice #SS-9971",
+    "sender_name": "Southern Steel Supplies Sdn Bhd Accounts",
+    "sender_email": "finance@southern-steels.com.my",
+    "category": "Raw Materials",
+    "status": "LOCKED_CRITICAL",
+    "risk_score": 92,
+    "received_date": "2026-10-07 11:35",
+    "files": [
+      "invoice_genuine_pdf.pdf",
+      "email_urgent_tamper.eml"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Southern Steel Supplies Sdn Bhd",
+        "draft": "Southern Steel Supplies Sdn Bhd",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "CIMB Bank",
+        "draft": "CIMB Bank (PDF) vs Public Bank (Email)",
+        "status": "defect",
+        "score": 70
+      },
+      "account_no": {
+        "truth": "8001234567",
+        "draft": "8001234567 (PDF) vs 999888111222 (Email)",
+        "status": "defect",
+        "score": 70
+      },
+      "landline": {
+        "truth": "+60 3-3344 5566",
+        "draft": "+60 3-3344 5566",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "Baseline Verified",
+        "draft": "RM 42,000.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-Valid",
+        "draft": "PO-MATCH",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "\u26a0\ufe0f Urgent payment redirection detected in email body contradicting attached PDF.",
+    "defect_fields": 2,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_037",
+    "subject": "Critical Notice: Routing Payment to Clearing Account #ML-8850",
+    "sender_name": "Mega Logistics Sdn Bhd Accounts",
+    "sender_email": "billing-notice@megalogistics-corp.com",
+    "category": "Logistics",
+    "status": "LOCKED_CRITICAL",
+    "risk_score": 91,
+    "received_date": "2026-10-07 11:35",
+    "files": [
+      "invoice_genuine_pdf.pdf",
+      "email_urgent_tamper.eml"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Mega Logistics Sdn Bhd",
+        "draft": "Mega Logistics Sdn Bhd",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "Maybank",
+        "draft": "Maybank (PDF) vs Hong Leong Bank (Email)",
+        "status": "defect",
+        "score": 70
+      },
+      "account_no": {
+        "truth": "514012345678",
+        "draft": "514012345678 (PDF) vs 777666555444 (Email)",
+        "status": "defect",
+        "score": 70
+      },
+      "landline": {
+        "truth": "+60 3-7722 8888",
+        "draft": "+60 3-7722 8888",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "Baseline Verified",
+        "draft": "RM 24,800.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-Valid",
+        "draft": "PO-MATCH",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "\u26a0\ufe0f Urgent payment redirection detected in email body contradicting attached PDF.",
+    "defect_fields": 2,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_038",
+    "subject": "Bank Maintenance In Progress: Remit to Secondary Partner Account",
+    "sender_name": "Johor Chemical Supplies Accounts",
+    "sender_email": "accounts@johorchem-holdings.com",
+    "category": "Raw Materials",
+    "status": "LOCKED_CRITICAL",
+    "risk_score": 89,
+    "received_date": "2026-10-07 11:35",
+    "files": [
+      "invoice_genuine_pdf.pdf",
+      "email_urgent_tamper.eml"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Johor Chemical Supplies",
+        "draft": "Johor Chemical Supplies",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "CIMB Bank",
+        "draft": "CIMB Bank (PDF) vs RHB Bank (Email)",
+        "status": "defect",
+        "score": 70
+      },
+      "account_no": {
+        "truth": "8002345678",
+        "draft": "8002345678 (PDF) vs 882299110033 (Email)",
+        "status": "defect",
+        "score": 70
+      },
+      "landline": {
+        "truth": "+60 7-2512 8899",
+        "draft": "+60 7-2512 8899",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "Baseline Verified",
+        "draft": "RM 26,500.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-Valid",
+        "draft": "PO-MATCH",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "\u26a0\ufe0f Urgent payment redirection detected in email body contradicting attached PDF.",
+    "defect_fields": 2,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_039",
+    "subject": "PAYMENT ADVICE OVERRIDE: Statutory Tax Audit Redirection",
+    "sender_name": "Southern Steel Supplies Sdn Bhd Accounts",
+    "sender_email": "cfo@southern-steel-group.com",
+    "category": "Raw Materials",
+    "status": "LOCKED_CRITICAL",
+    "risk_score": 92,
+    "received_date": "2026-10-07 11:35",
+    "files": [
+      "invoice_genuine_pdf.pdf",
+      "email_urgent_tamper.eml"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Southern Steel Supplies Sdn Bhd",
+        "draft": "Southern Steel Supplies Sdn Bhd",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "CIMB Bank",
+        "draft": "CIMB Bank (PDF) vs AmBank (Email)",
+        "status": "defect",
+        "score": 70
+      },
+      "account_no": {
+        "truth": "8001234567",
+        "draft": "8001234567 (PDF) vs 554433221100 (Email)",
+        "status": "defect",
+        "score": 70
+      },
+      "landline": {
+        "truth": "+60 3-3344 5566",
+        "draft": "+60 3-3344 5566",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "Baseline Verified",
+        "draft": "RM 44,000.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-Valid",
+        "draft": "PO-MATCH",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "\u26a0\ufe0f Urgent payment redirection detected in email body contradicting attached PDF.",
+    "defect_fields": 2,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_040",
+    "subject": "Urgent Haulage Clearance - Divert Wire to Expedited Account",
+    "sender_name": "Mega Logistics Sdn Bhd Accounts",
+    "sender_email": "dispatch-billing@megalogistics-online.com",
+    "category": "Logistics",
+    "status": "LOCKED_CRITICAL",
+    "risk_score": 88,
+    "received_date": "2026-10-07 11:35",
+    "files": [
+      "invoice_genuine_pdf.pdf",
+      "email_urgent_tamper.eml"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Mega Logistics Sdn Bhd",
+        "draft": "Mega Logistics Sdn Bhd",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "Maybank",
+        "draft": "Maybank (PDF) vs Alliance Bank (Email)",
+        "status": "defect",
+        "score": 70
+      },
+      "account_no": {
+        "truth": "514012345678",
+        "draft": "514012345678 (PDF) vs 665544332211 (Email)",
+        "status": "defect",
+        "score": 70
+      },
+      "landline": {
+        "truth": "+60 3-7722 8888",
+        "draft": "+60 3-7722 8888",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "Baseline Verified",
+        "draft": "RM 19,500.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-Valid",
+        "draft": "PO-MATCH",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "\u26a0\ufe0f Urgent payment redirection detected in email body contradicting attached PDF.",
+    "defect_fields": 2,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_041",
+    "subject": "Settlement of Chemical Reagents - Revised Account In Body",
+    "sender_name": "Johor Chemical Supplies Accounts",
+    "sender_email": "settlements@johorchem.com.my",
+    "category": "Raw Materials",
+    "status": "LOCKED_CRITICAL",
+    "risk_score": 90,
+    "received_date": "2026-10-07 11:35",
+    "files": [
+      "invoice_genuine_pdf.pdf",
+      "email_urgent_tamper.eml"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Johor Chemical Supplies",
+        "draft": "Johor Chemical Supplies",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "CIMB Bank",
+        "draft": "CIMB Bank (PDF) vs Maybank (Email)",
+        "status": "defect",
+        "score": 70
+      },
+      "account_no": {
+        "truth": "8002345678",
+        "draft": "8002345678 (PDF) vs 990011223344 (Email)",
+        "status": "defect",
+        "score": 70
+      },
+      "landline": {
+        "truth": "+60 7-2512 8899",
+        "draft": "+60 7-2512 8899",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "Baseline Verified",
+        "draft": "RM 27,800.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-Valid",
+        "draft": "PO-MATCH",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "\u26a0\ufe0f Urgent payment redirection detected in email body contradicting attached PDF.",
+    "defect_fields": 2,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_042",
+    "subject": "Invoice #SS-9988 - Structural Beam Fabrication Tranche",
+    "sender_name": "Southern Steel Supplies Sdn Bhd Billing",
+    "sender_email": "billing@southernsteel.com.my",
+    "category": "Raw Materials",
+    "status": "LOCKED_CRITICAL",
+    "risk_score": 94,
+    "received_date": "2026-10-07 11:45",
+    "files": [
+      "invoice_spliced_tampered.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Southern Steel Supplies Sdn Bhd",
+        "draft": "Southern Steel Supplies Sdn Bhd",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "CIMB Bank",
+        "draft": "Public Bank",
+        "status": "defect",
+        "score": 70
+      },
+      "account_no": {
+        "truth": "8001234567",
+        "draft": "777666555444",
+        "status": "defect",
+        "score": 70
+      },
+      "landline": {
+        "truth": "+60 3-3344 5566",
+        "draft": "+60 3-3344 5566",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "Baseline Verified",
+        "draft": "RM 43,500.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-MATCH",
+        "draft": "PO-MATCH",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "\u26a0\ufe0f Bank credentials differ from Master Ledger on Account Number. Blocks payment approval.",
+    "defect_fields": 2,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_043",
+    "subject": "Invoice #AP-3190 - Custom Printed Master Cartons",
+    "sender_name": "Apex Packaging Industries Billing",
+    "sender_email": "accounts@apexpack.com.my",
+    "category": "Manufacturing",
+    "status": "LOCKED_CRITICAL",
+    "risk_score": 92,
+    "received_date": "2026-10-07 11:45",
+    "files": [
+      "invoice_spliced_tampered.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Apex Packaging Industries",
+        "draft": "Apex Packaging Industries",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "Public Bank",
+        "draft": "Maybank",
+        "status": "defect",
+        "score": 70
+      },
+      "account_no": {
+        "truth": "3123456789",
+        "draft": "990011223344",
+        "status": "defect",
+        "score": 70
+      },
+      "landline": {
+        "truth": "+60 3-8921 7788",
+        "draft": "+60 3-8921 7788",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "Baseline Verified",
+        "draft": "RM 14,800.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-MATCH",
+        "draft": "PO-MATCH",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "\u26a0\ufe0f Bank credentials differ from Master Ledger on Account Number. Blocks payment approval.",
+    "defect_fields": 2,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_044",
+    "subject": "Invoice #SI-1090 - Argon & CO2 High Pressure Bulk Tank",
+    "sender_name": "Shah Alam Industrial Gases Billing",
+    "sender_email": "orders@shahalamgases.com.my",
+    "category": "Raw Materials",
+    "status": "LOCKED_CRITICAL",
+    "risk_score": 91,
+    "received_date": "2026-10-07 11:45",
+    "files": [
+      "invoice_spliced_tampered.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Shah Alam Industrial Gases",
+        "draft": "Shah Alam Industrial Gases",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "Public Bank",
+        "draft": "CIMB Bank",
+        "status": "defect",
+        "score": 70
+      },
+      "account_no": {
+        "truth": "3812345678",
+        "draft": "554433221100",
+        "status": "defect",
+        "score": 70
+      },
+      "landline": {
+        "truth": "+60 3-5510 6677",
+        "draft": "+60 3-5510 6677",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "Baseline Verified",
+        "draft": "RM 15,600.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-MATCH",
+        "draft": "PO-MATCH",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "\u26a0\ufe0f Bank credentials differ from Master Ledger on Account Number. Blocks payment approval.",
+    "defect_fields": 2,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_045",
+    "subject": "Invoice #BF-7799 - Port Klang Demurrage & Container Release",
+    "sender_name": "Bintang Forwarding Agencies Billing",
+    "sender_email": "billing@bintangforwarding.com.my",
+    "category": "Raw Materials",
+    "status": "LOCKED_CRITICAL",
+    "risk_score": 93,
+    "received_date": "2026-10-07 11:45",
+    "files": [
+      "invoice_spliced_tampered.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Bintang Forwarding Agencies",
+        "draft": "Bintang Forwarding Agencies",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "AmBank",
+        "draft": "Hong Leong Bank",
+        "status": "defect",
+        "score": 70
+      },
+      "account_no": {
+        "truth": "888100223344",
+        "draft": "882299110033",
+        "status": "defect",
+        "score": 70
+      },
+      "landline": {
+        "truth": "+60 3-3168 9900",
+        "draft": "+60 3-3168 9900",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "Baseline Verified",
+        "draft": "RM 21,400.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-MATCH",
+        "draft": "PO-MATCH",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "\u26a0\ufe0f Bank credentials differ from Master Ledger on Account Number. Blocks payment approval.",
+    "defect_fields": 2,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_046",
+    "subject": "Invoice #SP-9980 - High Density Fluting Board Consignment",
+    "sender_name": "Selangor Paper Products Billing",
+    "sender_email": "sales@selangorpaper.com.my",
+    "category": "Manufacturing",
+    "status": "LOCKED_CRITICAL",
+    "risk_score": 95,
+    "received_date": "2026-10-07 11:45",
+    "files": [
+      "invoice_spliced_tampered.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Selangor Paper Products",
+        "draft": "Selangor Paper Products",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "RHB Bank",
+        "draft": "Public Bank",
+        "status": "defect",
+        "score": 70
+      },
+      "account_no": {
+        "truth": "21201299887766",
+        "draft": "665544332211",
+        "status": "defect",
+        "score": 70
+      },
+      "landline": {
+        "truth": "+60 3-8736 1122",
+        "draft": "+60 3-8736 1122",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "Baseline Verified",
+        "draft": "RM 13,800.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-MATCH",
+        "draft": "PO-MATCH",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "\u26a0\ufe0f Bank credentials differ from Master Ledger on Account Number. Blocks payment approval.",
+    "defect_fields": 2,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_047",
+    "subject": "Notice of Accelerated Claim Settlement #SS-MULE-1",
+    "sender_name": "Southern Steel Supplies Sdn Bhd Treasury",
+    "sender_email": "accounts@southern-steel-direct.com",
+    "category": "Raw Materials",
+    "status": "LOCKED_CRITICAL",
+    "risk_score": 99,
+    "received_date": "2026-10-07 11:55",
+    "files": [
+      "invoice_mule_account.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Southern Steel Supplies Sdn Bhd",
+        "draft": "Southern Steel Supplies Sdn Bhd",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "CIMB Bank",
+        "draft": "CIMB Bank",
+        "status": "defect",
+        "score": 70
+      },
+      "account_no": {
+        "truth": "8001234567",
+        "draft": "800944112299",
+        "status": "defect",
+        "score": 70
+      },
+      "landline": {
+        "truth": "+60 3-3344 5566",
+        "draft": "+60 11-2345 6789",
+        "status": "defect",
+        "score": 70
+      },
+      "amount": {
+        "truth": "Baseline Verified",
+        "draft": "RM 44,500.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-Valid",
+        "draft": "PO-MULE",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "\ud83d\udea8 Beneficiary account flagged on PDRM CCID SemakMule fraud blacklist.",
+    "defect_fields": 3,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_048",
+    "subject": "Urgent Bonded Trucking Disbursal #ML-MULE-2",
+    "sender_name": "Mega Logistics Sdn Bhd Treasury",
+    "sender_email": "billing@mega-logistics-corp.com",
+    "category": "Logistics",
+    "status": "LOCKED_CRITICAL",
+    "risk_score": 99,
+    "received_date": "2026-10-07 11:55",
+    "files": [
+      "invoice_mule_account.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Mega Logistics Sdn Bhd",
+        "draft": "Mega Logistics Sdn Bhd",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "Maybank",
+        "draft": "Maybank",
+        "status": "defect",
+        "score": 70
+      },
+      "account_no": {
+        "truth": "514012345678",
+        "draft": "111222333444",
+        "status": "defect",
+        "score": 70
+      },
+      "landline": {
+        "truth": "+60 3-7722 8888",
+        "draft": "+60 11-8765 4321",
+        "status": "defect",
+        "score": 70
+      },
+      "amount": {
+        "truth": "Baseline Verified",
+        "draft": "RM 24,900.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-Valid",
+        "draft": "PO-MULE",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "\ud83d\udea8 Beneficiary account flagged on PDRM CCID SemakMule fraud blacklist.",
+    "defect_fields": 3,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_049",
+    "subject": "Hardware Supply Inbound Tax Invoice #KV-8821 (Account Dormant >200 Days)",
+    "sender_name": "Klang Valley Hardware Sales",
+    "sender_email": "sales@klangvalleyhardware.com.my",
+    "category": "Hardware",
+    "status": "NEEDS_REVIEW",
+    "risk_score": 65,
+    "received_date": "2026-10-07 10:00",
+    "files": [
+      "invoice_dormant_kv.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Klang Valley Hardware",
+        "draft": "Klang Valley Hardware",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "Hong Leong Bank",
+        "draft": "Hong Leong Bank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "00300123456",
+        "draft": "00300123456",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-5569 1122",
+        "draft": "+60 3-5569 1122",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "\u2264 RM 8,000.00",
+        "draft": "RM 6,200.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-KV-",
+        "draft": "PO-KV-8821",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "\u26a0\ufe0f Supplier profile has been inactive for >180 days. Requires senior re-authorization.",
+    "defect_fields": 1,
+    "can_extract_live": true
+  },
+  {
+    "id": "inv_050",
+    "subject": "Industrial Coatings & Primer Milestone Billing #MP-4401 (Account Dormant >200 Days)",
+    "sender_name": "Malayan Paint Billing",
+    "sender_email": "billing@malayanpaint.com.my",
+    "category": "Manufacturing",
+    "status": "NEEDS_REVIEW",
+    "risk_score": 65,
+    "received_date": "2026-10-07 10:10",
+    "files": [
+      "invoice_dormant_mp.pdf"
+    ],
+    "comparison": {
+      "vendor_name": {
+        "truth": "Malayan Paint & Coatings",
+        "draft": "Malayan Paint & Coatings",
+        "status": "match",
+        "score": 100
+      },
+      "bank_name": {
+        "truth": "Public Bank",
+        "draft": "Public Bank",
+        "status": "match",
+        "score": 100
+      },
+      "account_no": {
+        "truth": "3987654321",
+        "draft": "3987654321",
+        "status": "match",
+        "score": 100
+      },
+      "landline": {
+        "truth": "+60 3-5191 4400",
+        "draft": "+60 3-5191 4400",
+        "status": "match",
+        "score": 100
+      },
+      "amount": {
+        "truth": "\u2264 RM 18,000.00",
+        "draft": "RM 14,500.00",
+        "status": "match",
+        "score": 100
+      },
+      "po_number": {
+        "truth": "PO-MP-",
+        "draft": "PO-MP-4401",
+        "status": "match",
+        "score": 100
+      }
+    },
+    "banner_message": "\u26a0\ufe0f Supplier profile has been inactive for >180 days. Requires senior re-authorization.",
+    "defect_fields": 1,
+    "can_extract_live": true
+  }
+]

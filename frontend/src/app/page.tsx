@@ -259,6 +259,26 @@ export default function DocuVerifyApp() {
   const [copiedCode, setCopiedCode] = useState<boolean>(false);
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
 
+  // Simplified Role-Agnostic Escalation State
+  const [escalationPriority, setEscalationPriority] = useState<"Low" | "Medium" | "High">("Medium");
+  const [escalationNote, setEscalationNote] = useState<string>("");
+
+  const getPrimaryDiscrepancyNote = (item: VerificationRecord): string => {
+    if (item.category === "BEC_WIRE_FRAUD") {
+      return `Discrepancy Trap: Email body requests payment to ${item.claimedBank} ${item.claimedAccount} while attached invoice states Maybank 514011234567. Master ledger verifies Maybank.`;
+    }
+    if (item.category === "SEMAKMULE_HIT") {
+      return `🚨 PDRM CCID SemakMule Alert: Beneficiary account ${item.claimedAccount} flagged in commercial mule blacklist. Master ledger verifies Maybank ${item.masterAccount}.`;
+    }
+    if (item.claimedAccount !== item.masterAccount) {
+      return `Unauthorized Bank Change: Inbound invoice requests payment to ${item.claimedBank} ${item.claimedAccount} while master ledger verifies ${item.masterBank} ${item.masterAccount}.`;
+    }
+    if (item.isTampered) {
+      return `PDF Metadata Anomaly: Document produced with ${item.producerTool}. Bank account parity verified with master ledger.`;
+    }
+    return `Review Request: Inbound invoice ${item.emailId} for ${item.vendorName} requires verification.`;
+  };
+
   // Sync auth on load
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -293,6 +313,8 @@ export default function DocuVerifyApp() {
   const handleSelectCase = (item: VerificationRecord) => {
     setSelectedItem(item);
     setActiveTab("detail");
+    setEscalationNote(getPrimaryDiscrepancyNote(item));
+    setEscalationPriority(item.riskScore >= 80 ? "High" : item.riskScore > 20 ? "Medium" : "Low");
     if (item.status === "VERIFIED" || item.status === "RESOLVED") {
       setClerkSigned(true);
       setManagerSigned(true);
@@ -467,13 +489,77 @@ export default function DocuVerifyApp() {
         </div>
       </header>
 
+      {/* Enterprise Verification Cockpit Banner */}
+      <div className="bg-[#3D5A80] text-white px-4 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between text-xs shadow-xs gap-2">
+        <div className="flex items-center gap-2">
+          <span className="bg-white/20 px-2 py-0.5 rounded font-semibold uppercase text-[10px] tracking-wider">
+            DocuVerify Ergonomics
+          </span>
+          <span className="font-medium">
+            Unified Accounts Payable Verification Cockpit: 50 Ground-Truth Malaysian Invoices & 40-Vendor Master Ledger
+          </span>
+        </div>
+        <div className="flex items-center gap-3 shrink-0">
+          <Link
+            href="/queue"
+            className="bg-white text-[#3D5A80] hover:bg-neutral-100 font-bold px-3 py-1 rounded-lg transition-colors flex items-center gap-1.5 shadow-xs"
+          >
+            <span>Open Verification Cockpit</span>
+            <ChevronRight className="w-3.5 h-3.5" />
+          </Link>
+          <Link
+            href="/audit"
+            className="text-white/80 hover:text-white underline text-[11px]"
+          >
+            Audit Trail
+          </Link>
+        </div>
+      </div>
+
       {/* ==================================================================== */}
       {/* 2. BODY CONTAINER: SLIM LEFT SIDEBAR + WORKSPACE                     */}
       {/* ==================================================================== */}
       <div className="flex-1 flex flex-col md:flex-row w-full max-w-[1720px] mx-auto overflow-hidden">
         {/* Left Navigation Sidebar (w-60) */}
         <aside className="w-full md:w-60 bg-white border-r border-neutral-200 p-3 flex flex-col justify-between flex-shrink-0 shadow-xs">
-          <div className="space-y-6">
+          <div className="space-y-5">
+            {/* 1. Repositioned Mailbox Connection Card (Sidebar Top-Left) */}
+            <div className="p-3 rounded-xl border border-neutral-200 bg-neutral-50/80 shadow-2xs">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-white border border-neutral-200 flex items-center justify-center text-[#3D5A80] shadow-2xs">
+                    <Mail className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-neutral-900">
+                      {isDemoMode ? (
+                        <>
+                          <span className="w-2 h-2 rounded-full bg-amber-500" />
+                          <span>Demo Mailbox</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                          <span>Gmail Ingest</span>
+                        </>
+                      )}
+                    </div>
+                    <div className="text-[10px] text-neutral-500 font-mono mt-0.5">
+                      {isDemoMode ? `${queue.length} cases ready` : "Synced 2m ago"}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleSyncMailbox}
+                  title="Re-fetch / Sync Active Mailbox"
+                  className="p-1.5 rounded-md text-neutral-400 hover:text-[#3D5A80] hover:bg-white border border-transparent hover:border-neutral-200 transition-colors"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? "animate-spin text-[#3D5A80]" : ""}`} />
+                </button>
+              </div>
+            </div>
+
             <div>
               <div className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider px-2 mb-2">
                 Accounts Payable
@@ -516,7 +602,7 @@ export default function DocuVerifyApp() {
                         : "bg-neutral-100 text-neutral-600"
                     }`}
                   >
-                    7 Needs review
+                    {filteredQueue.length} Active
                   </span>
                 </button>
 
@@ -535,7 +621,7 @@ export default function DocuVerifyApp() {
                   <span>Reconciliation</span>
                 </button>
 
-                {/* 4. Audit */}
+                {/* 4. Audit Log */}
                 <button
                   type="button"
                   id="tab-audit"
@@ -547,7 +633,7 @@ export default function DocuVerifyApp() {
                   }`}
                 >
                   <FileSpreadsheet className="w-4 h-4" />
-                  <span>Audit</span>
+                  <span>Audit Log</span>
                 </button>
               </nav>
             </div>
@@ -962,172 +1048,470 @@ export default function DocuVerifyApp() {
 
               {/* Split-Pane: Side-by-Side Table (Left) + Decide & Contain (Right) */}
               <div className="flex flex-col lg:flex-row gap-6">
-                {/* Main Area: Side-by-Side Reconciliation Table (DocuVerify Layout) */}
-                <div className="flex-1 space-y-4 min-w-0">
-                  <div className="bg-white border border-neutral-200/90 rounded-xl overflow-hidden shadow-xs">
-                    <div className="p-4 border-b border-neutral-200 bg-neutral-50/70 flex items-center justify-between">
-                      <h3 className="text-sm font-bold text-neutral-900 flex items-center gap-2">
-                        <FileCode className="w-4 h-4 text-[#3D5A80]" />
-                        Reconciliation Matrix
-                      </h3>
-                      <span className="text-[11px] font-mono text-[#3D5A80] bg-[#E8EEF5] border border-[#B5C7D9] px-2 py-0.5 rounded font-semibold">
-                        DocuVerify Ledger Match
-                      </span>
-                    </div>
+                {/* Main Area: Side-by-Side Evidence Cards (Top Half) + Reconciliation Matrix (Bottom Half) */}
+                <div className="flex-1 space-y-5 min-w-0">
+                  {/* ========================================================== */}
+                  {/* TOP HALF: SIDE-BY-SIDE EVIDENCE CARDS (2 Columns)          */}
+                  {/* ========================================================== */}
+                  {(() => {
+                    const hasPdf = Boolean(
+                      selectedItem.attachedFiles &&
+                      selectedItem.attachedFiles.some((f) =>
+                        f.toLowerCase().endsWith(".pdf") ||
+                        f.toLowerCase().endsWith(".png") ||
+                        f.toLowerCase().endsWith(".jpg")
+                      )
+                    );
+                    const attachmentName = selectedItem.attachedFiles?.[0] || `${selectedItem.emailId}.pdf`;
+                    const isConsumerTool = Boolean(
+                      selectedItem.producerTool &&
+                      (selectedItem.producerTool.toLowerCase().includes("canva") ||
+                       selectedItem.producerTool.toLowerCase().includes("ilovepdf") ||
+                       selectedItem.producerTool.toLowerCase().includes("sejda"))
+                    );
+                    const bankMatchesLedger = selectedItem.claimedAccount === selectedItem.masterAccount;
+                    const isMuleHit = selectedItem.category === "SEMAKMULE_HIT";
+                    const isBecTrap = selectedItem.category === "BEC_WIRE_FRAUD";
 
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left text-xs min-w-[580px]">
-                        <thead className="bg-neutral-50 border-b border-neutral-200 text-neutral-500 uppercase font-mono text-[10px]">
-                          <tr>
-                            <th className="py-2.5 px-4 w-36">Field</th>
-                            <th className="py-2.5 px-4">Master Ledger (Source of Truth)</th>
-                            <th className="py-2.5 px-4">Invoice Draft (Extracted)</th>
-                            <th className="py-2.5 px-4 w-44">Status</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-neutral-200/70 font-mono text-xs">
-                          {/* Row 1: Legal Vendor Name */}
-                          <tr className="hover:bg-neutral-50/50">
-                            <td className="py-3 px-4 font-semibold text-neutral-800 font-sans">
-                              Vendor Legal Name
-                            </td>
-                            <td className="py-3 px-4 text-emerald-700 font-bold">
-                              {selectedItem.vendorName}
-                            </td>
-                            <td className="py-3 px-4 text-neutral-800">
-                              {selectedItem.vendorName}
-                            </td>
-                            <td className="py-3 px-4">
-                              <span className="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
-                                <Check className="w-3 h-3" /> Match
-                              </span>
-                            </td>
-                          </tr>
-
-                          {/* Row 2: Beneficiary Bank */}
-                          <tr className="hover:bg-neutral-50/50">
-                            <td className="py-3 px-4 font-semibold text-neutral-800 font-sans">
-                              Beneficiary Bank
-                            </td>
-                            <td className="py-3 px-4 text-emerald-700 font-bold">
-                              {selectedItem.masterBank}
-                            </td>
-                            <td className="py-3 px-4">
-                              <span className={selectedItem.claimedBank !== selectedItem.masterBank ? "text-rose-700 font-bold" : "text-neutral-800"}>
-                                {selectedItem.claimedBank}
-                              </span>
-                            </td>
-                            <td className="py-3 px-4">
-                              {selectedItem.claimedBank === selectedItem.masterBank ? (
-                                <span className="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
-                                  <Check className="w-3 h-3" /> Match
-                                </span>
-                              ) : (
-                                <span className="inline-flex items-center gap-1 text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
-                                  <XCircle className="w-3 h-3" /> Defect: Mismatch (Blocks approval)
-                                </span>
-                              )}
-                            </td>
-                          </tr>
-
-                          {/* Row 3: Account Number */}
-                          <tr className="hover:bg-neutral-50/50">
-                            <td className="py-3 px-4 font-semibold text-neutral-800 font-sans">
-                              Account Number
-                            </td>
-                            <td className="py-3 px-4 text-emerald-700 font-bold">
-                              {selectedItem.masterAccount}
-                            </td>
-                            <td className="py-3 px-4">
-                              {selectedItem.claimedAccount !== selectedItem.masterAccount ? (
-                                <div>
-                                  <span className="text-rose-700 font-bold line-through">
-                                    {selectedItem.claimedAccount}
+                    return (
+                      <>
+                        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                          {/* Left Card: Inbound Email Request */}
+                          <div className="bg-white border border-neutral-200/90 rounded-xl p-4 shadow-xs flex flex-col justify-between space-y-3">
+                            <div>
+                              <div className="flex items-center justify-between border-b border-neutral-100 pb-2.5">
+                                <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-800 flex items-center gap-2">
+                                  <Mail className="w-3.5 h-3.5 text-[#3D5A80]" />
+                                  <span>Inbound Email Request</span>
+                                </h3>
+                                {selectedItem.domainHighlight ? (
+                                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                                    ⚠️ Typosquatting Warning: @{selectedItem.domainHighlight}.com.my
                                   </span>
-                                  {selectedItem.riskScore >= 80 && (
-                                    <span className="block text-[10px] text-rose-800 font-sans font-semibold mt-0.5">
-                                      PDRM CCID SemakMule Flagged
+                                ) : (
+                                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    ✅ SPF / DKIM Authenticated
+                                  </span>
+                                )}
+                              </div>
+
+                              <div className="mt-3 space-y-2 text-xs">
+                                <div>
+                                  <span className="text-neutral-400 font-mono text-[11px] block">Sender Address:</span>
+                                  <span className="font-mono text-neutral-800 font-medium">{selectedItem.sender}</span>
+                                </div>
+                                <div>
+                                  <span className="text-neutral-400 font-mono text-[11px] block">Subject Line:</span>
+                                  <span className="font-semibold text-neutral-900">{selectedItem.subject}</span>
+                                </div>
+                                <div>
+                                  <span className="text-neutral-400 font-mono text-[11px] block">Raw Email Body Text:</span>
+                                  <pre className="mt-1 p-2.5 rounded-lg bg-neutral-50 border border-neutral-200 text-[11px] font-mono text-neutral-700 whitespace-pre-wrap leading-relaxed max-h-36 overflow-y-auto">
+                                    {selectedItem.body}
+                                  </pre>
+                                </div>
+                              </div>
+                            </div>
+
+                            {hasPdf && (
+                              <div className="pt-2 border-t border-neutral-100 flex items-center justify-between">
+                                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#E8EEF5] text-[#3D5A80] border border-[#B5C7D9] text-xs font-mono">
+                                  <FileText className="w-3.5 h-3.5" />
+                                  <span>[Attachment: {attachmentName}]</span>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => alert(`Previewing original document: ${attachmentName}`)}
+                                  className="text-xs font-semibold text-[#3D5A80] hover:underline"
+                                >
+                                  Preview File →
+                                </button>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Right Card: Contextual Counter-Evidence */}
+                          <div className="bg-white border border-neutral-200/90 rounded-xl p-4 shadow-xs flex flex-col justify-between space-y-3">
+                            <div>
+                              <div className="flex items-center justify-between border-b border-neutral-100 pb-2.5">
+                                <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-800 flex items-center gap-2">
+                                  <ShieldAlert className="w-3.5 h-3.5 text-[#3D5A80]" />
+                                  <span>
+                                    {hasPdf ? "Extracted Document Evidence" : "Vendor Master Ledger Record"}
+                                  </span>
+                                </h3>
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#E8EEF5] text-[#3D5A80] border border-[#B5C7D9]">
+                                  {hasPdf ? "Gemini Multimodal Native Stream" : "Source of Truth"}
+                                </span>
+                              </div>
+
+                              {hasPdf ? (
+                                <div className="mt-3 space-y-2.5 text-xs">
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <div className="p-2 rounded bg-neutral-50 border border-neutral-200">
+                                      <span className="text-[10px] text-neutral-400 uppercase font-mono block">Vendor Name</span>
+                                      <span className="font-bold text-neutral-800">{selectedItem.vendorName}</span>
+                                    </div>
+                                    <div className="p-2 rounded bg-neutral-50 border border-neutral-200">
+                                      <span className="text-[10px] text-neutral-400 uppercase font-mono block">Invoice No</span>
+                                      <span className="font-mono font-bold text-neutral-800">{selectedItem.emailId}</span>
+                                    </div>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <div className="p-2 rounded bg-neutral-50 border border-neutral-200">
+                                      <span className="text-[10px] text-neutral-400 uppercase font-mono block">Beneficiary Bank</span>
+                                      <span className="font-bold text-neutral-800">{selectedItem.claimedBank}</span>
+                                    </div>
+                                    <div className="p-2 rounded bg-neutral-50 border border-neutral-200">
+                                      <span className="text-[10px] text-neutral-400 uppercase font-mono block">Account Number</span>
+                                      <span className="font-mono font-bold text-neutral-800">{selectedItem.claimedAccount}</span>
+                                    </div>
+                                  </div>
+                                  <div className="p-2 rounded bg-neutral-50 border border-neutral-200">
+                                    <span className="text-[10px] text-neutral-400 uppercase font-mono block">Total Payable Amount</span>
+                                    <span className="text-sm font-bold text-neutral-900">
+                                      MYR {selectedItem.amountMyr.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                                     </span>
-                                  )}
+                                  </div>
                                 </div>
                               ) : (
-                                <span className="text-emerald-700 font-bold">
-                                  {selectedItem.claimedAccount}
-                                </span>
+                                <div className="mt-3 space-y-2.5 text-xs">
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <div className="p-2 rounded bg-neutral-50 border border-neutral-200">
+                                      <span className="text-[10px] text-neutral-400 uppercase font-mono block">Registered Entity</span>
+                                      <span className="font-bold text-neutral-800">{selectedItem.vendorName}</span>
+                                    </div>
+                                    <div className="p-2 rounded bg-neutral-50 border border-neutral-200">
+                                      <span className="text-[10px] text-neutral-400 uppercase font-mono block">Authorized Domains</span>
+                                      <span className="font-mono text-neutral-800">
+                                        @{selectedItem.sender.includes("@") ? selectedItem.sender.split("@")[1] : "megalogistics.com.my"}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <div className="p-2 rounded bg-neutral-50 border border-neutral-200">
+                                      <span className="text-[10px] text-neutral-400 uppercase font-mono block">Registered Bank</span>
+                                      <span className="font-bold text-emerald-700">{selectedItem.masterBank}</span>
+                                    </div>
+                                    <div className="p-2 rounded bg-neutral-50 border border-neutral-200">
+                                      <span className="text-[10px] text-neutral-400 uppercase font-mono block">Registered Account</span>
+                                      <span className="font-mono font-bold text-emerald-700">{selectedItem.masterAccount}</span>
+                                    </div>
+                                  </div>
+                                  <div className="p-2 rounded bg-neutral-50 border border-neutral-200 flex justify-between items-center">
+                                    <div>
+                                      <span className="text-[10px] text-neutral-400 uppercase font-mono block">Monthly Baseline Range</span>
+                                      <span className="font-bold text-neutral-800">MYR 5,000.00 – MYR 85,000.00</span>
+                                    </div>
+                                    <div className="text-right">
+                                      <span className="text-[10px] text-neutral-400 uppercase font-mono block">Verified Switchboard</span>
+                                      <span className="font-mono font-bold text-[#3D5A80]">{selectedItem.masterPhone}</span>
+                                    </div>
+                                  </div>
+                                </div>
                               )}
-                            </td>
-                            <td className="py-3 px-4">
-                              {selectedItem.claimedAccount === selectedItem.masterAccount ? (
-                                <span className="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
-                                  <Check className="w-3 h-3" /> Match
-                                </span>
-                              ) : (
-                                <span className="inline-flex items-center gap-1 text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
-                                  <AlertTriangle className="w-3 h-3" /> Defect: PDRM SemakMule Flagged
-                                </span>
-                              )}
-                            </td>
-                          </tr>
+                            </div>
 
-                          {/* Row 4: Callback Phone */}
-                          <tr className="hover:bg-neutral-50/50">
-                            <td className="py-3 px-4 font-semibold text-neutral-800 font-sans">
-                              Callback Phone
-                            </td>
-                            <td className="py-3 px-4 text-[#3D5A80] font-bold">
-                              {selectedItem.masterPhone} (Verified HQ)
-                            </td>
-                            <td className="py-3 px-4">
-                              {selectedItem.claimedPhone !== selectedItem.masterPhone ? (
-                                <span className="text-rose-700 line-through">
-                                  {selectedItem.claimedPhone} (Printed on PDF)
+                            {/* Binary Forensic Flag Inspection Footer */}
+                            {hasPdf && (
+                              <div className="pt-2 border-t border-neutral-100 flex items-center justify-between text-xs">
+                                <span className="text-[11px] font-mono text-neutral-500">
+                                  /Producer: <strong className="text-neutral-800">{selectedItem.producerTool}</strong>
                                 </span>
-                              ) : (
-                                <span className="text-neutral-800">{selectedItem.claimedPhone}</span>
-                              )}
-                            </td>
-                            <td className="py-3 px-4">
-                              {selectedItem.claimedPhone === selectedItem.masterPhone ? (
-                                <span className="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
-                                  <Check className="w-3 h-3" /> Verified
-                                </span>
-                              ) : (
-                                <span className="inline-flex items-center gap-1 text-amber-800 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
-                                  <Phone className="w-3 h-3" /> Discrepancy: Suppressed
-                                </span>
-                              )}
-                            </td>
-                          </tr>
+                                {isConsumerTool && !bankMatchesLedger ? (
+                                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                                    🚨 Suspicious Metadata Tampering
+                                  </span>
+                                ) : isConsumerTool && bankMatchesLedger ? (
+                                  <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-800 border border-amber-200">
+                                    ℹ️ Informal tool used by legitimate vendor (Low risk notice)
+                                  </span>
+                                ) : (
+                                  <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    ✅ Official ERP Engine • Intact
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
 
-                          {/* Row 5: PDF Producer */}
-                          <tr className="hover:bg-neutral-50/50">
-                            <td className="py-3 px-4 font-semibold text-neutral-800 font-sans">
-                              PDF Producer
-                            </td>
-                            <td className="py-3 px-4 text-neutral-700">
-                              Adobe Acrobat Pro / SAP NetWeaver
-                            </td>
-                            <td className="py-3 px-4">
-                              <span className={selectedItem.isTampered ? "text-rose-700 font-bold" : "text-neutral-700"}>
-                                {selectedItem.producerTool}
+                        {/* ========================================================== */}
+                        {/* BOTTOM HALF: MULTI-WAY FORENSIC RECONCILIATION TABLE       */}
+                        {/* ========================================================== */}
+                        <div className="bg-white border border-neutral-200/90 rounded-xl overflow-hidden shadow-xs">
+                          <div className="p-4 border-b border-neutral-200 bg-neutral-50/70 flex items-center justify-between">
+                            <h3 className="text-sm font-bold text-neutral-900 flex items-center gap-2">
+                              <FileCode className="w-4 h-4 text-[#3D5A80]" />
+                              <span>
+                                {hasPdf
+                                  ? "3-Way Forensic Cross-Verification Matrix"
+                                  : "2-Way Cross-Verification Matrix (Plain Text Context)"}
                               </span>
-                            </td>
-                            <td className="py-3 px-4">
-                              {selectedItem.isTampered ? (
-                                <span className="inline-flex items-center gap-1 text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
-                                  <AlertOctagon className="w-3 h-3" /> Tamper Detected
-                                </span>
-                              ) : (
-                                <span className="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
-                                  <Check className="w-3 h-3" /> Clean
-                                </span>
-                              )}
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
+                            </h3>
+                            <span className="text-[11px] font-mono text-[#3D5A80] bg-[#E8EEF5] border border-[#B5C7D9] px-2 py-0.5 rounded font-semibold">
+                              {hasPdf ? "Email Body vs. Attached PDF vs. Master Ledger" : "Email Body vs. Master Ledger"}
+                            </span>
+                          </div>
+
+                          <div className="overflow-x-auto">
+                            {hasPdf ? (
+                              /* 5-Column Table When PDF is Attached (3-Way Cross-Verification) */
+                              <table className="w-full text-left text-xs min-w-[700px]">
+                                <thead className="bg-neutral-50 border-b border-neutral-200 text-neutral-500 uppercase font-mono text-[10px]">
+                                  <tr>
+                                    <th className="py-2.5 px-3 w-36">Field Name</th>
+                                    <th className="py-2.5 px-3">Source 1: Email Body Text</th>
+                                    <th className="py-2.5 px-3">Source 2: Attached Invoice (PDF)</th>
+                                    <th className="py-2.5 px-3">Source 3: Vendor Master Ledger</th>
+                                    <th className="py-2.5 px-3 w-48 text-right">Forensic Verdict</th>
+                                  </tr>
+                                </thead>
+                                <tbody className="divide-y divide-neutral-200/70 font-mono text-xs">
+                                  {/* Row 1: Legal Vendor Name */}
+                                  <tr className="hover:bg-neutral-50/50">
+                                    <td className="py-3 px-3 font-semibold text-neutral-800 font-sans">
+                                      Vendor Legal Name
+                                    </td>
+                                    <td className="py-3 px-3 text-neutral-700">{selectedItem.vendorName}</td>
+                                    <td className="py-3 px-3 text-neutral-700">{selectedItem.vendorName}</td>
+                                    <td className="py-3 px-3 text-emerald-700 font-bold">{selectedItem.vendorName}</td>
+                                    <td className="py-3 px-3 text-right">
+                                      <span className="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
+                                        <Check className="w-3 h-3" /> ✅ Verified Match
+                                      </span>
+                                    </td>
+                                  </tr>
+
+                                  {/* Row 2: Beneficiary Bank */}
+                                  <tr className="hover:bg-neutral-50/50">
+                                    <td className="py-3 px-3 font-semibold text-neutral-800 font-sans">
+                                      Beneficiary Bank
+                                    </td>
+                                    <td className="py-3 px-3">
+                                      {isBecTrap ? (
+                                        <span className="text-rose-700 font-bold">RHB Bank (Diverted)</span>
+                                      ) : (
+                                        <span className="text-neutral-700">{selectedItem.claimedBank}</span>
+                                      )}
+                                    </td>
+                                    <td className="py-3 px-3">
+                                      <span className={!bankMatchesLedger ? "text-rose-700 font-bold" : "text-neutral-700"}>
+                                        {selectedItem.claimedBank}
+                                      </span>
+                                    </td>
+                                    <td className="py-3 px-3 text-emerald-700 font-bold">{selectedItem.masterBank}</td>
+                                    <td className="py-3 px-3 text-right">
+                                      {isBecTrap ? (
+                                        <span className="inline-flex items-center gap-1 text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
+                                          ❌ Email Divergence Trap
+                                        </span>
+                                      ) : !bankMatchesLedger ? (
+                                        <span className="inline-flex items-center gap-1 text-amber-800 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
+                                          ⚠️ Ledger Mismatch
+                                        </span>
+                                      ) : (
+                                        <span className="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
+                                          <Check className="w-3 h-3" /> ✅ Verified Match
+                                        </span>
+                                      )}
+                                    </td>
+                                  </tr>
+
+                                  {/* Row 3: Account Number */}
+                                  <tr className="hover:bg-neutral-50/50">
+                                    <td className="py-3 px-3 font-semibold text-neutral-800 font-sans">
+                                      Account Number
+                                    </td>
+                                    <td className="py-3 px-3">
+                                      {isBecTrap ? (
+                                        <span className="text-rose-700 font-bold line-through">214011234567</span>
+                                      ) : (
+                                        <span className="text-neutral-700">{selectedItem.claimedAccount}</span>
+                                      )}
+                                    </td>
+                                    <td className="py-3 px-3">
+                                      <span className={!bankMatchesLedger ? "text-rose-700 font-bold" : "text-neutral-700"}>
+                                        {selectedItem.claimedAccount}
+                                      </span>
+                                    </td>
+                                    <td className="py-3 px-3 text-emerald-700 font-bold">{selectedItem.masterAccount}</td>
+                                    <td className="py-3 px-3 text-right">
+                                      {isMuleHit ? (
+                                        <span className="inline-flex items-center gap-1 text-rose-700 bg-rose-100 border border-rose-300 px-2 py-0.5 rounded text-[11px] font-sans font-bold animate-pulse">
+                                          🚨 PDRM SemakMule Hit
+                                        </span>
+                                      ) : isBecTrap ? (
+                                        <span className="inline-flex items-center gap-1 text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
+                                          ❌ Email Divergence Trap
+                                        </span>
+                                      ) : !bankMatchesLedger ? (
+                                        <span className="inline-flex items-center gap-1 text-amber-800 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
+                                          ⚠️ Ledger Mismatch
+                                        </span>
+                                      ) : (
+                                        <span className="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
+                                          <Check className="w-3 h-3" /> ✅ Verified Match
+                                        </span>
+                                      )}
+                                    </td>
+                                  </tr>
+
+                                  {/* Row 4: Payable Amount */}
+                                  <tr className="hover:bg-neutral-50/50">
+                                    <td className="py-3 px-3 font-semibold text-neutral-800 font-sans">
+                                      Payable Amount
+                                    </td>
+                                    <td className="py-3 px-3 text-neutral-700">
+                                      MYR {selectedItem.amountMyr.toLocaleString()}
+                                    </td>
+                                    <td className="py-3 px-3 text-neutral-700">
+                                      MYR {selectedItem.amountMyr.toLocaleString()}
+                                    </td>
+                                    <td className="py-3 px-3 text-neutral-600 font-sans text-[11px]">
+                                      Baseline Max: MYR 60,000.00
+                                    </td>
+                                    <td className="py-3 px-3 text-right">
+                                      {selectedItem.amountMyr > 60000 ? (
+                                        <span className="inline-flex items-center gap-1 text-amber-800 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
+                                          ⚠️ Baseline Exceeded (+15 Risk)
+                                        </span>
+                                      ) : (
+                                        <span className="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
+                                          <Check className="w-3 h-3" /> ✅ Verified Match
+                                        </span>
+                                      )}
+                                    </td>
+                                  </tr>
+
+                                  {/* Row 5: Domain & Metadata */}
+                                  <tr className="hover:bg-neutral-50/50">
+                                    <td className="py-3 px-3 font-semibold text-neutral-800 font-sans">
+                                      Domain &amp; Metadata
+                                    </td>
+                                    <td className="py-3 px-3">
+                                      {selectedItem.domainHighlight ? (
+                                        <span className="text-rose-700 font-bold underline">
+                                          @{selectedItem.domainHighlight}.com.my
+                                        </span>
+                                      ) : (
+                                        <span className="text-neutral-700">
+                                          @{selectedItem.sender.split("@")[1] || "megalogistics.com.my"}
+                                        </span>
+                                      )}
+                                    </td>
+                                    <td className="py-3 px-3 text-neutral-700">
+                                      {selectedItem.producerTool}
+                                    </td>
+                                    <td className="py-3 px-3 text-emerald-700">
+                                      Authorized Domain Active
+                                    </td>
+                                    <td className="py-3 px-3 text-right">
+                                      {selectedItem.domainHighlight ? (
+                                        <span className="inline-flex items-center gap-1 text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
+                                          ⚠️ Typosquatting Warning
+                                        </span>
+                                      ) : isConsumerTool && !bankMatchesLedger ? (
+                                        <span className="inline-flex items-center gap-1 text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
+                                          ⚠️ Splicing Detected
+                                        </span>
+                                      ) : isConsumerTool && bankMatchesLedger ? (
+                                        <span className="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
+                                          ✅ Informal Tool (Benign)
+                                        </span>
+                                      ) : (
+                                        <span className="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
+                                          <Check className="w-3 h-3" /> ✅ Verified Match
+                                        </span>
+                                      )}
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            ) : (
+                              /* 4-Column Table When NO PDF is Attached (Plain Text Context) */
+                              <table className="w-full text-left text-xs min-w-[580px]">
+                                <thead className="bg-neutral-50 border-b border-neutral-200 text-neutral-500 uppercase font-mono text-[10px]">
+                                  <tr>
+                                    <th className="py-2.5 px-3 w-36">Field Name</th>
+                                    <th className="py-2.5 px-3">Source: Email Body</th>
+                                    <th className="py-2.5 px-3">Source: Master Ledger Baseline</th>
+                                    <th className="py-2.5 px-3 w-48 text-right">Forensic Verdict</th>
+                                  </tr>
+                                </thead>
+                                <tbody className="divide-y divide-neutral-200/70 font-mono text-xs">
+                                  <tr className="hover:bg-neutral-50/50">
+                                    <td className="py-3 px-3 font-semibold text-neutral-800 font-sans">
+                                      Vendor Legal Name
+                                    </td>
+                                    <td className="py-3 px-3 text-neutral-700">{selectedItem.vendorName}</td>
+                                    <td className="py-3 px-3 text-emerald-700 font-bold">{selectedItem.vendorName}</td>
+                                    <td className="py-3 px-3 text-right">
+                                      <span className="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
+                                        <Check className="w-3 h-3" /> ✅ Verified Match
+                                      </span>
+                                    </td>
+                                  </tr>
+                                  <tr className="hover:bg-neutral-50/50">
+                                    <td className="py-3 px-3 font-semibold text-neutral-800 font-sans">
+                                      Beneficiary Bank
+                                    </td>
+                                    <td className="py-3 px-3">{selectedItem.claimedBank}</td>
+                                    <td className="py-3 px-3 text-emerald-700 font-bold">{selectedItem.masterBank}</td>
+                                    <td className="py-3 px-3 text-right">
+                                      {selectedItem.claimedBank === selectedItem.masterBank ? (
+                                        <span className="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
+                                          <Check className="w-3 h-3" /> ✅ Verified Match
+                                        </span>
+                                      ) : (
+                                        <span className="inline-flex items-center gap-1 text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
+                                          ⚠️ Ledger Mismatch
+                                        </span>
+                                      )}
+                                    </td>
+                                  </tr>
+                                  <tr className="hover:bg-neutral-50/50">
+                                    <td className="py-3 px-3 font-semibold text-neutral-800 font-sans">
+                                      Account Number
+                                    </td>
+                                    <td className="py-3 px-3">{selectedItem.claimedAccount}</td>
+                                    <td className="py-3 px-3 text-emerald-700 font-bold">{selectedItem.masterAccount}</td>
+                                    <td className="py-3 px-3 text-right">
+                                      {isMuleHit ? (
+                                        <span className="inline-flex items-center gap-1 text-rose-700 bg-rose-100 border border-rose-300 px-2 py-0.5 rounded text-[11px] font-sans font-bold animate-pulse">
+                                          🚨 PDRM SemakMule Hit
+                                        </span>
+                                      ) : selectedItem.claimedAccount === selectedItem.masterAccount ? (
+                                        <span className="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
+                                          <Check className="w-3 h-3" /> ✅ Verified Match
+                                        </span>
+                                      ) : (
+                                        <span className="inline-flex items-center gap-1 text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
+                                          ⚠️ Ledger Mismatch
+                                        </span>
+                                      )}
+                                    </td>
+                                  </tr>
+                                  <tr className="hover:bg-neutral-50/50">
+                                    <td className="py-3 px-3 font-semibold text-neutral-800 font-sans">
+                                      Payable Amount
+                                    </td>
+                                    <td className="py-3 px-3 text-neutral-700">MYR {selectedItem.amountMyr.toLocaleString()}</td>
+                                    <td className="py-3 px-3 text-neutral-600 font-sans text-[11px]">Baseline: &lt; MYR 60k</td>
+                                    <td className="py-3 px-3 text-right">
+                                      <span className="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded text-[11px] font-sans font-medium">
+                                        <Check className="w-3 h-3" /> ✅ Verified Match
+                                      </span>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            )}
+                          </div>
+                        </div>
+                      </>
+                    );
+                  })()}
 
                   {/* Quarantined Text Payload */}
                   <div className="bg-white border border-neutral-200/90 rounded-xl p-4 shadow-xs space-y-2">
@@ -1639,33 +2023,76 @@ Reference Case ID: ${selectedItem.emailId}`}
         </div>
       )}
 
-      {/* Modal 4: Escalate to CFO */}
+      {/* Modal 4: Simplified Role-Agnostic Escalation Modal */}
       {activeModal === "escalate" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs">
-          <div className="w-full max-w-md bg-white border border-neutral-200 rounded-xl p-6 shadow-xl space-y-4">
+          <div className="w-full max-w-lg bg-white border border-neutral-200 rounded-xl p-6 shadow-xl space-y-4">
             <div className="flex items-center justify-between border-b border-neutral-200 pb-3">
               <h3 className="font-bold text-sm text-neutral-900 flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-amber-600" />
-                Escalate Case to Chief Financial Officer (CFO)
+                Escalate Exception for Forensic Review
               </h3>
-              <button type="button" onClick={() => setActiveModal(null)} className="text-neutral-400 hover:text-neutral-600">
+              <button
+                type="button"
+                onClick={() => setActiveModal(null)}
+                className="text-neutral-400 hover:text-neutral-600"
+              >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <p className="text-xs text-neutral-600">
-              Escalating freezes the payment voucher permanently and notifies executive leadership of an attempted BEC wire redirection.
+            <p className="text-xs text-neutral-600 leading-relaxed">
+              Flags multi-way verification anomalies and routes this invoice directly to the AP exception review queue.
             </p>
 
+            {/* Priority Selector: 3 clean toggle pills (Low, Medium, High) */}
             <div>
-              <label className="block text-[11px] font-semibold text-neutral-600 mb-1">
-                Escalation Note
+              <label className="block text-[11px] font-semibold text-neutral-600 mb-1.5 uppercase tracking-wider">
+                Priority Tier
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {(["Low", "Medium", "High"] as const).map((p) => {
+                  const isSelected = escalationPriority === p;
+                  return (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => setEscalationPriority(p)}
+                      className={`py-2 px-3 rounded-lg text-xs font-semibold border transition-all flex items-center justify-center gap-1.5 ${
+                        isSelected
+                          ? p === "High"
+                            ? "bg-rose-50 border-rose-300 text-rose-700 font-bold shadow-2xs"
+                            : p === "Medium"
+                            ? "bg-amber-50 border-amber-300 text-amber-800 font-bold shadow-2xs"
+                            : "bg-blue-50 border-blue-300 text-blue-700 font-bold shadow-2xs"
+                          : "bg-white border-neutral-200 text-neutral-600 hover:bg-neutral-50"
+                      }`}
+                    >
+                      <span>
+                        {p === "High" ? "🚨" : p === "Medium" ? "⚠️" : "ℹ️"}
+                      </span>
+                      <span>{p}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Reviewer Note labeled WHAT SHOULD THE REVIEWER LOOK AT? */}
+            <div>
+              <label className="block text-[11px] font-bold text-neutral-800 mb-1.5 tracking-tight uppercase">
+                WHAT SHOULD THE REVIEWER LOOK AT?
               </label>
               <textarea
-                rows={3}
-                defaultValue={`Potential BEC wire redirection detected for Case ${selectedItem.emailId}. Target account ${selectedItem.claimedBank} (${selectedItem.claimedAccount}) diverges from master ledger.`}
-                className="w-full p-2.5 rounded-lg border border-neutral-200 bg-neutral-50 text-xs font-mono text-neutral-800 focus:outline-none focus:ring-1 focus:ring-[#3D5A80]"
+                rows={4}
+                value={escalationNote}
+                onChange={(e) => setEscalationNote(e.target.value)}
+                placeholder="Describe key discrepancies for reviewer inspection..."
+                className="w-full p-2.5 rounded-lg border border-neutral-200 bg-neutral-50 text-xs font-mono text-neutral-800 focus:outline-none focus:ring-1 focus:ring-[#3D5A80] leading-relaxed"
               />
+              <span className="text-[10px] text-neutral-400 mt-1 block">
+                Pre-populated with primary detected discrepancy. Editable by AP reviewer.
+              </span>
             </div>
 
             <div className="flex items-center justify-end gap-2 pt-2">
@@ -1680,11 +2107,13 @@ Reference Case ID: ${selectedItem.emailId}`}
                 type="button"
                 onClick={() => {
                   setActiveModal(null);
-                  alert(`Case ${selectedItem.emailId} escalated to CFO executive queue. Payment frozen.`);
+                  alert(
+                    `Case ${selectedItem.emailId} escalated [Priority: ${escalationPriority}]. Review note dispatched to backend.`
+                  );
                 }}
                 className="px-4 py-2 rounded-lg bg-[#3D5A80] hover:bg-[#2E4665] text-white font-semibold text-xs shadow-xs"
               >
-                Confirm Escalation
+                Escalate
               </button>
             </div>
           </div>

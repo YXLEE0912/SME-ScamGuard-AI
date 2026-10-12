@@ -1,0 +1,56 @@
+{
+  "source": "Royal Malaysia Police (PDRM) CCID SemakMule Financial Fraud Registry",
+  "last_updated": "2026-10-07T00:00:00Z",
+  "records_count": 7,
+  "blacklisted_accounts": [
+    {
+      "account_no": "111222333444",
+      "bank_name": "Maybank",
+      "report_count": 14,
+      "category": "Commercial Crime Syndicate Mule",
+      "status": "FROZEN_POLICE_ORDER"
+    },
+    {
+      "account_no": "888800001111",
+      "bank_name": "CIMB Bank",
+      "report_count": 9,
+      "category": "BEC Wire Interception Diverter",
+      "status": "FROZEN_POLICE_ORDER"
+    },
+    {
+      "account_no": "999888777666",
+      "bank_name": "Public Bank",
+      "report_count": 22,
+      "category": "Impersonation Wire Fraud",
+      "status": "FROZEN_POLICE_ORDER"
+    },
+    {
+      "account_no": "1410029000123456",
+      "bank_name": "RHB Bank",
+      "report_count": 7,
+      "category": "Unauthorized Procurement Diversion",
+      "status": "FROZEN_POLICE_ORDER"
+    },
+    {
+      "account_no": "800944112299",
+      "bank_name": "CIMB Bank",
+      "report_count": 31,
+      "category": "High-Risk BEC Syndicate Mule",
+      "status": "FROZEN_POLICE_ORDER"
+    },
+    {
+      "account_no": "214488990011",
+      "bank_name": "Hong Leong Bank",
+      "report_count": 5,
+      "category": "AP Invoice Splicing Funnel",
+      "status": "FROZEN_POLICE_ORDER"
+    },
+    {
+      "account_no": "319900228811",
+      "bank_name": "AmBank",
+      "report_count": 12,
+      "category": "Procurement Tamper Node",
+      "status": "FROZEN_POLICE_ORDER"
+    }
+  ]
+}

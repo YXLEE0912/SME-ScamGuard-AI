@@ -1,0 +1,60 @@
+{
+  "benchmark_metadata": {
+    "test_suite": "SME-ScamGuard-AI AP Forensic Audit Benchmark",
+    "timestamp": "2026-10-06 20:04:53",
+    "vendor_ledger_count": 40,
+    "total_cases_run": 300,
+    "total_duration_sec": 0.0057,
+    "avg_latency_ms": 0.019
+  },
+  "metrics": {
+    "overall_accuracy_pct": 100.0,
+    "recall_detection_rate_pct": 100.0,
+    "precision_pct": 100.0,
+    "false_positive_rate_legit_pct": 0.0,
+    "canva_sme_false_positive_pct": 0.0,
+    "confusion_matrix": {
+      "true_positives": 150,
+      "true_negatives": 150,
+      "false_positives": 0,
+      "false_negatives": 0
+    }
+  },
+  "breakdown_by_category": {
+    "Legitimate Clean Invoices": {
+      "total": 100,
+      "passed": 100,
+      "blocked": 0,
+      "verified": 100,
+      "needs_review": 0
+    },
+    "Legitimate Informal SME (Canva/iLovePDF)": {
+      "total": 50,
+      "passed": 50,
+      "blocked": 0,
+      "verified": 50,
+      "needs_review": 0
+    },
+    "BEC In-Transit Diversion": {
+      "total": 50,
+      "passed": 50,
+      "blocked": 50,
+      "verified": 0,
+      "needs_review": 0
+    },
+    "Unauthorized Bank Change (PDF Tamper)": {
+      "total": 50,
+      "passed": 50,
+      "blocked": 50,
+      "verified": 0,
+      "needs_review": 0
+    },
+    "PDRM SemakMule Blacklist Hit": {
+      "total": 50,
+      "passed": 50,
+      "blocked": 50,
+      "verified": 0,
+      "needs_review": 0
+    }
+  }
+}

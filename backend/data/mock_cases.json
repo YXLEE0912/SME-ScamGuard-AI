@@ -1,0 +1,77 @@
+[
+  {
+    "case_id": "INV-2026-8841",
+    "vendor_name": "TechParts Malaysia Sdn Bhd",
+    "sender": "billing@techparts-urgent.com",
+    "subject": "URGENT: Revised Banking Remittance Details for Claim #8841",
+    "body": "Dear Finance,\nOur primary Maybank account is under audit. Remit RM 98,500.00 today to CIMB Bank: 800944112299.",
+    "attachment_filename": "invoice_8841.pdf",
+    "extracted_fields": {
+      "vendor_name": "TechParts Malaysia Sdn Bhd",
+      "invoice_number": "INV-2026-8841",
+      "invoice_date": "2026-10-05",
+      "total_amount": 98500.0,
+      "currency": "MYR",
+      "bank_name": "CIMB Bank",
+      "bank_account_number": "800944112299",
+      "recipient_name": "TechParts Remittance Desk",
+      "confidence_score": 0.98,
+      "review_reasons": [
+        "PDF metadata anomaly detected: document produced/modified by consumer graphic tool (iLovePDF)"
+      ]
+    },
+    "reconciliation": {
+      "verdict": "BLOCKED",
+      "risk_score": 100,
+      "matched_vendor": "TechParts Malaysia Sdn Bhd",
+      "flags": [
+        "UNAUTHORIZED_BANK_CHANGE",
+        "SEMAKMULE_BLACKLIST_HIT",
+        "AMOUNT_EXCEEDS_BASELINE",
+        "PDF_METADATA_SUSPICIOUS"
+      ],
+      "checks": {
+        "domain_match": false,
+        "bank_account_match": false,
+        "email_pdf_consistent": true,
+        "semak_mule_clear": false,
+        "amount_within_threshold": false
+      },
+      "recommendation": "CRITICAL: Beneficiary bank account flagged on CCID SemakMule scam registry. Payment blocked."
+    }
+  },
+  {
+    "case_id": "INV-2026-1042",
+    "vendor_name": "TechParts Malaysia Sdn Bhd",
+    "sender": "billing@techparts.com.my",
+    "subject": "Monthly Spare Parts Delivery Statement #TP-2026-1042",
+    "body": "Dear Finance Team,\nPlease find attached our monthly statement for RM 14,800.00. Standard Maybank 514011234567.",
+    "attachment_filename": "freight_stmt_1042.pdf",
+    "extracted_fields": {
+      "vendor_name": "TechParts Malaysia Sdn Bhd",
+      "invoice_number": "TP-2026-1042",
+      "invoice_date": "2026-10-01",
+      "total_amount": 14800.0,
+      "currency": "MYR",
+      "bank_name": "Maybank",
+      "bank_account_number": "514011234567",
+      "recipient_name": "TechParts Malaysia Sdn Bhd",
+      "confidence_score": 0.99,
+      "review_reasons": []
+    },
+    "reconciliation": {
+      "verdict": "VERIFIED",
+      "risk_score": 0,
+      "matched_vendor": "TechParts Malaysia Sdn Bhd",
+      "flags": [],
+      "checks": {
+        "domain_match": true,
+        "bank_account_match": true,
+        "email_pdf_consistent": true,
+        "semak_mule_clear": true,
+        "amount_within_threshold": true
+      },
+      "recommendation": "VERIFIED: 3-Way reconciliation passed. Remittance bank details match Master Procurement Ledger."
+    }
+  }
+]

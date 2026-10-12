@@ -93,22 +93,18 @@ class GmailWatcherService:
             return False
         return "@" in self.username and len(self.password) >= 8
 
-    def fetch_latest_unread_emails(self, max_count: int = 3) -> List[EmailInput]:
+    def fetch_latest_unread_emails(self, max_count: int = 15) -> List[EmailInput]:
         """Fetch latest unread emails from Gmail INBOX and parse invoice data.
-
-        Extracts:
-        - subject
-        - clean sender email
-        - plain text body
-        - declared_bank_account via regex: \\b\\d{10,16}\\b
-        - declared_amount via regex: (?:RM|MYR|\\$)\\s*[\\d,]+(?:\\.\\d{2})?
-
-        Returns empty list if credentials missing, dummy, or on connection error.
+        
+        Strictly limits to max 15 results, verifies invoice attachments (PDF/PNG/JPEG),
+        and skips non-invoice or non-attachment emails cleanly.
         """
         if not self._has_credentials():
             logger.info("Gmail credentials missing or dummy placeholder; skipping live IMAP poll.")
             return []
 
+        # Cap max_count to 15
+        capped_count = min(max_count, 15)
         emails_collected: List[EmailInput] = []
         mail: Optional[imaplib.IMAP4_SSL] = None
 
@@ -117,15 +113,15 @@ class GmailWatcherService:
             mail.login(self.username, self.password)
             mail.select("INBOX")
 
-            # Search for unread emails first
+            # Search for unread emails with invoice keywords
             status, response = mail.search(None, "UNSEEN")
             if status != "OK" or not response or not response[0]:
                 logger.info("No unread emails found in Gmail INBOX.")
                 return []
 
             email_ids = response[0].split()
-            # Pick latest up to max_count
-            latest_ids = email_ids[-max_count:]
+            # Pick latest up to capped_count
+            latest_ids = email_ids[-capped_count:]
             latest_ids.reverse()
 
             for msg_id in latest_ids:
@@ -139,6 +135,26 @@ class GmailWatcherService:
                 # Extract Subject
                 subject_raw = msg.get("Subject", "")
                 subject = _decode_header_str(subject_raw) or "No Subject"
+
+                # Check keyword filter match
+                sub_low = subject.lower()
+                is_inv_kw = any(kw in sub_low for kw in ["invoice", "bill", "payment", "resit", "inbois", "remittance", "bank account"])
+
+                # Check attachment requirement
+                has_valid_attachment = False
+                if msg.is_multipart():
+                    for part in msg.walk():
+                        content_type = str(part.get_content_type() or "").lower()
+                        filename = str(part.get_filename() or "").lower()
+                        if any(content_type.startswith(t) for t in ["application/pdf", "image/png", "image/jpeg"]) or \
+                           any(filename.endswith(ext) for ext in [".pdf", ".png", ".jpg", ".jpeg"]):
+                            has_valid_attachment = True
+                            break
+
+                # If no valid document attachment, skip cleanly with debug log
+                if not has_valid_attachment:
+                    logger.debug("Skipping message %s: No valid invoice attachment (PDF/PNG/JPEG) found.", msg_id)
+                    continue
 
                 # Extract Clean Sender
                 from_raw = msg.get("From", "")

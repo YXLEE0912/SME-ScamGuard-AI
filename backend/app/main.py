@@ -29,7 +29,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# In-memory voucher registry for 4-Eyes dual authorization governance
+from backend.app.routers.ledger import router as ledger_router
+from backend.app.routers.demo import router as demo_router
+from backend.app.routers.mule_intel import router as mule_intel_router
+
+app.include_router(ledger_router)
+app.include_router(demo_router)
+app.include_router(mule_intel_router)
 VOUCHER_STORE: Dict[str, Dict[str, Any]] = {}
 
 def load_eval_cases() -> list:
@@ -213,3 +219,87 @@ def override_manager(voucher_id: str, req: OverrideRequest):
         "status": voucher["status"],
         "message": "Payment voucher unlocked and authorized for disbursement.",
     }
+
+
+# ============================================================================
+# DUAL PIPELINE EXECUTION (STAGE 4 MULTIMODAL INGESTION & DEMO / LIVE GMAIL)
+# ============================================================================
+
+from backend.app.services.document_extractor import document_extractor
+from backend.app.services.gmail_service import gmail_ingestion
+from backend.services.reconciliation import reconcile_invoice, reconcile_case, load_master_ledger
+
+
+@app.post("/api/v1/google/sync")
+async def sync_live_gmail():
+    """Live Gmail Pipeline: Fetches invoices matching strict query filtering,
+
+    runs multimodal extraction via Google GenAI, and performs 3-way reconciliation.
+    """
+    result = gmail_ingestion.fetch_inbound_invoices()
+    return result
+
+
+@app.get("/api/v1/demo/cases")
+async def get_demo_cases():
+    """Demo Mailbox Pipeline: Returns pre-computed fields stored in
+
+    backend/data/mock_cases.json so the triage queue loads with zero latency.
+    """
+    cases_file = Path(__file__).resolve().parent.parent / "data" / "mock_cases.json"
+    if cases_file.exists():
+        with open(cases_file, "r", encoding="utf-8") as f:
+            cases = json.load(f)
+            return {"status": "success", "count": len(cases), "cases": cases}
+    return {"status": "success", "count": 0, "cases": []}
+
+
+@app.post("/api/v1/demo/extract/{case_id}")
+async def rerun_demo_extraction(case_id: str):
+    """Demo Mailbox Pipeline Live Inspector: Opens local fixture file,
+
+    feeds bytes into live Gemini extractor, and returns real-time parsed output.
+    """
+    cases_file = Path(__file__).resolve().parent.parent / "data" / "mock_cases.json"
+    target_case = None
+    if cases_file.exists():
+        with open(cases_file, "r", encoding="utf-8") as f:
+            cases = json.load(f)
+            for c in cases:
+                if c.get("case_id") == case_id:
+                    target_case = c
+                    break
+
+    fixtures_dir = Path(__file__).resolve().parent.parent / "data" / "fixtures"
+    att_name = target_case.get("attachment_filename", "invoice_8841.pdf") if target_case else "invoice_8841.pdf"
+    fixture_path = fixtures_dir / att_name
+
+    raw_bytes = b"%PDF-1.4\n1 0 obj\n<< /Producer (SAP NetWeaver) >>\nendobj\n%%EOF"
+    if fixture_path.exists():
+        raw_bytes = fixture_path.read_bytes()
+
+    # Feed bytes into live extractor
+    extracted = document_extractor.extract_from_bytes(raw_bytes, mime_type="application/pdf")
+
+    # Downstream reconciliation
+    email_meta = {
+        "sender_email": target_case.get("sender", "billing@techparts.com.my") if target_case else "billing@techparts.com.my",
+        "email_body_bank_account": None,
+        "subject": target_case.get("subject", "Invoice Delivery") if target_case else "Invoice Delivery",
+    }
+    recon = reconcile_invoice(extracted.model_dump(), email_meta)
+
+    return {
+        "case_id": case_id,
+        "live_extracted": extracted.model_dump(),
+        "reconciliation": recon,
+    }
+
+
+@app.post("/api/reconcile")
+async def run_reconciliation(payload: Dict[str, Any]):
+    """Core 3-Way Reconciliation endpoint."""
+    extracted = payload.get("extracted_invoice", {})
+    email_meta = payload.get("email_metadata", {})
+    return reconcile_invoice(extracted, email_meta)
+

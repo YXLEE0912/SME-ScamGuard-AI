@@ -26,26 +26,29 @@ export default function LoginPage() {
   const handleDemoSignIn = () => {
     setIsLoadingDemo(true);
     setDemoAuthSession();
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("scamguard_demo_ingestion_illusion", "true");
+    }
     setTimeout(() => {
-      router.push("/?mode=demo");
+      router.push("/queue?mode=demo&ingest=1");
     }, 300);
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-[#F9FAFB] text-neutral-900 font-sans px-4 py-12 relative">
+    <div className="min-h-screen flex flex-col justify-center items-center bg-[#F9FAFB] dark:bg-[#0B0F17] text-neutral-900 dark:text-slate-100 font-sans px-4 py-12 relative">
       {/* Centered White Modal Card */}
-      <div className="w-full max-w-md bg-white border border-neutral-200/90 rounded-2xl p-8 sm:p-9 shadow-sm relative z-10 text-center">
+      <div className="w-full max-w-md bg-white dark:bg-[#111827] border border-neutral-200/90 dark:border-neutral-800 rounded-2xl p-8 sm:p-9 shadow-sm relative z-10 text-center">
         {/* Brand Header: Square Slate Navy Logo Mark with White Checkmark */}
         <div className="w-12 h-12 rounded-xl bg-[#3D5A80] flex items-center justify-center text-white mx-auto shadow-xs mb-5">
           <Check className="w-6 h-6 stroke-[3]" />
         </div>
 
         {/* Title & Subtitle */}
-        <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 mb-2">
-          Sign in to ScamGuard.AI
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900 dark:text-white mb-2">
+          Sign in to SME-ScamGuard
         </h1>
-        <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed max-w-sm mx-auto mb-7">
-          Reads your AP accounts mailbox and checks inbound supplier invoices against the Master Ledger and PDRM SemakMule records.
+        <p className="text-xs sm:text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed max-w-sm mx-auto mb-7">
+          Monitors your Accounts Payable inbox and validates every inbound invoice against your Master Procurement Ledger and commercial crime threat feeds.
         </p>
 
         {/* Dual Actions Container */}
@@ -56,7 +59,7 @@ export default function LoginPage() {
             id="btn-google-oauth"
             onClick={handleGoogleSignIn}
             disabled={isLoadingGoogle || isLoadingDemo}
-            className="w-full flex items-center justify-center gap-3 px-5 py-3 rounded-xl bg-[#3D5A80] hover:bg-[#2E4665] text-white font-medium text-xs sm:text-sm shadow-xs transition-colors active:scale-98 disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-3 px-5 py-3 rounded-xl bg-[#3D5A80] hover:bg-[#2E4665] text-white font-medium text-xs sm:text-sm shadow-xs transition-colors active:scale-98 disabled:opacity-50 cursor-pointer"
           >
             {isLoadingGoogle ? (
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -90,23 +93,23 @@ export default function LoginPage() {
               id="btn-demo-mailbox"
               onClick={handleDemoSignIn}
               disabled={isLoadingGoogle || isLoadingDemo}
-              className="w-full flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-white hover:bg-neutral-50 text-neutral-700 font-medium text-xs sm:text-sm border border-neutral-300 shadow-2xs transition-colors active:scale-98 disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-white dark:bg-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 font-medium text-xs sm:text-sm border border-neutral-300 dark:border-neutral-700 shadow-2xs transition-colors active:scale-98 disabled:opacity-50 cursor-pointer"
             >
               {isLoadingDemo ? (
-                <div className="w-3.5 h-3.5 border-2 border-neutral-700 border-t-transparent rounded-full animate-spin" />
+                <div className="w-3.5 h-3.5 border-2 border-neutral-700 dark:border-white border-t-transparent rounded-full animate-spin" />
               ) : null}
               <span>Continue with demo mailbox</span>
             </button>
-            <p className="text-[11px] text-neutral-400 mt-2">
-              Explores the shared invoice demo without connecting Google.
+            <p className="text-[11px] text-neutral-500 dark:text-neutral-400 mt-2">
+              Explores the active AP operations inbox without connecting Google. Read-only access. SME-ScamGuard never sends, deletes, or modifies external emails.
             </p>
           </div>
         </div>
 
         {/* Security Footer */}
-        <div className="flex items-center justify-center gap-1.5 text-xs text-neutral-500 pt-5 border-t border-neutral-100">
+        <div className="flex items-center justify-center gap-1.5 text-xs text-neutral-500 dark:text-neutral-400 pt-5 border-t border-neutral-100 dark:border-neutral-800">
           <Lock className="w-3.5 h-3.5 text-neutral-400" />
-          <span>Read-only access. ScamGuard never sends, deletes, or modifies your emails.</span>
+          <span>Read-only access. SME-ScamGuard never sends, deletes, or modifies external emails.</span>
         </div>
       </div>
 
