@@ -19,6 +19,44 @@ KNOWN_SEMAKMULE_ACCOUNTS: Set[str] = {
     "319900228811",
 }
 
+# ==============================================================================
+# FORMAL RISK FORMULA CONSTANTS (Proposal Section 4.5)
+# R = max(S_SemakMule, min(100, w1*I_Ledger + w2*I_Tool + w3*I_Urgency + w4*I_Auth + w5*I_Context))
+# ==============================================================================
+WEIGHT_W1_LEDGER: int = 75       # w1: Master ledger mismatch
+WEIGHT_W2_TOOL: int = 20         # w2: Consumer tool / binary metadata anomaly
+WEIGHT_W3_URGENCY: int = 15      # w3: Psychological urgency / coercive pressure
+WEIGHT_W4_AUTH: int = 25         # w4: Transport / email-vs-PDF authorization discrepancy
+WEIGHT_W5_CONTEXT: int = 20      # w5: Temporal context (dormancy >180d / velocity breach / invalid PO)
+SCORE_SEMAKMULE_HIT: int = 99    # S_SemakMule: Confirmed police threat cache hit override
+
+THRESHOLD_VERIFIED_MAX: int = 50   # R < 50: VERIFIED
+THRESHOLD_LOCKED_MIN: int = 80     # R >= 80: LOCKED_CRITICAL (50 <= R < 80: NEEDS_REVIEW)
+
+
+def calculate_formal_risk_score(
+    i_ledger: int = 0,
+    i_tool: int = 0,
+    i_urgency: int = 0,
+    i_auth: int = 0,
+    i_context: int = 0,
+    s_semakmule: int = 0,
+) -> int:
+    """
+    Computes formal proposal risk score R according to Section 4.5:
+    R = max(S_SemakMule, min(100, w1*I_Ledger + w2*I_Tool + w3*I_Urgency + w4*I_Auth + w5*I_Context))
+    """
+    weighted_sum = (
+        WEIGHT_W1_LEDGER * i_ledger
+        + WEIGHT_W2_TOOL * i_tool
+        + WEIGHT_W3_URGENCY * i_urgency
+        + WEIGHT_W4_AUTH * i_auth
+        + WEIGHT_W5_CONTEXT * i_context
+    )
+    bounded_r = min(100, weighted_sum)
+    return max(s_semakmule, bounded_r)
+
+
 _CACHED_SEMAKMULE: Optional[Set[str]] = None
 
 def load_semakmule_cache() -> Set[str]:

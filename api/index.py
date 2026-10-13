@@ -91,7 +91,7 @@ DEMO_SCENARIOS = [
         "master_ledger_account": "514012998877",
         "master_ledger_phone": "+60 3-7722 8888",
         "risk_score": 85,
-        "status": "PENDING_MANUAL_REVIEW",
+        "status": "LOCKED_CRITICAL",
         "review_codes": ["MASTER_LEDGER_MISMATCH", "AI_COGNITIVE_UNAVAILABLE"],
         "producer_tool": "ERP Generator (ModDate Desync)",
         "is_tampered_tool": True,

@@ -361,14 +361,14 @@ The system therefore follows a **fail-closed** model instead of failing open.
 ```
 
 
-### 🤖 7-Agent Defense Architecture
-1. **Agent 1: In-Memory Privacy Sanitizer** — Strips MyKad (`\b\d{6}-\d{2}-\d{4}\b`) and Malaysian mobile numbers in volatile heap memory (<5ms SLA, PDPA 2010 Section 10 compliant).
-2. **Agent 2: Deterministic Binary Forensics** — Inspects PDF byte structures, trailer dictionaries, `/Producer` indicators, and applies dual-factor consumer tooling exceptions (Canva/iLovePDF).
-3. **Agent 3: Ground-Truth Registry & Threat Cache** — Validates remittance instructions against approved Master Procurement Ledger and SemakMule threat cache (<2ms SLA).
-4. **Agent 4: Cognitive Behavioral Investigator** — Leverages Google Gemini 2.5 Flash to analyze linguistic urgency, coercion tactics, and adversarial prompt injections within sandboxed `<UNTRUSTED_INBOUND_DOC>` wrappers.
-5. **Agent 5: Declarative Policy Arbiter & Fail-Closed Safety Net** — Computes deterministic multi-factor risk scores ($R \in [0, 100]$) and enforces automatic fail-closed locking upon upstream AI timeout.
-6. **Agent 6: Containment & Statutory Artifact Synthesis** — Produces court-admissible forensic dossiers, NSRC 997 / AMLA 2001 emergency incident reports, and cryptographic HMAC-SHA256 audit chains.
-7. **Agent 7: OSINT Police Threat Intelligence Ingestion Agent** — Ingests real-time PDRM CCID scam news alerts via 2-stage authenticity verification gate, canonicalizing bank names and updating local SemakMule threat caches atomically.
+### 🤖 7-Agent Defense Architecture (Proposal Baseline)
+1. **Agent 1: In-Memory Privacy Sanitizer (RAM Layer)** — Strips MyKad (`\b\d{6}-\d{2}-\d{4}\b`) and Malaysian mobile numbers (`\b01[0-9]-?[0-9]{7,8}\b`) in volatile heap memory (`io.BytesIO`) (<5ms SLA, PDPA 2010 Section 10 compliant).
+2. **Agent 2: Deterministic Binary Forensics (Byte Layer)** — Inspects PDF byte structures, trailer dictionaries, `/Producer` indicators, and enforces the dual-factor consumer tooling exception (`CONSUMER_PDF_TOOL_BENIGN` for Canva/iLovePDF).
+3. **Agent 3: Ground-Truth Registry & Threat Cache (Relational Layer)** — Validates remittance instructions against approved Master Procurement Ledger and local SemakMule threat cache (<2ms SLA, <0.003ms threat lookup).
+4. **Agent 4: Cognitive Behavioral Investigator (Perception Layer – Gemini 2.5 Flash)** — Leverages bounded Google Gemini 2.5 Flash to analyze linguistic urgency, coercion tactics, and adversarial prompt injections within sandboxed `<UNTRUSTED_INBOUND_DOC>` wrappers (no ERP/payment write privileges).
+5. **Agent 5: Declarative Policy Arbiter & Fail-Closed Safety Net (Governance Layer)** — Evaluates deterministic multi-factor risk scores ($R \in [0, 100]$) and enforces mandatory fail-closed locking (`AI_COGNITIVE_UNAVAILABLE` $\to$ `LOCKED_CRITICAL`).
+6. **Agent 6: Containment & Statutory Artifact Synthesis (Response Layer)** — Produces court-admissible forensic dossiers, NSRC 997 / AMLA 2001 emergency incident referral packages, and cryptographic audit chains (Evidence Act 1950 Section 90A SHA-256).
+7. **Agent 7: OSINT Police Threat Intelligence Ingestion Agent (Intelligence Hydration Layer)** — Ingests real-time PDRM CCID scam news alerts via 2-stage authenticity verification gate (`POST /api/v1/intel/ingest-police-alert`), canonicalizing bank names and updating local SemakMule threat cache atomically.
 
 ---
 
@@ -402,6 +402,26 @@ Conceptually:
 ```
 
 AI can provide **evidence**, but the final policy decision remains deterministic.
+
+### Formal Risk Formula & Configured Weights (Proposal Section 4.5)
+
+$$R = \max\Big(S_{\text{SemakMule}}, \min\big(100, w_1 \cdot I_{\text{Ledger}} + w_2 \cdot I_{\text{Tool}} + w_3 \cdot I_{\text{Urgency}} + w_4 \cdot I_{\text{Auth}} + w_5 \cdot I_{\text{Context}}\big)\Big)$$
+
+| Weight / Parameter | Value | Indicator Description |
+|---|---:|---|
+| **$w_1$ ($I_{\text{Ledger}}$)** | **75** | Master Procurement Ledger beneficiary mismatch (`UNAUTHORIZED_BANK_CHANGE`) |
+| **$w_2$ ($I_{\text{Tool}}$)** | **20** | Consumer PDF tool / binary revision anomaly (`PDF_METADATA_SUSPICIOUS`) |
+| **$w_3$ ($I_{\text{Urgency}}$)** | **15** | Bounded Gemini linguistic urgency / coercive pressure detection |
+| **$w_4$ ($I_{\text{Auth}}$)** | **25** | In-transit transport divergence (`BEC_IN_TRANSIT_DIVERSION`: email bank $\neq$ PDF bank) |
+| **$w_5$ ($I_{\text{Context}}$)** | **20** | Temporal context: Vendor dormancy (>180d), velocity burst, or missing/invalid PO |
+| **$S_{\text{SemakMule}}$** | **99** | Confirmed PDRM CCID SemakMule threat cache hit override (`LOCKED_CRITICAL`) |
+
+| Disposition | Risk Range | Policy Enforcement |
+|---|---|---|
+| **`VERIFIED`** | $R < 50$ | Proceed only under normal finance approval controls. |
+| **`NEEDS_REVIEW`** | $50 \le R < 80$ | Hold voucher for human triage; no automatic disbursement. |
+| **`LOCKED_CRITICAL`** | $R \ge 80$ | Freeze voucher, trigger audit event, notify reviewers. |
+| **`AI_COGNITIVE_UNAVAILABLE`** | Fail-Closed | Upstream AI timeout/error attaches diagnostic tag and **forces `LOCKED_CRITICAL`**. |
 
 ---
 

@@ -18,7 +18,7 @@ def evaluate_security_policy(
         review_codes.append("AI_COGNITIVE_UNAVAILABLE")
         return {
             "risk_score": 85,
-            "status": "PENDING_MANUAL_REVIEW",
+            "status": "LOCKED_CRITICAL",
             "review_codes": review_codes,
             "fail_closed_reason": "AI_COGNITIVE_TIMEOUT (Deterministic Tri-Factor Engaged)"
         }
@@ -34,7 +34,7 @@ def evaluate_security_policy(
     elif not ledger_match:
         return {
             "risk_score": 75,
-            "status": "PENDING_MANUAL_REVIEW",
+            "status": "NEEDS_REVIEW",
             "review_codes": review_codes,
             "fail_closed_reason": None
         }
