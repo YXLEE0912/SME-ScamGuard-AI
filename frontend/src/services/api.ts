@@ -24,7 +24,9 @@ export interface DemoInvoice {
   comparison: Record<string, ComparisonField>;
   banner_message: string;
   defect_fields: number;
-  can_extract_live: boolean;
+  can_extract_live?: boolean;
+  flags?: string[];
+  producerTool?: string;
   is_approved?: boolean;
   is_escalated?: boolean;
 }
@@ -141,8 +143,21 @@ export async function uploadNewVerification(file: File, supportingFile?: File): 
   const formData = new FormData();
   formData.append("file", file);
   if (supportingFile) {
+    formData.append("po_file", supportingFile);
     formData.append("supporting_file", supportingFile);
   }
+  try {
+    const res = await fetch(`${API_BASE}/api/v1/invoices/verify`, {
+      method: "POST",
+      body: formData,
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn("Primary verify route error, falling back to demo route:", err);
+  }
+
   const res = await fetch(`${API_BASE}/api/v1/demo/new-verification`, {
     method: "POST",
     body: formData,

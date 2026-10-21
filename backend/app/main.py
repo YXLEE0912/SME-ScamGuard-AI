@@ -51,6 +51,17 @@ def health_check():
     """Health check endpoint."""
     return {"status": "HEALTHY", "system": "SME-ScamGuard-AI"}
 
+@app.post("/api/v1/invoices/verify")
+async def verify_invoice_upload(
+    file: UploadFile = File(...),
+    po_file: Optional[UploadFile] = File(None),
+    supporting_file: Optional[UploadFile] = File(None),
+):
+    from backend.app.routers.demo import new_verification_ingest
+    supp = po_file if po_file is not None else supporting_file
+    return await new_verification_ingest(file=file, supporting_file=supp)
+
+
 @app.post("/api/scan")
 async def scan_invoice(
     request: Request,
