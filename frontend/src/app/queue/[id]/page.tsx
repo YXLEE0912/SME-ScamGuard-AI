@@ -91,7 +91,7 @@ export default function InvoiceDetailPage() {
     return (
       <div className="min-h-screen bg-[#F9FAFB] dark:bg-[#0B0F17] flex items-center justify-center p-8">
         <div className="flex items-center gap-3 text-neutral-500 font-medium">
-          <RefreshCw className="w-5 h-5 animate-spin text-[#3D5A80]" />
+          <RefreshCw className="w-5 h-5 animate-spin text-[#1e293b]" />
           <span>Hydrating forensic dossier...</span>
         </div>
       </div>
@@ -103,7 +103,7 @@ export default function InvoiceDetailPage() {
       <div className="min-h-screen bg-[#F9FAFB] dark:bg-[#0B0F17] p-8 text-center">
         <h2 className="text-xl font-bold">Invoice Not Found</h2>
         <p className="text-neutral-500 mt-2">Could not locate record ID: {invoiceId}</p>
-        <Link href="/queue" className="inline-block mt-4 text-[#3D5A80] font-semibold underline">
+        <Link href="/queue" className="inline-block mt-4 text-[#1e293b] font-semibold underline">
           Return to Queue
         </Link>
       </div>
@@ -429,7 +429,7 @@ export default function InvoiceDetailPage() {
                 id="btn-re-extract-gemini"
                 onClick={handleReExtract}
                 disabled={isReExtracting}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-[#3D5A80] dark:text-blue-400 transition-colors disabled:opacity-50 cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-[#1e293b] dark:text-blue-400 transition-colors disabled:opacity-50 cursor-pointer"
               >
                 {isReExtracting ? (
                   <RefreshCw className="w-3.5 h-3.5 animate-spin" />
@@ -534,7 +534,7 @@ export default function InvoiceDetailPage() {
                             {/* Correct / Edit button */}
                             <button
                               onClick={() => handleOpenCorrect(key, fieldObj)}
-                              className="text-[11px] font-medium text-[#3D5A80] dark:text-blue-400 hover:underline flex items-center gap-1 cursor-pointer"
+                              className="text-[11px] font-medium text-[#1e293b] dark:text-blue-400 hover:underline flex items-center gap-1 cursor-pointer"
                             >
                               <Edit2 className="w-3 h-3" />
                               <span>{isCorrected ? "Edit..." : "Correct..."}</span>
@@ -622,7 +622,7 @@ export default function InvoiceDetailPage() {
               <div className="pt-3 border-t border-neutral-100 dark:border-neutral-800 text-center">
                 <button
                   onClick={() => window.print()}
-                  className="text-xs font-medium text-[#3D5A80] dark:text-blue-400 hover:underline flex items-center justify-center gap-1.5 mx-auto cursor-pointer"
+                  className="text-xs font-medium text-[#1e293b] dark:text-blue-400 hover:underline flex items-center justify-center gap-1.5 mx-auto cursor-pointer"
                 >
                   <FileText className="w-3.5 h-3.5" />
                   <span>View verification record</span>
@@ -683,7 +683,7 @@ export default function InvoiceDetailPage() {
                   required
                   value={correctedValue}
                   onChange={(e) => setCorrectedValue(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-xs sm:text-sm font-mono text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#3D5A80]"
+                  className="w-full px-3 py-2 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-xs sm:text-sm font-mono text-neutral-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#1e293b]"
                 />
               </div>
 
@@ -697,7 +697,7 @@ export default function InvoiceDetailPage() {
                   value={justification}
                   onChange={(e) => setJustification(e.target.value)}
                   placeholder="e.g. Confirmed with supplier via verified landline switchboard (+60 3-XXXX XXXX)"
-                  className="w-full px-3 py-2 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-xs text-neutral-900 dark:text-white placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#3D5A80]"
+                  className="w-full px-3 py-2 rounded-xl bg-neutral-50 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-xs text-neutral-900 dark:text-white placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#1e293b]"
                 />
               </div>
 
@@ -712,7 +712,7 @@ export default function InvoiceDetailPage() {
                 <button
                   type="submit"
                   disabled={isSavingCorrection || !justification.trim()}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#3D5A80] hover:bg-[#2E4665] text-white transition-colors disabled:opacity-50 flex items-center gap-2 cursor-pointer"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#1e293b] hover:bg-[#0f172a] text-white transition-colors disabled:opacity-50 flex items-center gap-2 cursor-pointer shadow-xs"
                 >
                   {isSavingCorrection && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
                   <span>Save correction</span>

@@ -25,6 +25,10 @@ import {
   AlertOctagon,
   X,
   FileUp,
+  Building2,
+  ChevronDown,
+  BarChart3,
+  Inbox,
 } from "lucide-react";
 import {
   DemoInvoice,
@@ -217,266 +221,403 @@ function QueueContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB] dark:bg-[#0B0F17] text-neutral-900 dark:text-slate-100 font-sans pb-16">
-      {/* Top Application Navbar */}
-      <header className="sticky top-0 z-30 bg-white/95 dark:bg-[#111827]/95 backdrop-blur-md border-b border-neutral-200 dark:border-neutral-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <Link href="/queue" className="flex items-center gap-3 group">
-              <div className="w-9 h-9 rounded-xl bg-[#3D5A80] flex items-center justify-center text-white shadow-xs group-hover:bg-[#2E4665] transition-colors">
-                <Check className="w-5 h-5 stroke-[3]" />
-              </div>
-              <div className="flex flex-col">
-                <span className="font-bold text-sm tracking-tight text-neutral-900 dark:text-white flex items-center gap-1.5">
-                  SME-ScamGuard
-                  <span className="text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
-                    Cockpit
-                  </span>
-                </span>
-                <span className="text-[11px] text-neutral-500 dark:text-neutral-400">
-                  Accounts Payable Defense
-                </span>
-              </div>
-            </Link>
-
-            <nav className="hidden md:flex items-center gap-1 ml-4 border-l border-neutral-200 dark:border-neutral-800 pl-4">
-              <Link
-                href="/queue"
-                className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-white"
-              >
-                Queue
-              </Link>
-              <Link
-                href="/audit"
-                className="px-3 py-1.5 rounded-lg text-xs font-medium text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-colors flex items-center gap-1.5"
-              >
-                <History className="w-3.5 h-3.5" />
-                Audit Trail
-              </Link>
-            </nav>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setIsLedgerSyncOpen(true)}
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-700 dark:text-neutral-300 bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors cursor-pointer"
-              title="Sync AutoCount / SQL Account Master Ledger CSV"
-            >
-              <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-              <span>Sync Ledger</span>
-            </button>
-
-            <button
-              id="btn-new-verification"
-              onClick={() => setIsNewVerificationOpen(true)}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[#3D5A80] hover:bg-[#2E4665] text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer active:scale-98"
-            >
-              <Plus className="w-4 h-4 stroke-[2.5]" />
-              <span>New verification</span>
-            </button>
-
-            <div className="h-6 w-px bg-neutral-200 dark:bg-neutral-800 mx-1 hidden sm:block" />
-
-            <div className="flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400 bg-neutral-50 dark:bg-neutral-800/60 px-2.5 py-1.5 rounded-lg border border-neutral-200 dark:border-neutral-800">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              <span className="font-mono text-[11px]">AP-CLERK-MY01</span>
+    <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900 font-sans selection:bg-slate-900/10 selection:text-slate-900 pb-16">
+      {/* ==================================================================== */}
+      {/* 1. TOP GLOBAL APP BAR (From image_4.png)                             */}
+      {/* ==================================================================== */}
+      <header className="h-14 bg-white border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 shadow-2xs">
+        {/* Left: Brand badge + AP Inbound Invoices dropdown */}
+        <div className="flex items-center gap-3">
+          <Link href="/queue" className="flex items-center gap-2 group">
+            <div className="w-8 h-8 rounded-lg bg-[#1e293b] flex items-center justify-center text-white shadow-2xs group-hover:bg-slate-800 transition-colors">
+              <Check className="w-5 h-5 stroke-[3]" />
             </div>
+            <span className="font-bold text-base text-slate-900 tracking-tight flex items-center">
+              DocuVerify<span className="text-[#1e293b] ml-0.5 font-extrabold">.AI</span>
+            </span>
+          </Link>
+
+          <span className="text-slate-300 hidden sm:inline">/</span>
+
+          {/* AP Inbound Invoices Select Dropdown */}
+          <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-50 text-slate-700 text-xs font-medium border border-slate-200 shadow-2xs cursor-pointer hover:bg-slate-100 transition-colors">
+            <Building2 className="w-3.5 h-3.5 text-slate-600" />
+            <span className="font-semibold text-slate-800">AP Inbound Invoices</span>
+            <ChevronDown className="w-3 h-3 text-slate-400" />
           </div>
         </div>
-      </header>
 
-      {/* Main Container */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-6">
-        {/* SECTION 6.2: Mailbox Ingestion Loading Illusion Banner */}
-        {showIngestionIllusion && (
-          <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-600 text-white p-4 sm:p-5 rounded-2xl shadow-md animate-pulse">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center shrink-0">
-                  <RefreshCw className="w-5 h-5 animate-spin text-white" />
-                </div>
-                <div>
-                  <h3 className="text-sm sm:text-base font-semibold">
-                    Reading the mailbox and extracting every attachment.
-                  </h3>
-                  <p className="text-xs text-white/80">
-                    The first load can take up to 15 seconds. Initializing OCR parsers and threat feeds...
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 self-end sm:self-auto">
-                <span className="font-mono text-xl font-bold bg-white/20 px-3 py-1 rounded-xl">
-                  {countdown}s
-                </span>
-                <button
-                  onClick={() => setShowIngestionIllusion(false)}
-                  className="text-xs bg-white text-blue-900 font-semibold px-3 py-1.5 rounded-xl hover:bg-white/90 transition-colors cursor-pointer"
-                >
-                  Accelerate
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* SECTION 6.3: Top Volume Metric Tabs (Enterprise Aggregates) */}
-        <section className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
-            <button
-              onClick={() => setSelectedTab("ALL")}
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-colors flex items-center gap-2 cursor-pointer ${
-                selectedTab === "ALL"
-                  ? "bg-[#3D5A80] text-white shadow-xs"
-                  : "bg-white dark:bg-[#111827] text-neutral-600 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-800 hover:bg-neutral-50 dark:hover:bg-neutral-800"
-              }`}
-            >
-              <span>520 All invoices</span>
-            </button>
-
-            <button
-              onClick={() => setSelectedTab("NEEDS_REVIEW")}
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-colors flex items-center gap-2 cursor-pointer ${
-                selectedTab === "NEEDS_REVIEW"
-                  ? "bg-amber-600 text-white shadow-xs"
-                  : "bg-white dark:bg-[#111827] text-amber-700 dark:text-amber-400 border border-neutral-200 dark:border-neutral-800 hover:bg-amber-50 dark:hover:bg-amber-950/30"
-              }`}
-            >
-              <span className="w-2 h-2 rounded-full bg-amber-500" />
-              <span>27 Needs review</span>
-            </button>
-
-            <button
-              onClick={() => setSelectedTab("LOCKED")}
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-colors flex items-center gap-2 cursor-pointer ${
-                selectedTab === "LOCKED"
-                  ? "bg-rose-600 text-white shadow-xs"
-                  : "bg-white dark:bg-[#111827] text-rose-700 dark:text-rose-400 border border-neutral-200 dark:border-neutral-800 hover:bg-rose-50 dark:hover:bg-rose-950/30"
-              }`}
-            >
-              <span className="w-2 h-2 rounded-full bg-rose-500" />
-              <span>18 Defect / Locked</span>
-            </button>
-
-            <button
-              onClick={() => setSelectedTab("VERIFIED")}
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-colors flex items-center gap-2 cursor-pointer ${
-                selectedTab === "VERIFIED"
-                  ? "bg-emerald-600 text-white shadow-xs"
-                  : "bg-white dark:bg-[#111827] text-emerald-700 dark:text-emerald-400 border border-neutral-200 dark:border-neutral-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
-              }`}
-            >
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              <span>475 Verified</span>
-            </button>
-          </div>
-
-          <div className="text-xs text-neutral-500 dark:text-neutral-400 flex items-center gap-1.5 self-end sm:self-auto">
-            <span>Showing</span>
-            <span className="font-semibold text-neutral-900 dark:text-white font-mono">
-              {filteredInvoices.length}
-            </span>
-            <span>of 50 active interactive records</span>
-          </div>
-        </section>
-
-        {/* Search & Filter Controls */}
-        <section className="bg-white dark:bg-[#111827] p-3 sm:p-4 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-2xs flex flex-col md:flex-row items-stretch md:items-center gap-3">
-          {/* Search Input (Ctrl+K) */}
-          <div className="relative flex-1">
-            <Search className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+        {/* Center: Universal Search Input (From image_4.png) */}
+        <div className="hidden md:flex items-center flex-1 max-w-md mx-6">
+          <div className="relative w-full">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               ref={searchInputRef}
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search emails, senders, fields... (Ctrl+K)"
-              className="w-full pl-9 pr-16 py-2 rounded-xl bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-xs sm:text-sm text-neutral-900 dark:text-white placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#3D5A80]"
+              placeholder="Search emails, vendors, account numbers..."
+              className="w-full pl-9 pr-14 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400 shadow-2xs transition-all"
             />
-            <kbd className="hidden sm:inline-block absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-mono text-neutral-400 bg-neutral-200 dark:bg-neutral-700 px-1.5 py-0.5 rounded border border-neutral-300 dark:border-neutral-600">
-              Ctrl+K
-            </kbd>
-          </div>
-
-          {/* Category Dropdown */}
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <select
-                value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value)}
-                className="appearance-none pl-3 pr-8 py-2 rounded-xl bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-xs font-medium text-neutral-700 dark:text-neutral-200 focus:outline-none focus:ring-2 focus:ring-[#3D5A80] cursor-pointer"
-              >
-                <option value="ALL">All Categories</option>
-                {categories.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
-              <Filter className="w-3.5 h-3.5 text-neutral-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-            </div>
-
-            {/* Status Dropdown */}
-            <div className="relative">
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="appearance-none pl-3 pr-8 py-2 rounded-xl bg-neutral-50 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-xs font-medium text-neutral-700 dark:text-neutral-200 focus:outline-none focus:ring-2 focus:ring-[#3D5A80] cursor-pointer"
-              >
-                <option value="ALL">All Statuses</option>
-                <option value="VERIFIED">Verified</option>
-                <option value="NEEDS_REVIEW">Needs review</option>
-                <option value="LOCKED">Defect / Locked</option>
-              </select>
-              <Filter className="w-3.5 h-3.5 text-neutral-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5">
+              <kbd className="px-1.5 py-0.5 text-[10px] font-mono bg-white border border-slate-200 text-slate-400 rounded shadow-2xs font-medium">
+                ⌘K
+              </kbd>
             </div>
           </div>
-        </section>
+        </div>
 
-        {/* SECTION 6.3: Queue Table */}
-        <div className="bg-white dark:bg-[#111827] rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-2xs overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="bg-neutral-50 dark:bg-neutral-800/50 border-b border-neutral-200 dark:border-neutral-800 text-neutral-500 dark:text-neutral-400 font-semibold uppercase tracking-wider text-[11px]">
-                  <th className="py-3 px-4 w-[38%]">Invoice / Email</th>
-                  <th className="py-3 px-4 w-[24%]">Sender</th>
-                  <th className="py-3 px-4 w-[12%]">Category</th>
-                  <th className="py-3 px-4 w-[12%]">Status</th>
-                  <th className="py-3 px-4 w-[8%] text-center">Risk / Score</th>
-                  <th className="py-3 px-4 w-[6%] text-right">Action</th>
+        {/* Right: Connection status badge, + New verification, User profile 'AT' */}
+        <div className="flex items-center gap-3">
+          {/* Circular Connection Status Badge */}
+          <div className="hidden lg:flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50/80 border border-amber-200 text-amber-900 text-xs font-mono shadow-2xs">
+            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+            <span className="font-medium">Demo Mailbox: ap-audit@target-sme.com.my</span>
+            <button
+              type="button"
+              onClick={() => {
+                setIsLoadingData(true);
+                fetchMailboxInvoices().then((res) => {
+                  if (res) setInvoices(res);
+                  setIsLoadingData(false);
+                });
+              }}
+              title="Sync Mailbox"
+              className="text-amber-800 hover:rotate-180 transition-transform duration-300 ml-0.5"
+            >
+              <RefreshCw className={`w-3 h-3 ${isLoadingData ? "animate-spin" : ""}`} />
+            </button>
+          </div>
+
+          {/* Sync Ledger Button */}
+          <button
+            onClick={() => setIsLedgerSyncOpen(true)}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors shadow-2xs cursor-pointer"
+            title="Sync AutoCount / SQL Account Master Ledger CSV"
+          >
+            <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Sync Ledger</span>
+          </button>
+
+          {/* Deep Navy/Slate Button: + New verification */}
+          <button
+            id="btn-new-verification"
+            onClick={() => setIsNewVerificationOpen(true)}
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#1e293b] hover:bg-slate-800 text-white font-semibold text-xs shadow-xs transition-colors active:scale-98 cursor-pointer"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>New verification</span>
+          </button>
+
+          {/* User Profile 'AT' Circular Badge */}
+          <Link
+            href="/login"
+            title="Switch Authentication Mode (Operator: Alex Tan)"
+            className="w-8 h-8 rounded-full bg-[#1e293b] border border-slate-700 flex items-center justify-center text-xs font-bold text-white cursor-pointer hover:bg-slate-800 transition-colors shadow-2xs"
+          >
+            AT
+          </Link>
+        </div>
+      </header>
+
+      {/* ==================================================================== */}
+      {/* 2. UNIFIED TITLE BANNER & COCKPIT HEADER (From image_4.png)          */}
+      {/* ==================================================================== */}
+      <div className="bg-[#0f172a] text-white px-5 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between text-xs shadow-xs gap-3 border-b border-slate-800">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <span className="bg-white/15 text-white font-bold text-[10px] tracking-wider px-2.5 py-0.5 rounded-full border border-white/20 uppercase">
+            DOCUVERIFY ERGONOMICS
+          </span>
+          <span className="text-slate-200 font-medium">
+            Unified Accounts Payable Verification Cockpit: 50 Ground-Truth Malaysian Invoices &amp; 40-Vendor Master Ledger
+          </span>
+        </div>
+        <div className="flex items-center gap-3 shrink-0">
+          <Link
+            href="/queue"
+            className="bg-white text-slate-900 hover:bg-slate-100 font-bold px-3.5 py-1.5 rounded-xl transition-colors flex items-center gap-1.5 shadow-2xs text-xs"
+          >
+            <span>Open Verification Cockpit</span>
+            <ChevronRight className="w-3.5 h-3.5 stroke-[2.5]" />
+          </Link>
+          <Link
+            href="/audit"
+            className="text-slate-300 hover:text-white underline text-xs font-medium"
+          >
+            Audit Trail
+          </Link>
+        </div>
+      </div>
+
+      {/* ==================================================================== */}
+      {/* 3. BODY CONTAINER: SLIM LEFT SIDEBAR + WORKSPACE (image_4.png)        */}
+      {/* ==================================================================== */}
+      <div className="flex-1 flex flex-col md:flex-row w-full max-w-[1720px] mx-auto overflow-hidden">
+        {/* Left Navigation Sidebar (From image_4.png) */}
+        <aside className="w-full md:w-64 bg-white border-r border-slate-200 p-3.5 flex flex-col justify-between flex-shrink-0 shadow-2xs">
+          <div className="space-y-4">
+            {/* Connection Card: Mailbox label 'Demo Mailbox (7 cases ready)' with amber alert icon */}
+            <div className="p-3 rounded-2xl border border-slate-200 bg-white shadow-2xs">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-700 shadow-2xs">
+                    <AlertTriangle className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900">
+                      <span>Demo Mailbox</span>
+                    </div>
+                    <div className="text-[11px] text-slate-500 font-medium mt-0.5">
+                      (7 cases ready)
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsLoadingData(true);
+                    fetchMailboxInvoices().then((res) => {
+                      if (res) setInvoices(res);
+                      setIsLoadingData(false);
+                    });
+                  }}
+                  title="Re-fetch / Sync Active Mailbox"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-900 hover:bg-slate-100 border border-transparent hover:border-slate-200 transition-colors"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${isLoadingData ? "animate-spin text-slate-900" : ""}`} />
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-2 mb-2">
+                ACCOUNTS PAYABLE
+              </div>
+              <nav className="space-y-1 text-xs">
+                {/* 1. Insights */}
+                <Link
+                  href="/"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                >
+                  <BarChart3 className="w-4 h-4" />
+                  <span>Insights</span>
+                </Link>
+
+                {/* 2. Queue (1 Active) with badge */}
+                <Link
+                  href="/queue"
+                  className="w-full flex items-center justify-between px-3 py-2 rounded-xl font-bold bg-slate-100 text-slate-900 border border-slate-300 shadow-2xs transition-colors"
+                >
+                  <span className="flex items-center gap-2.5">
+                    <Inbox className="w-4 h-4" />
+                    <span>Queue</span>
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#1e293b] text-white">
+                    1 Active
+                  </span>
+                </Link>
+
+                {/* 3. Reconciliation */}
+                <Link
+                  href="/"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                >
+                  <FileText className="w-4 h-4" />
+                  <span>Reconciliation</span>
+                </Link>
+
+                {/* 4. Audit Log */}
+                <Link
+                  href="/audit"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                >
+                  <FileSpreadsheet className="w-4 h-4" />
+                  <span>Audit Log</span>
+                </Link>
+              </nav>
+            </div>
+          </div>
+
+          {/* Footer connection dots & custom 'N' avatar on bottom left */}
+          <div className="pt-4 border-t border-slate-200 space-y-3">
+            <div className="space-y-1.5 text-[11px] font-medium text-slate-500">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-2xs" />
+                <span>142 Approved Vendors in Master Ledger</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-2xs" />
+                <span>PDRM CCID SemakMule Cache Online (2ms)</span>
+              </div>
+            </div>
+
+            {/* Custom 'N' avatar on bottom left */}
+            <div className="flex items-center gap-2.5 pt-2 border-t border-slate-100">
+              <div className="w-8 h-8 rounded-lg bg-[#1e293b] text-white font-bold text-xs flex items-center justify-center shadow-2xs">
+                N
+              </div>
+              <div className="min-w-0">
+                <div className="text-xs font-bold text-slate-900 truncate">AP Approver</div>
+                <div className="text-[10px] text-slate-400 font-mono">Operator ID: N-904</div>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        {/* Workspace Container */}
+        <main className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4">
+          {/* SECTION 6.2: Mailbox Ingestion Loading Illusion Banner */}
+          {showIngestionIllusion && (
+            <div className="bg-[#1e293b] text-white p-4 sm:p-5 rounded-2xl shadow-md border border-slate-800 animate-pulse">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center shrink-0">
+                    <RefreshCw className="w-5 h-5 animate-spin text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm sm:text-base font-semibold">
+                      Reading the mailbox and extracting every attachment.
+                    </h3>
+                    <p className="text-xs text-slate-300">
+                      The first load can take up to 15 seconds. Initializing OCR parsers and threat feeds...
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 self-end sm:self-auto">
+                  <span className="font-mono text-xl font-bold bg-white/20 px-3 py-1 rounded-xl">
+                    {countdown}s
+                  </span>
+                  <button
+                    onClick={() => setShowIngestionIllusion(false)}
+                    className="text-xs bg-white text-slate-900 font-semibold px-3 py-1.5 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer"
+                  >
+                    Accelerate
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Feature Headline: Title "Verification queue" with muted sub-label (From image_4.png) */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+            <div>
+              <h2 className="text-xl font-bold tracking-tight text-slate-900">
+                Verification queue
+              </h2>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Review classified emails, inspect document differences, and resolve exceptions.
+              </p>
+            </div>
+            <div className="text-xs font-mono text-slate-500">
+              Showing {filteredInvoices.length} emails
+            </div>
+          </div>
+
+          {/* Status Filter Row: Pill-shaped toggle filters (From image_4.png) */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedTab("ALL");
+                setStatusFilter("ALL");
+              }}
+              className={`px-3.5 py-1.5 rounded-full font-medium border transition-all cursor-pointer ${
+                selectedTab === "ALL" && statusFilter === "ALL"
+                  ? "bg-[#1e293b] text-white border-[#1e293b] shadow-2xs font-semibold"
+                  : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+              }`}
+            >
+              All emails 528
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedTab("NEEDS_REVIEW");
+                setStatusFilter("NEEDS_REVIEW");
+              }}
+              className={`px-3.5 py-1.5 rounded-full font-medium border transition-all cursor-pointer ${
+                statusFilter === "NEEDS_REVIEW"
+                  ? "bg-slate-100 text-slate-900 border-slate-300 shadow-2xs font-bold"
+                  : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+              }`}
+            >
+              27 Needs review
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedTab("LOCKED");
+                setStatusFilter("LOCKED");
+              }}
+              className={`px-3.5 py-1.5 rounded-full font-medium border transition-all cursor-pointer ${
+                statusFilter === "LOCKED"
+                  ? "bg-rose-100 text-rose-800 border-rose-300 shadow-2xs font-bold"
+                  : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+              }`}
+            >
+              65 Defect
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedTab("VERIFIED");
+                setStatusFilter("VERIFIED");
+              }}
+              className={`px-3.5 py-1.5 rounded-full font-medium border transition-all cursor-pointer ${
+                statusFilter === "VERIFIED"
+                  ? "bg-emerald-100 text-emerald-800 border-emerald-300 shadow-2xs font-bold"
+                  : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+              }`}
+            >
+              37 Verified
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setSelectedTab("ALL");
+                setStatusFilter("RESOLVED");
+              }}
+              className={`px-3.5 py-1.5 rounded-full font-medium border transition-all cursor-pointer ${
+                statusFilter === "RESOLVED"
+                  ? "bg-slate-200 text-slate-900 border-slate-400 shadow-2xs font-bold"
+                  : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+              }`}
+            >
+              8 Resolved
+            </button>
+          </div>
+
+          {/* High Density Data Table (image_5.png Visual Polish) */}
+          <div className="bg-white border border-slate-200 rounded-2xl overflow-x-auto shadow-2xs">
+            <table className="w-full text-left text-xs min-w-[760px]">
+              <thead className="bg-white border-b border-slate-200 text-slate-400 uppercase font-semibold text-[11px] tracking-wider">
+                <tr>
+                  <th className="py-3 px-4">INVOICE / EMAIL</th>
+                  <th className="py-3 px-4 w-52">SENDER</th>
+                  <th className="py-3 px-4 w-36">CATEGORY</th>
+                  <th className="py-3 px-4 w-36">STATUS</th>
+                  <th className="py-3 px-4 w-32 text-right pr-6">RISK / SCORE</th>
                 </tr>
               </thead>
 
-              <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800/60">
+              <tbody className="divide-y divide-slate-100 font-sans">
                 {/* Skeleton Illusion Rows if loading */}
                 {showIngestionIllusion ? (
                   Array.from({ length: 8 }).map((_, i) => (
                     <tr key={`skel-${i}`} className="animate-pulse">
                       <td className="py-3.5 px-4">
-                        <div className="h-4 bg-neutral-200 dark:bg-neutral-700 rounded w-3/4 mb-1.5" />
-                        <div className="h-3 bg-neutral-100 dark:bg-neutral-800 rounded w-1/3" />
+                        <div className="h-4 bg-slate-100 rounded w-3/4 mb-1" />
+                        <div className="h-3 bg-slate-50 rounded w-1/2" />
                       </td>
-                      <td className="py-3.5 px-4">
-                        <div className="h-3.5 bg-neutral-200 dark:bg-neutral-700 rounded w-2/3 mb-1" />
-                        <div className="h-3 bg-neutral-100 dark:bg-neutral-800 rounded w-1/2" />
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <div className="h-5 bg-neutral-100 dark:bg-neutral-800 rounded-md w-16" />
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <div className="h-5 bg-neutral-100 dark:bg-neutral-800 rounded-full w-20" />
-                      </td>
-                      <td className="py-3.5 px-4 text-center">
-                        <div className="h-5 bg-neutral-100 dark:bg-neutral-800 rounded-full w-10 mx-auto" />
-                      </td>
-                      <td className="py-3.5 px-4 text-right">
-                        <div className="h-4 bg-neutral-100 dark:bg-neutral-800 rounded w-6 ml-auto" />
-                      </td>
+                      <td className="py-3.5 px-4"><div className="h-4 bg-slate-100 rounded w-28" /></td>
+                      <td className="py-3.5 px-4"><div className="h-5 bg-slate-100 rounded-full w-20" /></td>
+                      <td className="py-3.5 px-4"><div className="h-5 bg-slate-100 rounded-full w-24" /></td>
+                      <td className="py-3.5 px-4 text-right pr-6"><div className="h-4 bg-slate-100 rounded w-14 ml-auto" /></td>
                     </tr>
                   ))
                 ) : filteredInvoices.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="py-12 text-center text-neutral-400">
+                    <td colSpan={5} className="py-12 text-center text-slate-400">
                       No invoices found matching current search criteria.
                     </td>
                   </tr>
@@ -490,90 +631,104 @@ function QueueContent() {
                       <tr
                         key={inv.id}
                         onClick={() => router.push(`/queue/${inv.id}`)}
-                        className="hover:bg-neutral-50 dark:hover:bg-neutral-800/40 transition-colors cursor-pointer group"
+                        className="hover:bg-slate-50/80 cursor-pointer transition-colors group"
                       >
-                        {/* 1. Invoice / Email */}
+                        {/* 1. INVOICE / EMAIL */}
                         <td className="py-3.5 px-4">
-                          <div className="font-medium text-neutral-900 dark:text-white line-clamp-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                            {inv.subject}
+                          <div className="flex items-center gap-2">
+                            {isDefect && (
+                              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
+                            )}
+                            <span className="font-semibold text-slate-900 group-hover:text-slate-900 transition-colors text-xs">
+                              {inv.subject}
+                            </span>
+                            {isDefect && (
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200 shrink-0">
+                                BEC Alert
+                              </span>
+                            )}
                           </div>
-                          <div className="flex items-center gap-2 mt-1 text-[11px] text-neutral-400 font-mono">
-                            <span>{inv.id}</span>
+                          <div className="text-[11px] text-slate-400 font-mono mt-1 flex items-center gap-1.5">
+                            <span className="font-medium text-slate-500">{inv.id}</span>
                             <span>•</span>
                             <span>{inv.received_date}</span>
                             {inv.files && inv.files.length > 0 && (
                               <>
                                 <span>•</span>
-                                <span className="flex items-center gap-0.5 text-neutral-500">
-                                  📎 {inv.files[0]}
-                                </span>
+                                <span className="text-slate-400">📎 {inv.files[0]}</span>
                               </>
                             )}
                           </div>
                         </td>
 
-                        {/* 2. Sender */}
+                        {/* 2. SENDER */}
                         <td className="py-3.5 px-4">
-                          <div className="font-medium text-neutral-800 dark:text-neutral-200">
-                            {inv.sender_name}
+                          <div className="text-xs font-medium text-slate-800">
+                            {inv.sender_name || "Vendor Accounts"}
                           </div>
-                          <div className="text-[11px] text-neutral-400 truncate max-w-[200px]">
+                          <div className="text-[11px] text-slate-400 font-mono mt-0.5 truncate max-w-[180px]">
                             {inv.sender_email}
                           </div>
                         </td>
 
-                        {/* 3. Category */}
+                        {/* 3. CATEGORY */}
                         <td className="py-3.5 px-4">
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300">
-                            {inv.category}
+                          <span className="inline-flex items-center px-3 py-0.5 rounded-full bg-pink-50 text-pink-700 border border-pink-200 text-[11px] font-medium">
+                            {inv.category === "BEC_WIRE_FRAUD"
+                              ? "Raw Materials"
+                              : inv.category === "SEMAKMULE_HIT"
+                              ? "Logistics"
+                              : inv.category === "PROMPT_INJECTION"
+                              ? "Engineering"
+                              : inv.category === "FAIL_CLOSED"
+                              ? "Fail-Closed Recovery"
+                              : inv.category || "Operations"}
                           </span>
                         </td>
 
-                        {/* 4. Status Pill */}
+                        {/* 4. STATUS */}
                         <td className="py-3.5 px-4">
-                          {isVerified && (
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                              Verified
-                            </span>
-                          )}
                           {isReview && (
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800">
-                              <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                              Needs review
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold">
+                              <span className="w-1.5 h-1.5 rounded-full bg-amber-600" />
+                              NEEDS_REVIEW
                             </span>
                           )}
                           {isDefect && (
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800">
-                              <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-                              Defect / Locked
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 text-[11px] font-bold">
+                              <span className="w-1.5 h-1.5 rounded-full bg-rose-600" />
+                              LOCKED_CRITICAL
+                            </span>
+                          )}
+                          {isVerified && (
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+                              VERIFIED
+                            </span>
+                          )}
+                          {!isReview && !isDefect && !isVerified && (
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">
+                              <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
+                              RESOLVED
                             </span>
                           )}
                         </td>
 
-                        {/* 5. Risk / Match Score */}
-                        <td className="py-3.5 px-4 text-center">
-                          <span
-                            className={`font-mono text-xs font-bold px-2 py-0.5 rounded-md ${
-                              inv.risk_score >= 80
-                                ? "bg-rose-100 text-rose-800 dark:bg-rose-950 dark:text-rose-300"
-                                : inv.risk_score >= 50
-                                ? "bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300"
-                                : "bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300"
-                            }`}
-                          >
-                            {inv.risk_score}
-                          </span>
-                        </td>
-
-                        {/* 6. Action */}
-                        <td className="py-3.5 px-4 text-right">
-                          <Link
-                            href={`/queue/${inv.id}`}
-                            className="inline-flex items-center justify-center w-7 h-7 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-400 group-hover:text-neutral-700 dark:group-hover:text-white transition-colors"
-                          >
-                            <ChevronRight className="w-4 h-4" />
-                          </Link>
+                        {/* 5. RISK / SCORE */}
+                        <td className="py-3.5 px-4 text-right pr-6 font-mono text-xs font-bold">
+                          {inv.risk_score >= 80 ? (
+                            <span className="text-rose-600">
+                              {inv.risk_score}%
+                            </span>
+                          ) : inv.risk_score > 20 ? (
+                            <span className="text-amber-600">
+                              {inv.risk_score}%
+                            </span>
+                          ) : (
+                            <span className="text-emerald-600">
+                              {inv.risk_score || 0}%
+                            </span>
+                          )}
                         </td>
                       </tr>
                     );
@@ -582,8 +737,8 @@ function QueueContent() {
               </tbody>
             </table>
           </div>
-        </div>
-      </main>
+        </main>
+      </div>
 
       {/* SECTION 6.6: "New Verification" Modal (Two-Tier Ingestion) */}
       {isNewVerificationOpen && (
@@ -611,14 +766,14 @@ function QueueContent() {
                 <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 mb-1.5">
                   Choose the invoice / email input
                 </label>
-                <div className="border-2 border-dashed border-neutral-300 dark:border-neutral-700 hover:border-[#3D5A80] dark:hover:border-blue-500 rounded-xl p-4 text-center cursor-pointer transition-colors bg-neutral-50/50 dark:bg-neutral-800/30 relative">
+                <div className="border-2 border-dashed border-neutral-300 dark:border-neutral-700 hover:border-[#1e293b] dark:hover:border-slate-500 rounded-xl p-4 text-center cursor-pointer transition-colors bg-neutral-50/50 dark:bg-neutral-800/30 relative">
                   <input
                     type="file"
                     required
                     onChange={(e) => setPrimaryFile(e.target.files?.[0] || null)}
                     className="absolute inset-0 opacity-0 cursor-pointer"
                   />
-                  <FileUp className="w-6 h-6 text-[#3D5A80] dark:text-blue-400 mx-auto mb-1.5" />
+                  <FileUp className="w-6 h-6 text-[#1e293b] dark:text-slate-300 mx-auto mb-1.5" />
                   <p className="text-xs font-medium text-neutral-800 dark:text-neutral-200">
                     {primaryFile ? primaryFile.name : "Select or drag invoice (.eml, .txt, .json, .pdf, images)"}
                   </p>
@@ -662,7 +817,7 @@ function QueueContent() {
                 <button
                   type="submit"
                   disabled={!primaryFile || isSubmittingNew}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#3D5A80] hover:bg-[#2E4665] text-white transition-colors disabled:opacity-50 flex items-center gap-2 cursor-pointer"
+                  className="px-4 py-2 rounded-xl text-xs font-semibold bg-[#1e293b] hover:bg-[#0f172a] text-white transition-colors disabled:opacity-50 flex items-center gap-2 cursor-pointer shadow-xs"
                 >
                   {isSubmittingNew ? (
                     <RefreshCw className="w-3.5 h-3.5 animate-spin" />
@@ -753,7 +908,7 @@ export default function QueuePage() {
       fallback={
         <div className="min-h-screen bg-[#F9FAFB] dark:bg-[#0B0F17] flex items-center justify-center p-8">
           <div className="flex items-center gap-3 text-neutral-500 font-medium">
-            <div className="w-5 h-5 border-2 border-[#3D5A80] border-t-transparent rounded-full animate-spin" />
+            <div className="w-5 h-5 border-2 border-[#1e293b] border-t-transparent rounded-full animate-spin" />
             <span>Loading verification queue...</span>
           </div>
         </div>

@@ -153,7 +153,7 @@ export default function AuditTrailPage() {
             <button
               id="btn-export-json"
               onClick={handleExportJson}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#3D5A80] hover:bg-[#2E4665] text-white shadow-xs transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#1e293b] hover:bg-[#0f172a] text-white shadow-xs transition-colors cursor-pointer"
             >
               <FileCode className="w-3.5 h-3.5" />
               <span>Export JSON</span>
@@ -169,7 +169,7 @@ export default function AuditTrailPage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h1 className="text-xl sm:text-2xl font-bold text-neutral-900 dark:text-white flex items-center gap-2.5">
-                <History className="w-6 h-6 text-[#3D5A80] dark:text-blue-400" />
+                <History className="w-6 h-6 text-[#1e293b] dark:text-blue-400" />
                 Audit Trail
               </h1>
               <p className="text-xs sm:text-sm text-neutral-500 dark:text-neutral-400 mt-1 leading-relaxed">
@@ -193,7 +193,7 @@ export default function AuditTrailPage() {
               value={searchFilter}
               onChange={(e) => setSearchFilter(e.target.value)}
               placeholder="Search audit actions, descriptions, justifications, or operator IDs..."
-              className="w-full pl-9 pr-4 py-2 rounded-xl bg-neutral-50 dark:bg-neutral-800/70 border border-neutral-200 dark:border-neutral-700 text-xs sm:text-sm text-neutral-900 dark:text-white placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#3D5A80]"
+              className="w-full pl-9 pr-4 py-2 rounded-xl bg-neutral-50 dark:bg-neutral-800/70 border border-neutral-200 dark:border-neutral-700 text-xs sm:text-sm text-neutral-900 dark:text-white placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-[#1e293b]"
             />
           </div>
         </div>

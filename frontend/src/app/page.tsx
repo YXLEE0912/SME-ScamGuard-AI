@@ -393,126 +393,130 @@ export default function DocuVerifyApp() {
   });
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F9FAFB] text-neutral-900 font-sans selection:bg-[#3D5A80]/15 selection:text-[#3D5A80]">
+    <div className="min-h-screen flex flex-col bg-[#f8fafc] text-slate-900 font-sans selection:bg-slate-900/10 selection:text-slate-900">
       {/* ==================================================================== */}
-      {/* 1. TOP GLOBAL APP BAR                                                */}
+      {/* 1. TOP GLOBAL APP BAR (image_4.png)                                  */}
       {/* ==================================================================== */}
-      <header className="h-14 bg-white border-b border-neutral-200 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 shadow-xs">
-        {/* Left: Square crimson mark + Workspace dropdown */}
+      <header className="h-14 bg-white border-b border-slate-200 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 shadow-2xs">
+        {/* Left: Brand badge + AP Inbound Invoices dropdown */}
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-lg bg-[#3D5A80] flex items-center justify-center text-white shadow-xs group-hover:bg-[#2E4665] transition-colors">
+            <div className="w-8 h-8 rounded-lg bg-[#1e293b] flex items-center justify-center text-white shadow-2xs group-hover:bg-slate-800 transition-colors">
               <Check className="w-5 h-5 stroke-[3]" />
             </div>
-            <span className="font-bold text-base text-neutral-900 tracking-tight flex items-center gap-1">
-              DocuVerify<span className="text-[#3D5A80]">.AI</span>
+            <span className="font-bold text-base text-slate-900 tracking-tight flex items-center">
+              DocuVerify<span className="text-[#1e293b] ml-0.5 font-extrabold">.AI</span>
             </span>
           </Link>
 
-          <span className="text-neutral-300 hidden sm:inline">/</span>
+          <span className="text-slate-300 hidden sm:inline">/</span>
 
-          {/* Workspace Selector */}
-          <div className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-neutral-50 text-neutral-700 text-xs font-medium border border-neutral-200 cursor-pointer hover:bg-neutral-100 transition-colors">
-            <Building2 className="w-3.5 h-3.5 text-[#3D5A80]" />
-            <span>AP Inbound Invoices</span>
-            <ChevronDown className="w-3 h-3 text-neutral-400" />
+          {/* AP Inbound Invoices Select Dropdown */}
+          <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-50 text-slate-700 text-xs font-medium border border-slate-200 shadow-2xs cursor-pointer hover:bg-slate-100 transition-colors">
+            <Building2 className="w-3.5 h-3.5 text-slate-600" />
+            <span className="font-semibold text-slate-800">AP Inbound Invoices</span>
+            <ChevronDown className="w-3 h-3 text-slate-400" />
           </div>
         </div>
 
-        {/* Center: Universal Search Input */}
+        {/* Center: Universal Search Input (image_4.png) */}
         <div className="hidden md:flex items-center flex-1 max-w-md mx-6">
           <div className="relative w-full">
-            <Search className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search emails, vendors, account numbers... (Ctrl+K)"
-              className="w-full pl-9 pr-14 py-1.5 rounded-lg bg-neutral-50 border border-neutral-200 text-xs text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:ring-1 focus:ring-[#3D5A80] focus:border-[#3D5A80] transition-all"
+              placeholder="Search emails, vendors, account numbers..."
+              className="w-full pl-9 pr-14 py-1.5 rounded-full bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400 shadow-2xs transition-all"
             />
-            <kbd className="absolute right-2.5 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-[10px] font-mono bg-white border border-neutral-200 text-neutral-400 rounded">
-              ⌘K
-            </kbd>
+            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5">
+              <kbd className="px-1.5 py-0.5 text-[10px] font-mono bg-white border border-slate-200 text-slate-400 rounded shadow-2xs font-medium">
+                ⌘K
+              </kbd>
+            </div>
           </div>
         </div>
 
-        {/* Right: Connection Badge, + New verification, User Profile */}
-        <div className="flex items-center gap-2.5">
-          {/* Active Connection Badge */}
+        {/* Right: Connection status badge, + New verification, User profile 'AT' */}
+        <div className="flex items-center gap-3">
+          {/* Circular Connection Status Badge */}
           {isDemoMode ? (
-            <div className="hidden lg:flex items-center gap-2 px-2.5 py-1 rounded-full bg-[#E8EEF5] border border-[#B5C7D9] text-[#3D5A80] text-xs font-mono">
-              <span className="w-2 h-2 rounded-full bg-[#3D5A80] animate-pulse" />
-              <span>Demo Mailbox: ap-audit@target-sme.com.my</span>
+            <div className="hidden lg:flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50/80 border border-amber-200 text-amber-900 text-xs font-mono shadow-2xs">
+              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+              <span className="font-medium">Demo Mailbox: ap-audit@target-sme.com.my</span>
               <button
                 type="button"
                 onClick={handleSyncMailbox}
                 title="Sync Mailbox"
-                className="text-[#3D5A80] hover:rotate-180 transition-transform duration-300 ml-1"
+                className="text-amber-800 hover:rotate-180 transition-transform duration-300 ml-0.5"
               >
                 <RefreshCw className={`w-3 h-3 ${isSyncing ? "animate-spin" : ""}`} />
               </button>
             </div>
           ) : (
-            <div className="hidden lg:flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-mono">
+            <div className="hidden lg:flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-mono shadow-2xs">
               <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
-              <span>Connected: {currentUser?.email}</span>
+              <span className="font-medium">Connected: {currentUser?.email}</span>
               <button
                 type="button"
                 onClick={handleSyncMailbox}
                 title="Sync Live Mailbox"
-                className="text-emerald-700 hover:rotate-180 transition-transform duration-300 ml-1"
+                className="text-emerald-700 hover:rotate-180 transition-transform duration-300 ml-0.5"
               >
                 <RefreshCw className={`w-3 h-3 ${isSyncing ? "animate-spin" : ""}`} />
               </button>
             </div>
           )}
 
-          {/* Solid Slate Navy Button: + New verification */}
+          {/* Deep Navy/Slate Button: + New verification */}
           <button
             type="button"
             id="btn-new-verification"
             onClick={() => setActiveModal("new_verification")}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#3D5A80] hover:bg-[#2E4665] text-white font-medium text-xs shadow-xs transition-colors active:scale-98"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#1e293b] hover:bg-slate-800 text-white font-semibold text-xs shadow-xs transition-colors active:scale-98"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">New verification</span>
+            <span>New verification</span>
           </button>
 
-          {/* User Profile Avatar / Logout */}
+          {/* User Profile 'AT' Circular Badge */}
           <Link
             href="/login"
-            title="Switch Authentication Mode"
-            className="w-8 h-8 rounded-full bg-[#E8EEF5] border border-[#B5C7D9] flex items-center justify-center text-xs font-bold text-[#3D5A80] cursor-pointer hover:bg-[#EDF2F7] transition-colors"
+            title="Switch Authentication Mode (Operator: Alex Tan)"
+            className="w-8 h-8 rounded-full bg-[#1e293b] border border-slate-700 flex items-center justify-center text-xs font-bold text-white cursor-pointer hover:bg-slate-800 transition-colors shadow-2xs"
           >
             AT
           </Link>
         </div>
       </header>
 
-      {/* Enterprise Verification Cockpit Banner */}
-      <div className="bg-[#3D5A80] text-white px-4 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between text-xs shadow-xs gap-2">
-        <div className="flex items-center gap-2">
-          <span className="bg-white/20 px-2 py-0.5 rounded font-semibold uppercase text-[10px] tracking-wider">
-            DocuVerify Ergonomics
+      {/* Unified Title Banner & Cockpit Header (High-visibility dark blue horizontal ribbon) */}
+      <div className="bg-[#0f172a] text-white px-5 py-2.5 flex flex-col sm:flex-row sm:items-center justify-between text-xs shadow-xs gap-3 border-b border-slate-800">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          <span className="bg-white/15 text-white font-bold text-[10px] tracking-wider px-2.5 py-0.5 rounded-full border border-white/20 uppercase">
+            DOCUVERIFY ERGONOMICS
           </span>
-          <span className="font-medium">
-            Unified Accounts Payable Verification Cockpit: 50 Ground-Truth Malaysian Invoices & 40-Vendor Master Ledger
+          <span className="text-slate-200 font-medium">
+            Unified Accounts Payable Verification Cockpit: 50 Ground-Truth Malaysian Invoices &amp; 40-Vendor Master Ledger
           </span>
         </div>
         <div className="flex items-center gap-3 shrink-0">
-          <Link
-            href="/queue"
-            className="bg-white text-[#3D5A80] hover:bg-neutral-100 font-bold px-3 py-1 rounded-lg transition-colors flex items-center gap-1.5 shadow-xs"
+          <button
+            type="button"
+            onClick={() => setActiveTab("queue")}
+            className="bg-white text-slate-900 hover:bg-slate-100 font-bold px-3.5 py-1.5 rounded-xl transition-colors flex items-center gap-1.5 shadow-2xs text-xs"
           >
             <span>Open Verification Cockpit</span>
-            <ChevronRight className="w-3.5 h-3.5" />
-          </Link>
-          <Link
-            href="/audit"
-            className="text-white/80 hover:text-white underline text-[11px]"
+            <ChevronRight className="w-3.5 h-3.5 stroke-[2.5]" />
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("audit")}
+            className="text-slate-300 hover:text-white underline text-xs font-medium"
           >
             Audit Trail
-          </Link>
+          </button>
         </div>
       </div>
 
@@ -520,32 +524,22 @@ export default function DocuVerifyApp() {
       {/* 2. BODY CONTAINER: SLIM LEFT SIDEBAR + WORKSPACE                     */}
       {/* ==================================================================== */}
       <div className="flex-1 flex flex-col md:flex-row w-full max-w-[1720px] mx-auto overflow-hidden">
-        {/* Left Navigation Sidebar (w-60) */}
-        <aside className="w-full md:w-60 bg-white border-r border-neutral-200 p-3 flex flex-col justify-between flex-shrink-0 shadow-xs">
-          <div className="space-y-5">
-            {/* 1. Repositioned Mailbox Connection Card (Sidebar Top-Left) */}
-            <div className="p-3 rounded-xl border border-neutral-200 bg-neutral-50/80 shadow-2xs">
+        {/* Left Navigation Sidebar (image_4.png) */}
+        <aside className="w-full md:w-64 bg-white border-r border-slate-200 p-3.5 flex flex-col justify-between flex-shrink-0 shadow-2xs">
+          <div className="space-y-4">
+            {/* Connection Card: Mailbox label 'Demo Mailbox (7 cases ready)' with amber alert icon */}
+            <div className="p-3 rounded-2xl border border-slate-200 bg-white shadow-2xs">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-white border border-neutral-200 flex items-center justify-center text-[#3D5A80] shadow-2xs">
-                    <Mail className="w-4 h-4" />
+                  <div className="w-8 h-8 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-700 shadow-2xs">
+                    <AlertTriangle className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-neutral-900">
-                      {isDemoMode ? (
-                        <>
-                          <span className="w-2 h-2 rounded-full bg-amber-500" />
-                          <span>Demo Mailbox</span>
-                        </>
-                      ) : (
-                        <>
-                          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                          <span>Gmail Ingest</span>
-                        </>
-                      )}
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900">
+                      <span>Demo Mailbox</span>
                     </div>
-                    <div className="text-[10px] text-neutral-500 font-mono mt-0.5">
-                      {isDemoMode ? `${queue.length} cases ready` : "Synced 2m ago"}
+                    <div className="text-[11px] text-slate-500 font-medium mt-0.5">
+                      (7 cases ready)
                     </div>
                   </div>
                 </div>
@@ -553,16 +547,16 @@ export default function DocuVerifyApp() {
                   type="button"
                   onClick={handleSyncMailbox}
                   title="Re-fetch / Sync Active Mailbox"
-                  className="p-1.5 rounded-md text-neutral-400 hover:text-[#3D5A80] hover:bg-white border border-transparent hover:border-neutral-200 transition-colors"
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-slate-900 hover:bg-slate-100 border border-transparent hover:border-slate-200 transition-colors"
                 >
-                  <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? "animate-spin text-[#3D5A80]" : ""}`} />
+                  <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? "animate-spin text-slate-900" : ""}`} />
                 </button>
               </div>
             </div>
 
             <div>
-              <div className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider px-2 mb-2">
-                Accounts Payable
+              <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider px-2 mb-2">
+                ACCOUNTS PAYABLE
               </div>
               <nav className="space-y-1 text-xs">
                 {/* 1. Insights */}
@@ -570,25 +564,25 @@ export default function DocuVerifyApp() {
                   type="button"
                   id="tab-insights"
                   onClick={() => setActiveTab("insights")}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium transition-colors ${
+                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl font-medium transition-colors ${
                     activeTab === "insights"
-                      ? "bg-[#E8EEF5] text-[#3D5A80] font-semibold border border-[#B5C7D9]"
-                      : "text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900"
+                      ? "bg-slate-100 text-slate-900 font-bold border border-slate-300 shadow-2xs"
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                   }`}
                 >
                   <BarChart3 className="w-4 h-4" />
                   <span>Insights</span>
                 </button>
 
-                {/* 2. Queue */}
+                {/* 2. Queue (1 Active) with badge */}
                 <button
                   type="button"
                   id="tab-queue"
                   onClick={() => setActiveTab("queue")}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium transition-colors ${
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl font-medium transition-colors ${
                     activeTab === "queue"
-                      ? "bg-[#E8EEF5] text-[#3D5A80] font-semibold border border-[#B5C7D9]"
-                      : "text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900"
+                      ? "bg-slate-100 text-slate-900 font-bold border border-slate-300 shadow-2xs"
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                   }`}
                 >
                   <span className="flex items-center gap-2.5">
@@ -596,25 +590,25 @@ export default function DocuVerifyApp() {
                     <span>Queue</span>
                   </span>
                   <span
-                    className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold transition-colors ${
+                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold transition-colors ${
                       activeTab === "queue"
-                        ? "bg-[#3D5A80] text-white"
-                        : "bg-neutral-100 text-neutral-600"
+                        ? "bg-[#1e293b] text-white"
+                        : "bg-slate-100 text-slate-600 border border-slate-200"
                     }`}
                   >
-                    {filteredQueue.length} Active
+                    1 Active
                   </span>
                 </button>
 
-                {/* 3. Detail View (Reconciliation) */}
+                {/* 3. Reconciliation */}
                 <button
                   type="button"
                   id="tab-detail"
                   onClick={() => setActiveTab("detail")}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium transition-colors ${
+                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl font-medium transition-colors ${
                     activeTab === "detail"
-                      ? "bg-[#E8EEF5] text-[#3D5A80] font-semibold border border-[#B5C7D9]"
-                      : "text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900"
+                      ? "bg-slate-100 text-slate-900 font-bold border border-slate-300 shadow-2xs"
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                   }`}
                 >
                   <FileText className="w-4 h-4" />
@@ -626,10 +620,10 @@ export default function DocuVerifyApp() {
                   type="button"
                   id="tab-audit"
                   onClick={() => setActiveTab("audit")}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg font-medium transition-colors ${
+                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl font-medium transition-colors ${
                     activeTab === "audit"
-                      ? "bg-[#E8EEF5] text-[#3D5A80] font-semibold border border-[#B5C7D9]"
-                      : "text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900"
+                      ? "bg-slate-100 text-slate-900 font-bold border border-slate-300 shadow-2xs"
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                   }`}
                 >
                   <FileSpreadsheet className="w-4 h-4" />
@@ -639,15 +633,28 @@ export default function DocuVerifyApp() {
             </div>
           </div>
 
-          {/* Bottom System Status Indicators */}
-          <div className="pt-4 border-t border-neutral-100 space-y-2 text-[11px] font-medium text-neutral-500">
-            <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              <span>142 Approved Vendors in Master Ledger</span>
+          {/* Footer connection dots & custom 'N' avatar on bottom left */}
+          <div className="pt-4 border-t border-slate-200 space-y-3">
+            <div className="space-y-1.5 text-[11px] font-medium text-slate-500">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-2xs" />
+                <span>142 Approved Vendors in Master Ledger</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-2xs" />
+                <span>PDRM CCID SemakMule Cache Online (2ms)</span>
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              <span>PDRM CCID SemakMule Cache Online (2ms)</span>
+
+            {/* Custom 'N' avatar on bottom left */}
+            <div className="flex items-center gap-2.5 pt-2 border-t border-slate-100">
+              <div className="w-8 h-8 rounded-lg bg-[#1e293b] text-white font-bold text-xs flex items-center justify-center shadow-2xs">
+                N
+              </div>
+              <div className="min-w-0">
+                <div className="text-xs font-bold text-slate-900 truncate">AP Approver</div>
+                <div className="text-[10px] text-slate-400 font-mono">Operator ID: N-904</div>
+              </div>
             </div>
           </div>
         </aside>
@@ -660,24 +667,24 @@ export default function DocuVerifyApp() {
           {activeTab === "insights" && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-xl font-bold tracking-tight text-neutral-900">
+                <h2 className="text-xl font-bold tracking-tight text-slate-900">
                   AP Reconciliation Insights
                 </h2>
-                <p className="text-xs text-neutral-500 mt-0.5">
+                <p className="text-xs text-slate-500 mt-0.5">
                   Real-time straight-through processing rates and field defect distribution across inbound supplier claims.
                 </p>
               </div>
 
               {/* Hero Straight-Through Rate Card */}
-              <div className="bg-white border border-neutral-200/90 rounded-xl p-6 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                  <div className="text-xs font-semibold uppercase text-neutral-400 tracking-wider mb-1">
+                  <div className="text-xs font-semibold uppercase text-slate-400 tracking-wider mb-1">
                     Straight-Through Processing
                   </div>
-                  <div className="text-5xl font-black text-[#3D5A80] tracking-tight">
+                  <div className="text-5xl font-black text-[#1e293b] tracking-tight">
                     29%
                   </div>
-                  <p className="text-xs text-neutral-600 mt-2 font-medium">
+                  <p className="text-xs text-slate-600 mt-2 font-medium">
                     37 of 129 comparisons matched their Master Ledger; 92 had a defect or mismatch.
                   </p>
                 </div>
@@ -686,7 +693,7 @@ export default function DocuVerifyApp() {
                   <button
                     type="button"
                     onClick={() => setActiveTab("queue")}
-                    className="px-4 py-2.5 rounded-lg bg-[#3D5A80] hover:bg-[#2E4665] text-white font-semibold text-xs shadow-xs transition-colors"
+                    className="px-4 py-2.5 rounded-xl bg-[#1e293b] hover:bg-slate-800 text-white font-semibold text-xs shadow-xs transition-colors"
                   >
                     Inspect Exceptions Queue →
                   </button>
@@ -696,24 +703,24 @@ export default function DocuVerifyApp() {
               {/* Bottom Grid: Field Defect Rate + Category Mix */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Left: Field Defect Rate Horizontal Bars */}
-                <div className="bg-white border border-neutral-200/90 rounded-xl p-6 shadow-xs space-y-4">
+                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-2xs space-y-4">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-neutral-900">
+                    <h3 className="text-sm font-bold text-slate-900">
                       Field defect rate
                     </h3>
-                    <span className="text-[11px] font-mono text-neutral-400">129 Invoices</span>
+                    <span className="text-[11px] font-mono text-slate-400">129 Invoices</span>
                   </div>
 
                   <div className="space-y-3.5 text-xs">
                     <div>
                       <div className="flex justify-between mb-1">
-                        <span className="font-medium text-neutral-700">
+                        <span className="font-medium text-slate-700">
                           Beneficiary Bank Account
                         </span>
-                        <span className="font-bold text-[#3D5A80]">41%</span>
+                        <span className="font-bold text-[#1e293b]">41%</span>
                       </div>
-                      <div className="w-full h-2 rounded-full bg-neutral-100 overflow-hidden">
-                        <div className="h-full bg-[#3D5A80] rounded-full" style={{ width: "41%" }} />
+                      <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                        <div className="h-full bg-[#1e293b] rounded-full" style={{ width: "41%" }} />
                       </div>
                     </div>
 
@@ -815,33 +822,34 @@ export default function DocuVerifyApp() {
           )}
 
           {/* ================================================================ */}
-          {/* TAB 2: VERIFICATION QUEUE VIEW                                   */}
+          {/* ================================================================ */}
+          {/* TAB 2: VERIFICATION QUEUE VIEW (image_4.png + image_5.png)        */}
           {/* ================================================================ */}
           {activeTab === "queue" && (
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <div>
-                  <h2 className="text-xl font-bold tracking-tight text-neutral-900">
+                  <h2 className="text-xl font-bold tracking-tight text-slate-900">
                     Verification queue
                   </h2>
-                  <p className="text-xs text-neutral-500 mt-0.5">
+                  <p className="text-xs text-slate-500 mt-0.5">
                     Review classified emails, inspect document differences, and resolve exceptions.
                   </p>
                 </div>
-                <div className="text-xs font-mono text-neutral-400">
+                <div className="text-xs font-mono text-slate-500">
                   Showing {filteredQueue.length} emails
                 </div>
               </div>
 
-              {/* Filter Pill Tabs */}
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+              {/* Status Filter Row: Pill-shaped toggle filters (From image_4.png) */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
                 <button
                   type="button"
                   onClick={() => setQueueFilter("ALL")}
-                  className={`px-3 py-1.5 rounded-md font-medium border transition-colors ${
+                  className={`px-3.5 py-1.5 rounded-full font-medium border transition-all cursor-pointer ${
                     queueFilter === "ALL"
-                      ? "bg-[#E8EEF5] text-[#3D5A80] border border-[#3D5A80] font-medium"
-                      : "bg-white text-neutral-600 border-neutral-200 hover:bg-neutral-50"
+                      ? "bg-[#1e293b] text-white border-[#1e293b] shadow-2xs font-semibold"
+                      : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
                   }`}
                 >
                   All emails 528
@@ -849,10 +857,10 @@ export default function DocuVerifyApp() {
                 <button
                   type="button"
                   onClick={() => setQueueFilter("NEEDS_REVIEW")}
-                  className={`px-3 py-1.5 rounded-md font-medium border transition-colors ${
+                  className={`px-3.5 py-1.5 rounded-full font-medium border transition-all cursor-pointer ${
                     queueFilter === "NEEDS_REVIEW"
-                      ? "bg-[#E8EEF5] text-[#3D5A80] border border-[#3D5A80] font-medium"
-                      : "bg-white text-neutral-600 border-neutral-200 hover:bg-neutral-50"
+                      ? "bg-slate-100 text-slate-900 border-slate-300 shadow-2xs font-bold"
+                      : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
                   }`}
                 >
                   27 Needs review
@@ -860,10 +868,10 @@ export default function DocuVerifyApp() {
                 <button
                   type="button"
                   onClick={() => setQueueFilter("DEFECT")}
-                  className={`px-3 py-1.5 rounded-md font-medium border transition-colors ${
+                  className={`px-3.5 py-1.5 rounded-full font-medium border transition-all cursor-pointer ${
                     queueFilter === "DEFECT"
-                      ? "bg-[#E8EEF5] text-[#3D5A80] border border-[#3D5A80] font-medium"
-                      : "bg-white text-neutral-600 border-neutral-200 hover:bg-neutral-50"
+                      ? "bg-rose-100 text-rose-800 border-rose-300 shadow-2xs font-bold"
+                      : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
                   }`}
                 >
                   65 Defect
@@ -871,10 +879,10 @@ export default function DocuVerifyApp() {
                 <button
                   type="button"
                   onClick={() => setQueueFilter("VERIFIED")}
-                  className={`px-3 py-1.5 rounded-md font-medium border transition-colors ${
+                  className={`px-3.5 py-1.5 rounded-full font-medium border transition-all cursor-pointer ${
                     queueFilter === "VERIFIED"
-                      ? "bg-[#E8EEF5] text-[#3D5A80] border border-[#3D5A80] font-medium"
-                      : "bg-white text-neutral-600 border-neutral-200 hover:bg-neutral-50"
+                      ? "bg-emerald-100 text-emerald-800 border-emerald-300 shadow-2xs font-bold"
+                      : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
                   }`}
                 >
                   37 Verified
@@ -882,84 +890,136 @@ export default function DocuVerifyApp() {
                 <button
                   type="button"
                   onClick={() => setQueueFilter("RESOLVED")}
-                  className={`px-3 py-1.5 rounded-md font-medium border transition-colors ${
+                  className={`px-3.5 py-1.5 rounded-full font-medium border transition-all cursor-pointer ${
                     queueFilter === "RESOLVED"
-                      ? "bg-[#E8EEF5] text-[#3D5A80] border border-[#3D5A80] font-medium"
-                      : "bg-white text-neutral-600 border-neutral-200 hover:bg-neutral-50"
+                      ? "bg-slate-200 text-slate-900 border-slate-400 shadow-2xs font-bold"
+                      : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
                   }`}
                 >
                   8 Resolved
                 </button>
               </div>
 
-              {/* Data Table */}
-              <div className="bg-white border border-neutral-200/90 rounded-xl overflow-x-auto shadow-xs">
-                <table className="w-full text-left text-xs min-w-[720px]">
-                  <thead className="bg-neutral-50 border-b border-neutral-200 text-neutral-500 uppercase font-mono text-[10px]">
+              {/* High Density Data Table (image_5.png Visual Polish) */}
+              <div className="bg-white border border-slate-200 rounded-2xl overflow-x-auto shadow-2xs">
+                <table className="w-full text-left text-xs min-w-[760px]">
+                  <thead className="bg-white border-b border-slate-200 text-slate-400 uppercase font-semibold text-[11px] tracking-wider">
                     <tr>
-                      <th className="py-3 px-4 w-32">Email ID</th>
-                      <th className="py-3 px-4">Subject &amp; Sender</th>
-                      <th className="py-3 px-4 w-36">Category</th>
-                      <th className="py-3 px-4 w-32">Status</th>
-                      <th className="py-3 px-4 w-36">Lowest Field Score</th>
-                      <th className="py-3 px-4 w-20 text-right">Actions</th>
+                      <th className="py-3 px-4">INVOICE / EMAIL</th>
+                      <th className="py-3 px-4 w-52">SENDER</th>
+                      <th className="py-3 px-4 w-36">CATEGORY</th>
+                      <th className="py-3 px-4 w-36">STATUS</th>
+                      <th className="py-3 px-4 w-32 text-right pr-6">RISK / SCORE</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-neutral-200/70 font-sans">
+                  <tbody className="divide-y divide-slate-100 font-sans">
                     {filteredQueue.map((item) => {
-                      let statusBadge = "bg-amber-50 text-amber-800 border-amber-200";
-                      if (item.status === "DEFECT") {
-                        statusBadge = "bg-rose-50 text-rose-700 border-rose-200 font-semibold";
-                      } else if (item.status === "VERIFIED") {
-                        statusBadge = "bg-emerald-50 text-emerald-700 border-emerald-200";
-                      } else if (item.status === "RESOLVED") {
-                        statusBadge = "bg-blue-50 text-blue-700 border-blue-200";
-                      }
+                      const isDefect = item.status === "DEFECT" || item.riskScore >= 80;
+                      const isReview = item.status === "NEEDS_REVIEW";
+                      const isVerified = item.status === "VERIFIED";
 
                       return (
                         <tr
                           key={item.id}
                           onClick={() => handleSelectCase(item)}
-                          className="hover:bg-neutral-50/80 cursor-pointer transition-colors group"
+                          className="hover:bg-slate-50/80 cursor-pointer transition-colors group"
                         >
-                          <td className="py-3 px-4 font-mono font-medium text-neutral-800">
-                            {item.emailId}
-                          </td>
-                          <td className="py-3 px-4">
-                            <div className="font-semibold text-neutral-900 group-hover:text-[#3D5A80] transition-colors">
-                              {item.subject}
+                          {/* 1. INVOICE / EMAIL */}
+                          <td className="py-3.5 px-4">
+                            <div className="flex items-center gap-2">
+                              {isDefect && (
+                                <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
+                              )}
+                              <span className="font-semibold text-slate-900 group-hover:text-slate-900 transition-colors text-xs">
+                                {item.subject}
+                              </span>
+                              {isDefect && (
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200 shrink-0">
+                                  BEC Alert
+                                </span>
+                              )}
                             </div>
-                            <div className="text-[11px] text-neutral-500 font-mono mt-0.5">
-                              {item.sender} • {item.receivedTime}
+                            <div className="text-[11px] text-slate-400 font-mono mt-1 flex items-center gap-1.5">
+                              <span className="font-medium text-slate-500">{item.emailId}</span>
+                              <span>•</span>
+                              <span>{item.receivedTime}</span>
+                              {item.attachedFiles && item.attachedFiles.length > 0 && (
+                                <>
+                                  <span>•</span>
+                                  <span className="text-slate-400">📎 {item.attachedFiles[0]}</span>
+                                </>
+                              )}
                             </div>
                           </td>
-                          <td className="py-3 px-4">
-                            <span className="px-2 py-0.5 rounded bg-neutral-100 text-neutral-700 border border-neutral-200 text-[11px] font-medium">
-                              {item.categoryLabel}
+
+                          {/* 2. SENDER */}
+                          <td className="py-3.5 px-4">
+                            <div className="text-xs font-medium text-slate-800">
+                              {item.vendorName || "Vendor Accounts"}
+                            </div>
+                            <div className="text-[11px] text-slate-400 font-mono mt-0.5 truncate max-w-[180px]">
+                              {item.sender}
+                            </div>
+                          </td>
+
+                          {/* 3. CATEGORY */}
+                          <td className="py-3.5 px-4">
+                            <span className="inline-flex items-center px-3 py-0.5 rounded-full bg-pink-50 text-pink-700 border border-pink-200 text-[11px] font-medium">
+                              {item.category === "BEC_WIRE_FRAUD"
+                                ? "Raw Materials"
+                                : item.category === "SEMAKMULE_HIT"
+                                ? "Logistics"
+                                : item.category === "PROMPT_INJECTION"
+                                ? "Engineering"
+                                : item.category === "FAIL_CLOSED"
+                                ? "Fail-Closed Recovery"
+                                : item.categoryLabel || "Operations"}
                             </span>
                           </td>
-                          <td className="py-3 px-4">
-                            <span className={`inline-flex items-center px-2 py-0.5 rounded-full border text-[11px] font-medium ${statusBadge}`}>
-                              {item.status}
-                            </span>
+
+                          {/* 4. STATUS */}
+                          <td className="py-3.5 px-4">
+                            {isReview && (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-[11px] font-bold">
+                                <span className="w-1.5 h-1.5 rounded-full bg-amber-600" />
+                                NEEDS_REVIEW
+                              </span>
+                            )}
+                            {isDefect && (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 text-[11px] font-bold">
+                                <span className="w-1.5 h-1.5 rounded-full bg-rose-600" />
+                                LOCKED_CRITICAL
+                              </span>
+                            )}
+                            {isVerified && (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-bold">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
+                                VERIFIED
+                              </span>
+                            )}
+                            {!isReview && !isDefect && !isVerified && (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">
+                                <span className="w-1.5 h-1.5 rounded-full bg-slate-500" />
+                                RESOLVED
+                              </span>
+                            )}
                           </td>
-                          <td className="py-3 px-4 font-mono font-bold">
-                            <span
-                              className={
-                                item.riskScore >= 80
-                                  ? "text-rose-700"
-                                  : item.riskScore > 20
-                                  ? "text-amber-700"
-                                  : "text-emerald-700"
-                              }
-                            >
-                              {item.riskScore >= 80 ? "0/100 (Critical Defect)" : `${100 - item.riskScore}/100 Match`}
-                            </span>
-                          </td>
-                          <td className="py-3 px-4 text-right">
-                            <span className="inline-flex items-center text-[#3D5A80] font-semibold group-hover:underline">
-                              Inspect <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
-                            </span>
+
+                          {/* 5. RISK / SCORE */}
+                          <td className="py-3.5 px-4 text-right pr-6 font-mono text-xs font-bold">
+                            {item.riskScore >= 80 ? (
+                              <span className="text-rose-600">
+                                {item.riskScore}%
+                              </span>
+                            ) : item.riskScore > 20 ? (
+                              <span className="text-amber-600">
+                                {item.riskScore}%
+                              </span>
+                            ) : (
+                              <span className="text-emerald-600">
+                                {item.riskScore || 0}%
+                              </span>
+                            )}
                           </td>
                         </tr>
                       );
@@ -981,30 +1041,30 @@ export default function DocuVerifyApp() {
                   type="button"
                   id="btn-back-to-queue"
                   onClick={() => setActiveTab("queue")}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#3D5A80] hover:underline"
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-800 hover:text-slate-950 transition-colors"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   <span>Queue</span>
                 </button>
 
-                <div className="text-xs text-neutral-500 font-mono">
+                <div className="text-xs text-slate-500 font-mono">
                   Face Value Claimed:{" "}
-                  <strong className="text-neutral-900 font-sans text-sm">
+                  <strong className="text-slate-900 font-sans text-sm">
                     MYR {selectedItem.amountMyr.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                   </strong>
                 </div>
               </div>
 
               {/* Case Header Card */}
-              <div className="bg-white border border-neutral-200/90 rounded-xl p-5 shadow-xs space-y-3">
+              <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-3">
                 <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
                   <div>
-                    <h2 className="text-base sm:text-lg font-bold text-neutral-900 tracking-tight">
+                    <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
                       {selectedItem.subject}
                     </h2>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs text-neutral-500">Inbound Sender:</span>
-                      <div className="px-2 py-0.5 rounded bg-neutral-50 border border-neutral-200 text-xs font-mono">
+                      <span className="text-xs text-slate-500">Inbound Sender:</span>
+                      <div className="px-2 py-0.5 rounded bg-slate-50 border border-slate-200 text-xs font-mono">
                         {selectedItem.domainHighlight ? (
                           <>
                             billing@
@@ -1025,9 +1085,9 @@ export default function DocuVerifyApp() {
                     {selectedItem.attachedFiles.map((f) => (
                       <span
                         key={f}
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-neutral-50 border border-neutral-200 text-xs font-mono text-neutral-700"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-50 border border-slate-200 text-xs font-mono text-slate-700"
                       >
-                        <FileText className="w-3.5 h-3.5 text-[#3D5A80]" />
+                        <FileText className="w-3.5 h-3.5 text-slate-600" />
                         {f}
                       </span>
                     ))}
@@ -1036,8 +1096,8 @@ export default function DocuVerifyApp() {
 
                 {/* Notice Callout Banner */}
                 {selectedItem.status !== "VERIFIED" && selectedItem.status !== "RESOLVED" && (
-                  <div className="p-3 rounded-lg border-l-4 border-l-[#3D5A80] bg-[#F4F7FA] text-[#2E4665] text-xs flex items-start gap-2.5">
-                    <AlertTriangle className="w-4 h-4 text-[#3D5A80] flex-shrink-0 mt-0.5" />
+                  <div className="p-3 rounded-xl border-l-4 border-l-[#1e293b] bg-slate-50 text-slate-800 text-xs flex items-start gap-2.5">
+                    <AlertTriangle className="w-4 h-4 text-[#1e293b] flex-shrink-0 mt-0.5" />
                     <p className="leading-relaxed">
                       <strong>Warning:</strong> Remittance bank account differs from Master Procurement Ledger.
                       Ledger records are the immutable source of truth under Malaysian AP compliance protocols.
@@ -1077,11 +1137,11 @@ export default function DocuVerifyApp() {
                       <>
                         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                           {/* Left Card: Inbound Email Request */}
-                          <div className="bg-white border border-neutral-200/90 rounded-xl p-4 shadow-xs flex flex-col justify-between space-y-3">
+                          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-2xs flex flex-col justify-between space-y-3">
                             <div>
-                              <div className="flex items-center justify-between border-b border-neutral-100 pb-2.5">
-                                <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-800 flex items-center gap-2">
-                                  <Mail className="w-3.5 h-3.5 text-[#3D5A80]" />
+                              <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-2">
+                                  <Mail className="w-3.5 h-3.5 text-slate-700" />
                                   <span>Inbound Email Request</span>
                                 </h3>
                                 {selectedItem.domainHighlight ? (
@@ -1097,16 +1157,16 @@ export default function DocuVerifyApp() {
 
                               <div className="mt-3 space-y-2 text-xs">
                                 <div>
-                                  <span className="text-neutral-400 font-mono text-[11px] block">Sender Address:</span>
-                                  <span className="font-mono text-neutral-800 font-medium">{selectedItem.sender}</span>
+                                  <span className="text-slate-400 font-mono text-[11px] block">Sender Address:</span>
+                                  <span className="font-mono text-slate-800 font-medium">{selectedItem.sender}</span>
                                 </div>
                                 <div>
-                                  <span className="text-neutral-400 font-mono text-[11px] block">Subject Line:</span>
-                                  <span className="font-semibold text-neutral-900">{selectedItem.subject}</span>
+                                  <span className="text-slate-400 font-mono text-[11px] block">Subject Line:</span>
+                                  <span className="font-semibold text-slate-900">{selectedItem.subject}</span>
                                 </div>
                                 <div>
-                                  <span className="text-neutral-400 font-mono text-[11px] block">Raw Email Body Text:</span>
-                                  <pre className="mt-1 p-2.5 rounded-lg bg-neutral-50 border border-neutral-200 text-[11px] font-mono text-neutral-700 whitespace-pre-wrap leading-relaxed max-h-36 overflow-y-auto">
+                                  <span className="text-slate-400 font-mono text-[11px] block">Raw Email Body Text:</span>
+                                  <pre className="mt-1 p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-[11px] font-mono text-slate-700 whitespace-pre-wrap leading-relaxed max-h-36 overflow-y-auto">
                                     {selectedItem.body}
                                   </pre>
                                 </div>
@@ -1114,15 +1174,15 @@ export default function DocuVerifyApp() {
                             </div>
 
                             {hasPdf && (
-                              <div className="pt-2 border-t border-neutral-100 flex items-center justify-between">
-                                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#E8EEF5] text-[#3D5A80] border border-[#B5C7D9] text-xs font-mono">
+                              <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+                                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 text-slate-800 border border-slate-200 text-xs font-mono">
                                   <FileText className="w-3.5 h-3.5" />
                                   <span>[Attachment: {attachmentName}]</span>
                                 </div>
                                 <button
                                   type="button"
                                   onClick={() => alert(`Previewing original document: ${attachmentName}`)}
-                                  className="text-xs font-semibold text-[#3D5A80] hover:underline"
+                                  className="text-xs font-semibold text-slate-800 hover:text-slate-950 underline"
                                 >
                                   Preview File →
                                 </button>
@@ -1131,16 +1191,16 @@ export default function DocuVerifyApp() {
                           </div>
 
                           {/* Right Card: Contextual Counter-Evidence */}
-                          <div className="bg-white border border-neutral-200/90 rounded-xl p-4 shadow-xs flex flex-col justify-between space-y-3">
+                          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-2xs flex flex-col justify-between space-y-3">
                             <div>
-                              <div className="flex items-center justify-between border-b border-neutral-100 pb-2.5">
-                                <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-800 flex items-center gap-2">
-                                  <ShieldAlert className="w-3.5 h-3.5 text-[#3D5A80]" />
+                              <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-2">
+                                  <ShieldAlert className="w-3.5 h-3.5 text-slate-700" />
                                   <span>
                                     {hasPdf ? "Extracted Document Evidence" : "Vendor Master Ledger Record"}
                                   </span>
                                 </h3>
-                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-[#E8EEF5] text-[#3D5A80] border border-[#B5C7D9]">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-100 text-slate-800 border border-slate-200">
                                   {hasPdf ? "Gemini Multimodal Native Stream" : "Source of Truth"}
                                 </span>
                               </div>
@@ -1205,7 +1265,7 @@ export default function DocuVerifyApp() {
                                     </div>
                                     <div className="text-right">
                                       <span className="text-[10px] text-neutral-400 uppercase font-mono block">Verified Switchboard</span>
-                                      <span className="font-mono font-bold text-[#3D5A80]">{selectedItem.masterPhone}</span>
+                                      <span className="font-mono font-bold text-[#1e293b]">{selectedItem.masterPhone}</span>
                                     </div>
                                   </div>
                                 </div>
@@ -1242,14 +1302,14 @@ export default function DocuVerifyApp() {
                         <div className="bg-white border border-neutral-200/90 rounded-xl overflow-hidden shadow-xs">
                           <div className="p-4 border-b border-neutral-200 bg-neutral-50/70 flex items-center justify-between">
                             <h3 className="text-sm font-bold text-neutral-900 flex items-center gap-2">
-                              <FileCode className="w-4 h-4 text-[#3D5A80]" />
+                              <FileCode className="w-4 h-4 text-[#1e293b]" />
                               <span>
                                 {hasPdf
                                   ? "3-Way Forensic Cross-Verification Matrix"
                                   : "2-Way Cross-Verification Matrix (Plain Text Context)"}
                               </span>
                             </h3>
-                            <span className="text-[11px] font-mono text-[#3D5A80] bg-[#E8EEF5] border border-[#B5C7D9] px-2 py-0.5 rounded font-semibold">
+                            <span className="text-[11px] font-mono text-[#1e293b] bg-slate-100 border border-slate-200 px-2 py-0.5 rounded font-semibold">
                               {hasPdf ? "Email Body vs. Attached PDF vs. Master Ledger" : "Email Body vs. Master Ledger"}
                             </span>
                           </div>
@@ -1517,7 +1577,7 @@ export default function DocuVerifyApp() {
                   <div className="bg-white border border-neutral-200/90 rounded-xl p-4 shadow-xs space-y-2">
                     <div className="text-xs font-semibold text-neutral-700 flex items-center justify-between">
                       <span>Inbound Document Extract (&lt;UNTRUSTED_INBOUND_DOC&gt;)</span>
-                      <span className="text-[#3D5A80] text-[10px] font-mono">
+                      <span className="text-[#1e293b] text-[10px] font-mono">
                         Malaysian PDPA 2010 Sec 10 In-Memory Sanitized
                       </span>
                     </div>
@@ -1558,10 +1618,10 @@ export default function DocuVerifyApp() {
                         id="btn-approve-submit"
                         disabled={!clerkSigned || !managerSigned || voucherReleased}
                         onClick={() => setVoucherReleased(true)}
-                        className={`w-full py-2.5 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 shadow-xs transition-colors ${
+                        className={`w-full py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 shadow-xs transition-colors ${
                           clerkSigned && managerSigned && !voucherReleased
-                            ? "bg-[#3D5A80] hover:bg-[#2E4665] text-white cursor-pointer active:scale-98"
-                            : "bg-neutral-100 text-neutral-400 border border-neutral-200 cursor-not-allowed"
+                            ? "bg-[#1e293b] hover:bg-slate-800 text-white cursor-pointer active:scale-98"
+                            : "bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed"
                         }`}
                       >
                         <Unlock className="w-3.5 h-3.5" />
@@ -1572,7 +1632,7 @@ export default function DocuVerifyApp() {
                         type="button"
                         id="btn-escalate"
                         onClick={() => setActiveModal("escalate")}
-                        className="w-full py-2 px-3 rounded-lg text-xs font-semibold border border-[#3D5A80] text-[#3D5A80] hover:bg-[#E8EEF5] transition-colors"
+                        className="w-full py-2 px-3 rounded-xl text-xs font-semibold border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors"
                       >
                         Escalate
                       </button>
@@ -1580,10 +1640,10 @@ export default function DocuVerifyApp() {
                   </div>
 
                   {/* Card 2: 4-Eyes Dual Authorization Checklist */}
-                  <div className="bg-white border border-neutral-200/90 rounded-xl p-5 shadow-xs space-y-3">
-                    <div className="text-xs font-bold text-neutral-900 flex items-center justify-between">
+                  <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-3">
+                    <div className="text-xs font-bold text-slate-900 flex items-center justify-between">
                       <span>4-Eyes Dual Authorization</span>
-                      <span className="text-[10px] text-[#3D5A80] font-mono">AMLA 2001 Sec 44</span>
+                      <span className="text-[10px] text-slate-500 font-mono">AMLA 2001 Sec 44</span>
                     </div>
 
                     <label className="flex items-start gap-2.5 cursor-pointer group">
@@ -1594,12 +1654,12 @@ export default function DocuVerifyApp() {
                           setClerkSigned(e.target.checked);
                           if (!e.target.checked) setManagerSigned(false);
                         }}
-                        className="mt-0.5 w-4 h-4 rounded border-neutral-300 text-[#3D5A80] focus:ring-[#3D5A80] cursor-pointer"
+                        className="mt-0.5 w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900 cursor-pointer"
                       />
-                      <span className="text-xs text-neutral-700 leading-snug group-hover:text-neutral-900">
-                        <strong className="text-[#3D5A80] block font-medium">Step 1 (AP Clerk):</strong>
+                      <span className="text-xs text-slate-700 leading-snug group-hover:text-slate-900">
+                        <strong className="text-slate-900 block font-medium">Step 1 (AP Clerk):</strong>
                         Verbal verification via official switchboard{" "}
-                        <code className="text-[#3D5A80] font-mono text-[11px]">{selectedItem.masterPhone}</code>
+                        <code className="text-slate-900 font-mono text-[11px] font-bold">{selectedItem.masterPhone}</code>
                       </span>
                     </label>
 
@@ -1613,71 +1673,71 @@ export default function DocuVerifyApp() {
                         disabled={!clerkSigned}
                         checked={managerSigned}
                         onChange={(e) => setManagerSigned(e.target.checked)}
-                        className="mt-0.5 w-4 h-4 rounded border-neutral-300 text-[#3D5A80] focus:ring-[#3D5A80]"
+                        className="mt-0.5 w-4 h-4 rounded border-slate-300 text-slate-900 focus:ring-slate-900"
                       />
-                      <span className="text-xs text-neutral-700 leading-snug">
-                        <strong className="text-[#3D5A80] block font-medium">Step 2 (Finance Manager):</strong>
+                      <span className="text-xs text-slate-700 leading-snug">
+                        <strong className="text-slate-900 block font-medium">Step 2 (Finance Manager):</strong>
                         Cryptographic key override
                       </span>
                     </label>
                   </div>
 
                   {/* Card 3: Export Artifacts */}
-                  <div className="bg-white border border-neutral-200/90 rounded-xl p-5 shadow-xs space-y-2">
-                    <div className="text-xs font-semibold uppercase text-neutral-400 tracking-wider mb-2">
+                  <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-2">
+                    <div className="text-xs font-semibold uppercase text-slate-400 tracking-wider mb-2">
                       Corporate Artifacts
                     </div>
 
                     <button
                       type="button"
                       onClick={() => setActiveModal("dossier")}
-                      className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium border border-neutral-200 hover:border-[#3D5A80] hover:text-[#3D5A80] text-neutral-700 transition-colors"
+                      className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 transition-colors"
                     >
                       <span className="flex items-center gap-2">
-                        <FileText className="w-3.5 h-3.5 text-[#3D5A80]" />
+                        <FileText className="w-3.5 h-3.5 text-slate-600" />
                         Export NSRC 997 Police Dossier (PDF)
                       </span>
-                      <ChevronRight className="w-3 h-3 text-neutral-400" />
+                      <ChevronRight className="w-3 h-3 text-slate-400" />
                     </button>
 
                     <button
                       type="button"
                       onClick={() => setActiveModal("print")}
-                      className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium border border-neutral-200 hover:border-[#3D5A80] hover:text-[#3D5A80] text-neutral-700 transition-colors"
+                      className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 transition-colors"
                     >
                       <span className="flex items-center gap-2">
-                        <Printer className="w-3.5 h-3.5 text-[#3D5A80]" />
+                        <Printer className="w-3.5 h-3.5 text-slate-600" />
                         Print Verification Record
                       </span>
-                      <ChevronRight className="w-3 h-3 text-neutral-400" />
+                      <ChevronRight className="w-3 h-3 text-slate-400" />
                     </button>
 
                     <button
                       type="button"
                       onClick={() => setActiveModal("gmail")}
-                      className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs font-medium border border-neutral-200 hover:border-[#3D5A80] hover:text-[#3D5A80] text-neutral-700 transition-colors"
+                      className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 transition-colors"
                     >
                       <span className="flex items-center gap-2">
-                        <Mail className="w-3.5 h-3.5 text-[#3D5A80]" />
+                        <Mail className="w-3.5 h-3.5 text-slate-600" />
                         Insert Gmail Challenge Reply Draft
                       </span>
-                      <ChevronRight className="w-3 h-3 text-neutral-400" />
+                      <ChevronRight className="w-3 h-3 text-slate-400" />
                     </button>
                   </div>
 
                   {/* Card 4: Collapsible Raw JSON Submission */}
-                  <div className="bg-white border border-neutral-200/90 rounded-xl overflow-hidden shadow-xs">
+                  <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-2xs">
                     <button
                       type="button"
                       onClick={() => setRawJsonExpanded(!rawJsonExpanded)}
-                      className="w-full px-4 py-3 flex items-center justify-between text-xs font-semibold text-neutral-700 hover:bg-neutral-50 transition-colors"
+                      className="w-full px-4 py-3 flex items-center justify-between text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
                     >
                       <span className="flex items-center gap-1.5 font-mono">
-                        <FileCode className="w-3.5 h-3.5 text-[#3D5A80]" />
+                        <FileCode className="w-3.5 h-3.5 text-slate-600" />
                         RAW JSON SUBMISSION
                       </span>
                       <ChevronDown
-                        className={`w-3.5 h-3.5 text-neutral-400 transition-transform ${
+                        className={`w-3.5 h-3.5 text-slate-400 transition-transform ${
                           rawJsonExpanded ? "rotate-180" : ""
                         }`}
                       />
@@ -1729,7 +1789,7 @@ export default function DocuVerifyApp() {
                   <button
                     type="button"
                     onClick={handleExportCsv}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-neutral-300 bg-white hover:bg-neutral-50 hover:border-[#3D5A80] hover:text-[#3D5A80] text-neutral-700 font-medium text-xs transition-colors shadow-2xs"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-neutral-300 bg-white hover:bg-neutral-50 hover:border-[#1e293b] hover:text-[#1e293b] text-neutral-700 font-medium text-xs transition-colors shadow-2xs cursor-pointer"
                   >
                     <Download className="w-3.5 h-3.5" />
                     <span>Export CSV</span>
@@ -1738,7 +1798,7 @@ export default function DocuVerifyApp() {
                   <button
                     type="button"
                     onClick={handleExportJson}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-neutral-300 bg-white hover:bg-neutral-50 hover:border-[#3D5A80] hover:text-[#3D5A80] text-neutral-700 font-medium text-xs transition-colors shadow-2xs"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-neutral-300 bg-white hover:bg-neutral-50 hover:border-[#1e293b] hover:text-[#1e293b] text-neutral-700 font-medium text-xs transition-colors shadow-2xs cursor-pointer"
                   >
                     <Download className="w-3.5 h-3.5" />
                     <span>Export JSON</span>
@@ -1749,7 +1809,7 @@ export default function DocuVerifyApp() {
               {/* Chronological Audit Timeline */}
               <div className="bg-white border border-neutral-200/90 rounded-xl p-5 shadow-xs space-y-4 font-mono text-xs">
                 <div className="flex items-start gap-3 pb-3 border-b border-neutral-100">
-                  <span className="px-2 py-0.5 rounded bg-[#E8EEF5] text-[#3D5A80] text-[10px] font-bold">
+                  <span className="px-2 py-0.5 rounded bg-slate-100 text-[#1e293b] text-[10px] font-bold">
                     10:15:22 UTC
                   </span>
                   <div className="flex-1 font-sans">
@@ -1832,7 +1892,7 @@ export default function DocuVerifyApp() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs">
           <div className="w-full max-w-2xl bg-white border border-neutral-200 rounded-xl p-6 shadow-xl space-y-4 max-h-[90vh] flex flex-col">
             <div className="flex items-center justify-between border-b border-neutral-200 pb-3">
-              <div className="flex items-center gap-2 text-[#3D5A80]">
+              <div className="flex items-center gap-2 text-[#1e293b]">
                 <FileText className="w-5 h-5" />
                 <h3 className="font-bold text-sm text-neutral-900">
                   PDRM CCID / NSRC 997 Police Complaint Dossier
@@ -1844,7 +1904,7 @@ export default function DocuVerifyApp() {
             </div>
 
             <div className="flex-1 overflow-y-auto font-mono text-xs text-neutral-800 bg-neutral-50 p-4 rounded-lg border border-neutral-200 space-y-3 leading-relaxed">
-              <div className="text-[#3D5A80] font-bold border-b border-neutral-200 pb-1">
+              <div className="text-[#1e293b] font-bold border-b border-neutral-200 pb-1">
                 ROYAL MALAYSIA POLICE (PDRM) CCID &amp; NSRC 997 INCIDENT DOSSIER
               </div>
               <div>
@@ -1883,15 +1943,15 @@ export default function DocuVerifyApp() {
               <button
                 type="button"
                 onClick={() => copyToClipboard(`PDRM CCID DOSSIER - Case ${selectedItem.emailId} - Target Account: ${selectedItem.claimedBank} ${selectedItem.claimedAccount}`)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-neutral-100 hover:bg-neutral-200 text-xs font-semibold text-neutral-800 transition-colors"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-slate-800 transition-colors"
               >
-                {copiedCode ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4 text-[#3D5A80]" />}
+                {copiedCode ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4 text-slate-700" />}
                 <span>{copiedCode ? "Copied" : "Copy Dossier Text"}</span>
               </button>
               <button
                 type="button"
                 onClick={() => window.print()}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#3D5A80] hover:bg-[#2E4665] text-xs font-bold text-white transition-colors"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#1e293b] hover:bg-slate-800 text-xs font-bold text-white transition-colors shadow-2xs"
               >
                 <Printer className="w-4 h-4" />
                 <span>Print Official PDF</span>
@@ -1903,22 +1963,22 @@ export default function DocuVerifyApp() {
 
       {/* Modal 2: Print Verification Record */}
       {activeModal === "print" && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs">
-          <div className="w-full max-w-xl bg-white border border-neutral-200 rounded-xl p-6 shadow-xl space-y-4 max-h-[90vh] flex flex-col">
-            <div className="flex items-center justify-between border-b border-neutral-200 pb-3">
-              <div className="flex items-center gap-2 text-[#3D5A80]">
-                <Printer className="w-5 h-5" />
-                <h3 className="font-bold text-sm text-neutral-900">Physical Verification Record</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+          <div className="w-full max-w-xl bg-white border border-slate-200 rounded-2xl p-6 shadow-xl space-y-4 max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+              <div className="flex items-center gap-2 text-slate-900">
+                <Printer className="w-5 h-5 text-slate-700" />
+                <h3 className="font-bold text-sm text-slate-900">Physical Verification Record</h3>
               </div>
-              <button type="button" onClick={() => setActiveModal(null)} className="text-neutral-400 hover:text-neutral-600">
+              <button type="button" onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-600">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto text-xs bg-white text-neutral-900 p-5 rounded-lg border border-neutral-200 space-y-3 font-sans">
-              <div className="border-b-2 border-neutral-900 pb-2">
+            <div className="flex-1 overflow-y-auto text-xs bg-white text-slate-900 p-5 rounded-xl border border-slate-200 space-y-3 font-sans">
+              <div className="border-b-2 border-slate-900 pb-2">
                 <h4 className="font-bold text-sm uppercase">DocuVerify • Accounts Payable Audit Voucher</h4>
-                <p className="text-[11px] text-neutral-600">Physical Finance Filing &amp; Statutory Compliance Record</p>
+                <p className="text-[11px] text-slate-600">Physical Finance Filing &amp; Statutory Compliance Record</p>
               </div>
               <div className="grid grid-cols-2 gap-2 text-[11px]">
                 <div><strong>Case Reference:</strong> {selectedItem.emailId}</div>
@@ -1928,21 +1988,21 @@ export default function DocuVerifyApp() {
                 <div><strong>Audit Verdict:</strong> {selectedItem.status}</div>
                 <div><strong>Risk Score:</strong> {selectedItem.riskScore}/100</div>
               </div>
-              <div className="border-t border-neutral-300 pt-2 text-[11px]">
+              <div className="border-t border-slate-200 pt-2 text-[11px]">
                 <strong>Two-Way Parity Check:</strong>
                 <p>Ground Truth Bank: {selectedItem.masterBank} ({selectedItem.masterAccount})</p>
                 <p>Inbound Claimed: {selectedItem.claimedBank} ({selectedItem.claimedAccount})</p>
               </div>
-              <div className="border-t border-neutral-300 pt-2 text-[11px]">
+              <div className="border-t border-slate-200 pt-2 text-[11px]">
                 <strong>Dual Authorization Signatures:</strong>
-                <div className="mt-4 grid grid-cols-2 gap-6 pt-4 border-t border-neutral-200">
+                <div className="mt-4 grid grid-cols-2 gap-6 pt-4 border-t border-slate-200">
                   <div>
-                    <p className="text-[10px] text-neutral-500">AP Clerk Verbal Confirmation:</p>
-                    <div className="mt-4 border-b border-neutral-400 w-32" />
+                    <p className="text-[10px] text-slate-500">AP Clerk Verbal Confirmation:</p>
+                    <div className="mt-4 border-b border-slate-400 w-32" />
                   </div>
                   <div>
-                    <p className="text-[10px] text-neutral-500">Finance Manager Key Sign-Off:</p>
-                    <div className="mt-4 border-b border-neutral-400 w-32" />
+                    <p className="text-[10px] text-slate-500">Finance Manager Key Sign-Off:</p>
+                    <div className="mt-4 border-b border-slate-400 w-32" />
                   </div>
                 </div>
               </div>
@@ -1952,14 +2012,14 @@ export default function DocuVerifyApp() {
               <button
                 type="button"
                 onClick={() => setActiveModal(null)}
-                className="px-3.5 py-1.5 rounded-lg border border-neutral-200 text-xs font-semibold text-neutral-600 hover:bg-neutral-100"
+                className="px-3.5 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-100"
               >
                 Close
               </button>
               <button
                 type="button"
                 onClick={() => window.print()}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#3D5A80] hover:bg-[#2E4665] text-xs font-bold text-white transition-colors"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#1e293b] hover:bg-slate-800 text-xs font-bold text-white transition-colors shadow-2xs"
               >
                 <Printer className="w-4 h-4" />
                 <span>Print Document</span>
@@ -1971,19 +2031,19 @@ export default function DocuVerifyApp() {
 
       {/* Modal 3: Gmail Challenge Reply Draft */}
       {activeModal === "gmail" && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs">
-          <div className="w-full max-w-xl bg-white border border-neutral-200 rounded-xl p-6 shadow-xl space-y-4 max-h-[90vh] flex flex-col">
-            <div className="flex items-center justify-between border-b border-neutral-200 pb-3">
-              <div className="flex items-center gap-2 text-[#3D5A80]">
-                <Mail className="w-5 h-5" />
-                <h3 className="font-bold text-sm text-neutral-900">Gmail Challenge Dispute Notice Draft</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+          <div className="w-full max-w-xl bg-white border border-slate-200 rounded-2xl p-6 shadow-xl space-y-4 max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+              <div className="flex items-center gap-2 text-slate-900">
+                <Mail className="w-5 h-5 text-slate-700" />
+                <h3 className="font-bold text-sm text-slate-900">Gmail Challenge Dispute Notice Draft</h3>
               </div>
-              <button type="button" onClick={() => setActiveModal(null)} className="text-neutral-400 hover:text-neutral-600">
+              <button type="button" onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-600">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto text-xs font-mono text-neutral-800 bg-neutral-50 p-4 rounded-lg border border-neutral-200 leading-relaxed whitespace-pre-wrap">
+            <div className="flex-1 overflow-y-auto text-xs font-mono text-slate-800 bg-slate-50 p-4 rounded-xl border border-slate-200 leading-relaxed whitespace-pre-wrap">
 {`Re: ${selectedItem.subject}
 
 Dear Accounts Department / Remittance Contact,
@@ -2005,7 +2065,7 @@ Reference Case ID: ${selectedItem.emailId}`}
             </div>
 
             <div className="flex items-center justify-between pt-2">
-              <span className="text-[10px] text-neutral-500">Pre-populated polite corporate dispute draft</span>
+              <span className="text-[10px] text-slate-500">Pre-populated polite corporate dispute draft</span>
               <button
                 type="button"
                 onClick={() =>
@@ -2013,7 +2073,7 @@ Reference Case ID: ${selectedItem.emailId}`}
                     `Re: ${selectedItem.subject}\n\nDear Accounts Department,\nPayment voucher for MYR ${selectedItem.amountMyr} placed on mandatory security hold pending out-of-band verification via official switchboard ${selectedItem.masterPhone}.\n\nReference: ${selectedItem.emailId}`
                   )
                 }
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#3D5A80] hover:bg-[#2E4665] text-xs font-bold text-white transition-colors"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#1e293b] hover:bg-slate-800 text-xs font-bold text-white transition-colors shadow-2xs"
               >
                 {copiedCode ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                 <span>{copiedCode ? "Copied" : "Copy Reply Draft"}</span>
@@ -2025,29 +2085,29 @@ Reference Case ID: ${selectedItem.emailId}`}
 
       {/* Modal 4: Simplified Role-Agnostic Escalation Modal */}
       {activeModal === "escalate" && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs">
-          <div className="w-full max-w-lg bg-white border border-neutral-200 rounded-xl p-6 shadow-xl space-y-4">
-            <div className="flex items-center justify-between border-b border-neutral-200 pb-3">
-              <h3 className="font-bold text-sm text-neutral-900 flex items-center gap-2">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+          <div className="w-full max-w-lg bg-white border border-slate-200 rounded-2xl p-6 shadow-xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+              <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-amber-600" />
                 Escalate Exception for Forensic Review
               </h3>
               <button
                 type="button"
                 onClick={() => setActiveModal(null)}
-                className="text-neutral-400 hover:text-neutral-600"
+                className="text-slate-400 hover:text-slate-600"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <p className="text-xs text-neutral-600 leading-relaxed">
+            <p className="text-xs text-slate-600 leading-relaxed">
               Flags multi-way verification anomalies and routes this invoice directly to the AP exception review queue.
             </p>
 
             {/* Priority Selector: 3 clean toggle pills (Low, Medium, High) */}
             <div>
-              <label className="block text-[11px] font-semibold text-neutral-600 mb-1.5 uppercase tracking-wider">
+              <label className="block text-[11px] font-semibold text-slate-600 mb-1.5 uppercase tracking-wider">
                 Priority Tier
               </label>
               <div className="grid grid-cols-3 gap-2">
@@ -2058,14 +2118,14 @@ Reference Case ID: ${selectedItem.emailId}`}
                       key={p}
                       type="button"
                       onClick={() => setEscalationPriority(p)}
-                      className={`py-2 px-3 rounded-lg text-xs font-semibold border transition-all flex items-center justify-center gap-1.5 ${
+                      className={`py-2 px-3 rounded-full text-xs font-semibold border transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                         isSelected
                           ? p === "High"
                             ? "bg-rose-50 border-rose-300 text-rose-700 font-bold shadow-2xs"
                             : p === "Medium"
                             ? "bg-amber-50 border-amber-300 text-amber-800 font-bold shadow-2xs"
-                            : "bg-blue-50 border-blue-300 text-blue-700 font-bold shadow-2xs"
-                          : "bg-white border-neutral-200 text-neutral-600 hover:bg-neutral-50"
+                            : "bg-slate-100 border-slate-400 text-slate-900 font-bold shadow-2xs"
+                          : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
                       }`}
                     >
                       <span>
@@ -2080,7 +2140,7 @@ Reference Case ID: ${selectedItem.emailId}`}
 
             {/* Reviewer Note labeled WHAT SHOULD THE REVIEWER LOOK AT? */}
             <div>
-              <label className="block text-[11px] font-bold text-neutral-800 mb-1.5 tracking-tight uppercase">
+              <label className="block text-[11px] font-bold text-slate-800 mb-1.5 tracking-tight uppercase">
                 WHAT SHOULD THE REVIEWER LOOK AT?
               </label>
               <textarea
@@ -2088,9 +2148,9 @@ Reference Case ID: ${selectedItem.emailId}`}
                 value={escalationNote}
                 onChange={(e) => setEscalationNote(e.target.value)}
                 placeholder="Describe key discrepancies for reviewer inspection..."
-                className="w-full p-2.5 rounded-lg border border-neutral-200 bg-neutral-50 text-xs font-mono text-neutral-800 focus:outline-none focus:ring-1 focus:ring-[#3D5A80] leading-relaxed"
+                className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-mono text-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-900 leading-relaxed"
               />
-              <span className="text-[10px] text-neutral-400 mt-1 block">
+              <span className="text-[10px] text-slate-400 mt-1 block">
                 Pre-populated with primary detected discrepancy. Editable by AP reviewer.
               </span>
             </div>
@@ -2099,7 +2159,7 @@ Reference Case ID: ${selectedItem.emailId}`}
               <button
                 type="button"
                 onClick={() => setActiveModal(null)}
-                className="px-3.5 py-1.5 rounded-lg border border-neutral-200 text-xs font-semibold text-neutral-600 hover:bg-neutral-100"
+                className="px-3.5 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-100"
               >
                 Cancel
               </button>
@@ -2111,7 +2171,7 @@ Reference Case ID: ${selectedItem.emailId}`}
                     `Case ${selectedItem.emailId} escalated [Priority: ${escalationPriority}]. Review note dispatched to backend.`
                   );
                 }}
-                className="px-4 py-2 rounded-lg bg-[#3D5A80] hover:bg-[#2E4665] text-white font-semibold text-xs shadow-xs"
+                className="px-4 py-2 rounded-xl bg-[#1e293b] hover:bg-slate-800 text-white font-semibold text-xs shadow-xs"
               >
                 Escalate
               </button>
@@ -2122,42 +2182,42 @@ Reference Case ID: ${selectedItem.emailId}`}
 
       {/* Modal 5: New Verification */}
       {activeModal === "new_verification" && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-xs">
-          <div className="w-full max-w-lg bg-white border border-neutral-200 rounded-xl p-6 shadow-xl space-y-4">
-            <div className="flex items-center justify-between border-b border-neutral-200 pb-3">
-              <h3 className="font-bold text-sm text-neutral-900 flex items-center gap-2">
-                <Plus className="w-4 h-4 text-[#3D5A80]" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+          <div className="w-full max-w-lg bg-white border border-slate-200 rounded-2xl p-6 shadow-xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+              <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
+                <Plus className="w-4 h-4 text-slate-800" />
                 New Inbound AP Verification
               </h3>
-              <button type="button" onClick={() => setActiveModal(null)} className="text-neutral-400 hover:text-neutral-600">
+              <button type="button" onClick={() => setActiveModal(null)} className="text-slate-400 hover:text-slate-600">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="space-y-3">
               <div>
-                <label className="block text-[11px] font-semibold text-neutral-600 mb-1">
+                <label className="block text-[11px] font-semibold text-slate-600 mb-1">
                   Upload Invoice PDF (Max 4.5MB Serverless Limit)
                 </label>
-                <div className="border-2 border-dashed border-neutral-300 rounded-lg p-6 text-center hover:border-[#3D5A80] transition-colors cursor-pointer">
-                  <UploadCloud className="w-8 h-8 text-[#3D5A80] mx-auto mb-2" />
-                  <p className="text-xs text-neutral-600 font-medium">
+                <div className="border-2 border-dashed border-slate-300 rounded-2xl p-6 text-center hover:border-slate-500 transition-colors cursor-pointer bg-slate-50/50">
+                  <UploadCloud className="w-8 h-8 text-slate-700 mx-auto mb-2" />
+                  <p className="text-xs text-slate-700 font-medium">
                     Click to browse or drag and drop invoice PDF
                   </p>
-                  <p className="text-[10px] text-neutral-400 mt-1">
+                  <p className="text-[10px] text-slate-400 mt-1">
                     Inspected strictly in volatile RAM with zero disk persistence under PDPA 2010.
                   </p>
                 </div>
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-neutral-600 mb-1">
+                <label className="block text-[11px] font-semibold text-slate-600 mb-1">
                   Or Paste Suspicious Email / Inbound Claims
                 </label>
                 <textarea
                   rows={3}
                   placeholder="Paste email headers or remittance bank account claim..."
-                  className="w-full p-2.5 rounded-lg border border-neutral-200 bg-neutral-50 text-xs font-mono text-neutral-800 focus:outline-none focus:ring-1 focus:ring-[#3D5A80]"
+                  className="w-full p-2.5 rounded-xl border border-slate-200 bg-slate-50 text-xs font-mono text-slate-800 focus:outline-none focus:ring-1 focus:ring-slate-900"
                 />
               </div>
             </div>
@@ -2166,7 +2226,7 @@ Reference Case ID: ${selectedItem.emailId}`}
               <button
                 type="button"
                 onClick={() => setActiveModal(null)}
-                className="px-3.5 py-1.5 rounded-lg border border-neutral-200 text-xs font-semibold text-neutral-600 hover:bg-neutral-100"
+                className="px-3.5 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-100"
               >
                 Cancel
               </button>
@@ -2177,7 +2237,7 @@ Reference Case ID: ${selectedItem.emailId}`}
                   alert("Invoice ingested and analyzed. Results loaded into Queue.");
                   setActiveTab("queue");
                 }}
-                className="px-4 py-2 rounded-lg bg-[#3D5A80] hover:bg-[#2E4665] text-white font-semibold text-xs shadow-xs"
+                className="px-4 py-2 rounded-xl bg-[#1e293b] hover:bg-slate-800 text-white font-semibold text-xs shadow-xs"
               >
                 Run Verification
               </button>

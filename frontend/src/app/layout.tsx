@@ -42,7 +42,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} ${jetbrainsMono.variable} font-sans min-h-screen antialiased bg-[#F9FAFB] dark:bg-[#0B0F17] text-neutral-900 dark:text-slate-100 selection:bg-blue-600/20 selection:text-blue-700 dark:selection:text-blue-300`}
+        className={`${inter.variable} ${jetbrainsMono.variable} font-sans min-h-screen antialiased bg-[#f8fafc] dark:bg-[#0B0F17] text-slate-900 dark:text-slate-100 selection:bg-slate-800/10 selection:text-slate-900`}
       >
         {children}
       </body>
