@@ -671,7 +671,7 @@ uv run python benchmark_eval.py
 
 ### 🚧 Phase 3 — Enterprise Integration
 
-- Microsoft 365 / Exchange integration
+- Microsoft 365 / Exchange Live Mailbox integration `[ON HOLD / DO NOT IMPLEMENT FIRST — SCOPE NOT FINALIZED]`
 - AutoCount Cloud
 - SQL Account
 - Xero

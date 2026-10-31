@@ -134,7 +134,7 @@ The horizontal risk score gauge renders an inline track (`w-14 h-1.5 rounded-ful
 - **Width**: `w-60` (240px) expanded, `68px` collapsed.
 - **Surface**: `bg-white dark:bg-[#11131a]` with `border-r border-slate-200/80 dark:border-white/10`.
 - **Top Brand Lockup**: ScamGuard logo with deep blue check badge (`#1f4b8e`), `ScamGuard` text, `AP` tag, and subtext `Accounts Payable Defense`.
-- **Mailbox Ingestion Widget**: Inset card directly beneath logo (`bg-slate-50 dark:bg-[#11131a] rounded-xl p-2.5 mx-3 mt-3 border border-slate-200/70 dark:border-white/10`) featuring active pulsing green dot, `ap-audit@target-sme.com.my`, and sync trigger.
+- **Mailbox Ingestion Widget**: Inset card directly beneath logo (`bg-slate-50 dark:bg-[#11131a] rounded-xl p-2.5 mx-3 mt-3 border border-slate-200/70 dark:border-white/10`) featuring active pulsing green dot, `ap-audit@target-sme.com.my`, and sync trigger. *(Note: Displays simulated operational demonstration feed; live M365/Gmail background listeners are flagged ON HOLD / DO NOT IMPLEMENT FIRST).*
 - **Navigation Items (Strict 3-Item Model)**:
   1. `Insights` (`/insights`) &rarr; AP Insights & Cockpit
   2. `Queue` (`/queue`) &rarr; Verification queue (with `13` unread defect count badge in `bg-amber-500/15 text-amber-700`)
