@@ -230,7 +230,7 @@ export default function AuditTrailPage() {
               <button
                 type="submit"
                 disabled={isUploadingLedger || !ledgerFile}
-                className="btn btn-primary w-full text-xs py-2.5 bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-semibold rounded-lg shadow-xs"
+                className="btn btn-primary w-full text-xs py-2.5 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-semibold rounded-lg shadow-xs"
               >
                 {isUploadingLedger ? "Synchronizing..." : "Upload & Sync Ledger"}
               </button>

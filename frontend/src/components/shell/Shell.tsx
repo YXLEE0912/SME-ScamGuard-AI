@@ -156,14 +156,14 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const compact = collapsed && !isNarrow;
 
   return (
-    <div className="min-h-screen bg-[var(--rail)] text-[var(--ink)]">
-      {/* Top signature accent hairline (Orange review / high-precision indicator) */}
-      <div className="h-0.5 bg-[#e78823] w-full" aria-hidden="true" />
+    <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)]">
+      {/* Top signature accent hairline (Deep Steel Blue brand indicator) */}
+      <div className="h-0.5 bg-[#1f4b8e] w-full" aria-hidden="true" />
 
-      {/* Floating Left Rail (Desktop) */}
+      {/* Floating Left Rail (Desktop: Midnight Navy #0f1225) */}
       {!isNarrow && (
         <aside
-          className="fixed bottom-3 left-3 top-3.5 z-30 flex flex-col rounded-[24px] border border-[var(--rail-line)] bg-[var(--rail)] text-[var(--rail-ink)] transition-all duration-200 select-none"
+          className="fixed bottom-3 left-3 top-3.5 z-30 flex flex-col rounded-[24px] border border-white/10 bg-[#0f1225] text-[#f1ece6] transition-all duration-200 select-none shadow-md"
           style={{ width: RAIL(compact) }}
         >
           {/* Top Brand Lockup */}
@@ -171,7 +171,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             <button
               type="button"
               onClick={() => setCollapsed((c) => !c)}
-              className="flex items-center justify-center w-9 h-9 rounded-xl bg-slate-900 text-white dark:bg-emerald-600 shadow-xs hover:opacity-90 transition-opacity"
+              className="flex items-center justify-center w-9 h-9 rounded-xl bg-[#1f4b8e] text-[#f1ece6] shadow-xs hover:bg-[#163666] transition-colors"
               title={compact ? "Click to expand sidebar" : "Click to collapse sidebar"}
             >
               <Check className="w-5 h-5 stroke-[2.5]" />
@@ -179,14 +179,14 @@ export function Shell({ children }: { children: React.ReactNode }) {
             {!compact && (
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[14px] font-bold tracking-tight text-[var(--rail-ink)]">
+                  <span className="text-[14px] font-bold tracking-tight text-[#f1ece6]">
                     ScamGuard
                   </span>
-                  <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-[var(--rail-fill)] border border-[var(--rail-line)] text-[var(--rail-ink)]">
+                  <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-white/10 border border-white/15 text-[#f1ece6]">
                     AP
                   </span>
                 </div>
-                <div className="text-[11px] text-[var(--rail-ink-2)] truncate">
+                <div className="text-[11px] text-[#adbccd] truncate">
                   Accounts Payable Defense
                 </div>
               </div>
@@ -196,20 +196,20 @@ export function Shell({ children }: { children: React.ReactNode }) {
           {/* Mailbox Status Card */}
           {!compact && (
             <div className="px-3 pb-3">
-              <div className="flex items-center gap-2.5 rounded-2xl bg-[var(--rail-fill)] p-2.5 border border-[var(--rail-line)]">
+              <div className="flex items-center gap-2.5 rounded-2xl bg-white/5 p-2.5 border border-white/10">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
                 <div className="min-w-0 flex-1">
-                  <div className="truncate text-[12px] font-medium text-[var(--rail-ink)]">
+                  <div className="truncate text-[12px] font-medium text-[#f1ece6]">
                     ap-audit@target-sme.com.my
                   </div>
-                  <div className="text-[11px] text-[var(--rail-ink-2)]">
+                  <div className="text-[11px] text-[#adbccd]">
                     Direct Mailbox Feed
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={handleSyncMailbox}
-                  className="p-1 rounded-md text-[var(--rail-ink-2)] hover:text-[var(--rail-ink)] hover:bg-[var(--rail-hover)] transition-colors"
+                  className="p-1 rounded-md text-[#adbccd] hover:text-[#f1ece6] hover:bg-white/10 transition-colors"
                   title="Sync Mailbox"
                 >
                   <RefreshCw size={13} className={isSyncing ? "animate-spin" : ""} />
@@ -228,8 +228,8 @@ export function Shell({ children }: { children: React.ReactNode }) {
                   href={href}
                   className={`flex items-center gap-3 rounded-xl transition-all ${compact ? "justify-center p-2.5" : "px-3 py-2.5"
                     } ${on
-                      ? "bg-slate-900 text-white dark:bg-slate-800 font-semibold shadow-xs"
-                      : "text-[var(--rail-ink-2)] hover:bg-[var(--rail-hover)] hover:text-[var(--rail-ink)]"
+                      ? "bg-[#1f4b8e] text-[#f1ece6] font-semibold shadow-xs"
+                      : "text-[#adbccd] hover:bg-white/10 hover:text-[#f1ece6]"
                     }`}
                   title={label}
                 >
@@ -238,7 +238,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
                     <div className="flex items-center justify-between flex-1 min-w-0">
                       <span className="text-[13px] truncate">{label}</span>
                       {href === "/queue" && (
-                        <span className="num text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400">
+                        <span className="num text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400">
                           13
                         </span>
                       )}
@@ -250,16 +250,16 @@ export function Shell({ children }: { children: React.ReactNode }) {
           </nav>
 
           {/* Bottom Operator Profile */}
-          <div className={`p-3 border-t border-[var(--rail-line)] flex items-center gap-2.5 ${compact ? "justify-center" : "px-4"}`}>
-            <div className="w-8 h-8 rounded-full bg-slate-800 text-white font-bold text-xs flex items-center justify-center shrink-0 border border-slate-700">
+          <div className={`p-3 border-t border-white/10 flex items-center gap-2.5 ${compact ? "justify-center" : "px-4"}`}>
+            <div className="w-8 h-8 rounded-full bg-[#1f4b8e] text-[#f1ece6] font-bold text-xs flex items-center justify-center shrink-0 border border-[#adbccd]/30">
               AT
             </div>
             {!compact && (
               <div className="min-w-0 flex-1">
-                <div className="text-[12px] font-medium truncate text-[var(--rail-ink)]">
+                <div className="text-[12px] font-medium truncate text-[#f1ece6]">
                   Alex Tan
                 </div>
-                <div className="text-[10px] text-[var(--rail-ink-2)]">
+                <div className="text-[10px] text-[#adbccd]">
                   AP Lead Auditor
                 </div>
               </div>
@@ -452,44 +452,50 @@ export function Shell({ children }: { children: React.ReactNode }) {
           onClick={() => setDrawerOpen(false)}
         >
           <div
-            className="w-64 bg-[var(--rail)] text-[var(--rail-ink)] h-full p-4 flex flex-col justify-between"
+            className="w-64 bg-[#0f1225] text-[#f1ece6] h-full p-4 flex flex-col justify-between border-r border-white/10"
             onClick={(e) => e.stopPropagation()}
           >
             <div>
-              <div className="flex items-center justify-between pb-4 border-b border-[var(--rail-line)]">
+              <div className="flex items-center justify-between pb-4 border-b border-white/10">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold">
+                  <div className="w-8 h-8 rounded-lg bg-[#1f4b8e] text-[#f1ece6] flex items-center justify-center font-bold">
                     <Check size={18} />
                   </div>
-                  <span className="font-bold text-sm">SME-ScamGuard</span>
+                  <span className="font-bold text-sm text-[#f1ece6]">SME-ScamGuard</span>
                 </div>
-                <button type="button" onClick={() => setDrawerOpen(false)}>
+                <button type="button" onClick={() => setDrawerOpen(false)} className="text-[#adbccd] hover:text-[#f1ece6]">
                   <X size={18} />
                 </button>
               </div>
 
               <nav className="mt-4 space-y-1">
-                {NAV.map(({ href, label, icon: Icon }) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    onClick={() => setDrawerOpen(false)}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium hover:bg-[var(--rail-hover)]"
-                  >
-                    <Icon size={16} />
-                    <span>{label}</span>
-                  </Link>
-                ))}
+                {NAV.map(({ href, label, icon: Icon }) => {
+                  const on = isActive(path, href);
+                  return (
+                    <Link
+                      key={href}
+                      href={href}
+                      onClick={() => setDrawerOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-colors ${on
+                          ? "bg-[#1f4b8e] text-[#f1ece6] font-semibold"
+                          : "text-[#adbccd] hover:bg-white/10 hover:text-[#f1ece6]"
+                        }`}
+                    >
+                      <Icon size={16} />
+                      <span>{label}</span>
+                    </Link>
+                  );
+                })}
               </nav>
             </div>
 
-            <div className="pt-4 border-t border-[var(--rail-line)] flex items-center gap-2 text-xs">
-              <div className="w-7 h-7 rounded-full bg-slate-800 text-white flex items-center justify-center font-bold">
+            <div className="pt-4 border-t border-white/10 flex items-center gap-2 text-xs">
+              <div className="w-7 h-7 rounded-full bg-[#1f4b8e] text-[#f1ece6] flex items-center justify-center font-bold border border-[#adbccd]/30">
                 AT
               </div>
               <div>
-                <div className="font-medium">Alex Tan</div>
-                <div className="text-[10px] text-[var(--rail-ink-2)]">AP Lead Auditor</div>
+                <div className="font-medium text-[#f1ece6]">Alex Tan</div>
+                <div className="text-[10px] text-[#adbccd]">AP Lead Auditor</div>
               </div>
             </div>
           </div>

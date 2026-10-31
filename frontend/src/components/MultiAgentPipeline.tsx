@@ -263,10 +263,10 @@ export function MultiAgentPipeline({
     return (
       <div
         className={`p-3.5 rounded-lg border ${isDefectState
-            ? "border-rose-200 dark:border-rose-800/60 bg-rose-50/20 dark:bg-rose-950/20"
-            : isAmber
-              ? "border-amber-200 dark:border-amber-800/60 bg-amber-50/20 dark:bg-amber-950/20"
-              : "border-[var(--line)] bg-[var(--surface)]"
+          ? "border-rose-200 dark:border-rose-800/60 bg-rose-50/20 dark:bg-rose-950/20"
+          : isAmber
+            ? "border-amber-200 dark:border-amber-800/60 bg-amber-50/20 dark:bg-amber-950/20"
+            : "border-[var(--line)] bg-[var(--surface)]"
           } space-y-2 select-none`}
       >
         <div className="flex flex-wrap items-center justify-between gap-2">
@@ -313,10 +313,10 @@ export function MultiAgentPipeline({
         {/* 2. Impact Label */}
         <div
           className={`text-xs font-semibold ${isDefectState
-              ? "text-rose-600 dark:text-rose-400"
-              : isAmber
-                ? "text-amber-600 dark:text-amber-400"
-                : "text-emerald-600 dark:text-emerald-400"
+            ? "text-rose-600 dark:text-rose-400"
+            : isAmber
+              ? "text-amber-600 dark:text-amber-400"
+              : "text-emerald-600 dark:text-emerald-400"
             }`}
         >
           {isDefectState
@@ -329,10 +329,10 @@ export function MultiAgentPipeline({
         {/* 4. Helper Explanation */}
         <div
           className={`text-[11px] leading-tight ${isDefectState
-              ? "text-rose-700 dark:text-rose-300"
-              : isAmber
-                ? "text-amber-700 dark:text-amber-400"
-                : "text-emerald-700 dark:text-emerald-400"
+            ? "text-rose-700 dark:text-rose-300"
+            : isAmber
+              ? "text-amber-700 dark:text-amber-400"
+              : "text-emerald-700 dark:text-emerald-400"
             }`}
         >
           {helperText}
@@ -356,14 +356,14 @@ export function MultiAgentPipeline({
   };
 
   return (
-    <div className="card overflow-hidden">
+    <div className="bg-white dark:bg-[#171b33] rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-[0_1px_3px_rgba(15,18,37,0.04)] overflow-hidden">
       {/* Component Title & Stepper Header */}
-      <div className="p-4 border-b border-[var(--line)] bg-[var(--surface-2)] flex flex-wrap items-center justify-between gap-2">
+      <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-[#171b33] flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <ShieldCheck size={16} className="text-[var(--burgundy)]" />
-          <span className="label">7-Agent Defense Pipeline</span>
+          <ShieldCheck size={16} className="text-[#1f4b8e]" />
+          <span className="text-xs font-semibold tracking-wider text-slate-500 uppercase">7-Agent Defense Pipeline</span>
         </div>
-        <span className="text-[11px] font-mono text-[var(--ink-3)]">
+        <span className="font-mono text-xs text-slate-400">
           Autonomous Interdiction & Forensic Audit Protocol
         </span>
       </div>
@@ -387,28 +387,28 @@ export function MultiAgentPipeline({
 
       {/* Vertical Connected Stepper Container */}
       <div className="p-5 space-y-4 relative">
-        {/* Subtle connecting vertical line running down through steps */}
-        <div className="absolute left-[33px] top-7 bottom-7 w-[2px] bg-[var(--line)] pointer-events-none" />
+        {/* Subtle connecting vertical line running down through steps (Clean light slate) */}
+        <div className="absolute left-[33px] top-7 bottom-7 w-[2px] bg-slate-200 dark:bg-slate-700 pointer-events-none" />
 
         {/* ============================================================== */}
         {/* AGENT 1: In-Memory Privacy Sanitizer (RAM Layer) */}
         {/* ============================================================== */}
         <div className="relative flex items-start gap-3.5">
           {renderStepCircle("01", "VERIFIED")}
-          <div className="flex-1 rounded-xl border border-[var(--line)] bg-[var(--surface)] overflow-hidden">
-            <div className="p-3.5 flex flex-wrap items-center justify-between gap-2 bg-[var(--surface)]">
+          <div className="flex-1 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#171b33] overflow-hidden shadow-2xs">
+            <div className="p-3.5 flex flex-wrap items-center justify-between gap-2 bg-slate-50/70 dark:bg-slate-900/40">
               <div className="flex flex-wrap items-center gap-2.5">
                 <span className="text-xs font-semibold text-[var(--ink)]">
                   In-Memory Privacy Sanitizer
                 </span>
-                <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-[var(--surface-2)] border border-[var(--line)] text-[var(--ink-3)]">
+                <span className="bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-[11px] font-mono px-2 py-0.5 rounded">
                   RAM Layer
                 </span>
                 <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                   PASSED · BYPASS
                 </span>
               </div>
-              <div className="flex items-center gap-2 text-xs font-mono text-[var(--ink-3)]">
+              <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
                 <span>100% Zero Disk Write</span>
               </div>
             </div>
@@ -420,16 +420,16 @@ export function MultiAgentPipeline({
         {/* ============================================================== */}
         <div className="relative flex items-start gap-3.5">
           {renderStepCircle("02", agent2Status)}
-          <div className="flex-1 rounded-xl border border-[var(--line)] bg-[var(--surface)] overflow-hidden">
+          <div className="flex-1 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#171b33] overflow-hidden shadow-2xs">
             <div
               onClick={() => toggleAgent(2)}
-              className="p-3.5 flex flex-wrap items-center justify-between gap-2 cursor-pointer hover:bg-[var(--surface-2)] transition-colors select-none"
+              className="p-3.5 flex flex-wrap items-center justify-between gap-2 cursor-pointer bg-slate-50/70 hover:bg-slate-100/70 dark:bg-slate-900/40 dark:hover:bg-slate-900/70 transition-colors select-none"
             >
               <div className="flex flex-wrap items-center gap-2.5">
                 <span className="text-xs font-semibold text-[var(--ink)]">
                   Deterministic Binary Forensics
                 </span>
-                <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-[var(--surface-2)] border border-[var(--line)] text-[var(--ink-3)]">
+                <span className="bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-[11px] font-mono px-2 py-0.5 rounded">
                   Byte Layer
                 </span>
                 {agent2Status === "DEFECT" ? (
@@ -458,14 +458,14 @@ export function MultiAgentPipeline({
             </div>
 
             {isAgentExpanded(2) && (
-              <div className="p-4 border-t border-[var(--line)] bg-[var(--surface-2)] space-y-3 text-xs">
+              <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-[#161a30] space-y-3 text-xs">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div className="p-3 rounded-lg border border-[var(--line)] bg-[var(--surface)] space-y-1">
+                  <div className="p-3 rounded-lg border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 space-y-1">
                     <span className="label block">Producer Tool Metadata</span>
                     <p className="font-mono text-xs font-medium text-[var(--ink)]">
                       {invoice.producerTool}
                     </p>
-                    <span className="text-[11px] text-[var(--ink-3)]">
+                    <span className="text-[11px] text-slate-500">
                       {agent2Status === "DEFECT"
                         ? "Non-ERP splicing utility detected (desynchronized byte offsets)."
                         : agent2Status === "NEEDS_REVIEW"
@@ -474,7 +474,7 @@ export function MultiAgentPipeline({
                     </span>
                   </div>
 
-                  <div className="p-3 rounded-lg border border-[var(--line)] bg-[var(--surface)] space-y-1">
+                  <div className="p-3 rounded-lg border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 space-y-1">
                     <span className="label block">Trailer & Splicing Markers</span>
                     <p className="font-mono text-xs font-medium text-[var(--ink)]">
                       {agent2Status === "DEFECT"
@@ -483,7 +483,7 @@ export function MultiAgentPipeline({
                           ? "1 EOF marker · Minor font subset anomalies"
                           : "1 atomic EOF trailer · Zero post-generation edits"}
                     </p>
-                    <span className="text-[11px] text-[var(--ink-3)]">
+                    <span className="text-[11px] text-slate-500">
                       SHA256: 7f8a...3312 verified against runtime byte cache
                     </span>
                   </div>
@@ -516,16 +516,16 @@ export function MultiAgentPipeline({
         {/* ============================================================== */}
         <div className="relative flex items-start gap-3.5">
           {renderStepCircle("03", agent3Status)}
-          <div className="flex-1 rounded-xl border border-[var(--line)] bg-[var(--surface)] overflow-hidden">
+          <div className="flex-1 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#171b33] overflow-hidden shadow-2xs">
             <div
               onClick={() => toggleAgent(3)}
-              className="p-3.5 flex flex-wrap items-center justify-between gap-2 cursor-pointer hover:bg-[var(--surface-2)] transition-colors select-none"
+              className="p-3.5 flex flex-wrap items-center justify-between gap-2 cursor-pointer bg-slate-50/70 hover:bg-slate-100/70 dark:bg-slate-900/40 dark:hover:bg-slate-900/70 transition-colors select-none"
             >
               <div className="flex flex-wrap items-center gap-2.5">
                 <span className="text-xs font-semibold text-[var(--ink)]">
                   Ground-Truth Registry & Threat Cache
                 </span>
-                <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-[var(--surface-2)] border border-[var(--line)] text-[var(--ink-3)]">
+                <span className="bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-[11px] font-mono px-2 py-0.5 rounded">
                   Relational Layer
                 </span>
                 {agent3Status === "DEFECT" ? (
@@ -554,23 +554,23 @@ export function MultiAgentPipeline({
             </div>
 
             {isAgentExpanded(3) && (
-              <div className="p-4 border-t border-[var(--line)] bg-[var(--surface-2)] space-y-4">
+              <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-[#161a30] space-y-4">
                 {/* Embedded 3-Way Reconciliation Table */}
-                <div className="rounded-lg border border-[var(--line)] overflow-hidden bg-[var(--surface)]">
-                  <div className="px-4 py-2.5 bg-[var(--surface-2)] border-b border-[var(--line)] flex items-center justify-between">
-                    <span className="label">3-Way Forensic Reconciliation Table</span>
-                    <span className="text-[11px] font-mono text-[var(--ink-3)]">
+                <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900">
+                  <div className="px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                    <span className="text-xs font-semibold tracking-wider text-slate-600 dark:text-slate-300 uppercase">3-Way Forensic Reconciliation Table</span>
+                    <span className="text-[11px] font-mono text-slate-400">
                       Master Procurement Baseline
                     </span>
                   </div>
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-xs border-collapse">
                       <thead>
-                        <tr className="border-b border-[var(--line)] bg-[var(--surface-2)] select-none">
-                          <th className="py-2.5 px-4 label">Verification Field</th>
-                          <th className="py-2.5 px-4 label">Master Ledger · Source of Truth</th>
-                          <th className="py-2.5 px-4 label">Inbound Claim · Submitted</th>
-                          <th className="py-2.5 px-4 label text-right pr-4">Status & Match</th>
+                        <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-100/80 dark:bg-slate-800/80 select-none">
+                          <th className="py-2.5 px-4 font-mono text-[11px] font-semibold text-slate-600 dark:text-slate-300 uppercase">Verification Field</th>
+                          <th className="py-2.5 px-4 font-mono text-[11px] font-semibold text-slate-600 dark:text-slate-300 uppercase">Master Ledger · Source of Truth</th>
+                          <th className="py-2.5 px-4 font-mono text-[11px] font-semibold text-slate-600 dark:text-slate-300 uppercase">Inbound Claim · Submitted</th>
+                          <th className="py-2.5 px-4 font-mono text-[11px] font-semibold text-slate-600 dark:text-slate-300 uppercase text-right pr-4">Status & Match</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-[var(--line)] bg-[var(--surface)]">
@@ -583,8 +583,8 @@ export function MultiAgentPipeline({
                             <tr
                               key={row.key}
                               className={`transition-colors ${!isMatch
-                                  ? "bg-rose-50/70 dark:bg-rose-950/40 border-l-[3px] border-l-rose-500"
-                                  : "border-l-[3px] border-l-transparent hover:bg-[var(--surface-2)]"
+                                ? "bg-rose-50/70 dark:bg-rose-950/40 border-l-[3px] border-l-rose-500"
+                                : "border-l-[3px] border-l-transparent hover:bg-[var(--surface-2)]"
                                 }`}
                             >
                               <td className="py-3 px-4 font-medium text-[var(--ink)]">
@@ -600,8 +600,8 @@ export function MultiAgentPipeline({
                               </td>
                               <td
                                 className={`py-3 px-4 font-mono text-[11px] ${!isMatch
-                                    ? "text-rose-700 dark:text-rose-300 font-bold"
-                                    : "text-[var(--ink)]"
+                                  ? "text-rose-700 dark:text-rose-300 font-bold"
+                                  : "text-[var(--ink)]"
                                   }`}
                               >
                                 {effectiveDraft}
@@ -679,16 +679,16 @@ export function MultiAgentPipeline({
         {/* ============================================================== */}
         <div className="relative flex items-start gap-3.5">
           {renderStepCircle("04", agent4Status)}
-          <div className="flex-1 rounded-xl border border-[var(--line)] bg-[var(--surface)] overflow-hidden">
+          <div className="flex-1 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#171b33] overflow-hidden shadow-2xs">
             <div
               onClick={() => toggleAgent(4)}
-              className="p-3.5 flex flex-wrap items-center justify-between gap-2 cursor-pointer hover:bg-[var(--surface-2)] transition-colors select-none"
+              className="p-3.5 flex flex-wrap items-center justify-between gap-2 cursor-pointer bg-slate-50/70 hover:bg-slate-100/70 dark:bg-slate-900/40 dark:hover:bg-slate-900/70 transition-colors select-none"
             >
               <div className="flex flex-wrap items-center gap-2.5">
                 <span className="text-xs font-semibold text-[var(--ink)]">
                   Cognitive Behavioral Investigator
                 </span>
-                <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-[var(--surface-2)] border border-[var(--line)] text-[var(--ink-3)]">
+                <span className="bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-[11px] font-mono px-2 py-0.5 rounded">
                   Perception Layer · Gemini 2.5 Flash
                 </span>
                 {agent4Status === "DEFECT" ? (
@@ -717,9 +717,9 @@ export function MultiAgentPipeline({
             </div>
 
             {isAgentExpanded(4) && (
-              <div className="p-4 border-t border-[var(--line)] bg-[var(--surface-2)] space-y-3 text-xs">
+              <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-[#161a30] space-y-3 text-xs">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div className="p-3 rounded-lg border border-[var(--line)] bg-[var(--surface)] space-y-1">
+                  <div className="p-3 rounded-lg border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 space-y-1">
                     <span className="label block">NLP Urgency & Pressure Signal</span>
                     <p className="font-semibold text-xs text-[var(--ink)]">
                       {agent4Status === "DEFECT"
@@ -728,12 +728,12 @@ export function MultiAgentPipeline({
                           ? "ELEVATED (Immediate Payment Prompt · Uncharacteristic Vendor Tone)"
                           : "NORMAL (Standard Net 30 Commercial Billing Terms)"}
                     </p>
-                    <span className="text-[11px] text-[var(--ink-3)]">
+                    <span className="text-[11px] text-slate-500">
                       Extracted NLP tokens evaluated with zero prompt injection escape.
                     </span>
                   </div>
 
-                  <div className="p-3 rounded-lg border border-[var(--line)] bg-[var(--surface)] space-y-1">
+                  <div className="p-3 rounded-lg border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 space-y-1">
                     <span className="label block">Authority Impersonation Flag</span>
                     <p className="font-semibold text-xs text-[var(--ink)]">
                       {agent4Status === "DEFECT"
@@ -742,7 +742,7 @@ export function MultiAgentPipeline({
                           ? "Unverified Email Sender Domain Variant"
                           : "Verified standard AP clerk correspondence"}
                     </p>
-                    <span className="text-[11px] text-[var(--ink-3)]">
+                    <span className="text-[11px] text-slate-500">
                       Sender domain match: {invoice.sender}
                     </span>
                   </div>
@@ -775,16 +775,16 @@ export function MultiAgentPipeline({
         {/* ============================================================== */}
         <div className="relative flex items-start gap-3.5">
           {renderStepCircle("05", agent5Status)}
-          <div className="flex-1 rounded-xl border border-[var(--line)] bg-[var(--surface)] overflow-hidden">
+          <div className="flex-1 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#171b33] overflow-hidden shadow-2xs">
             <div
               onClick={() => toggleAgent(5)}
-              className="p-3.5 flex flex-wrap items-center justify-between gap-2 cursor-pointer hover:bg-[var(--surface-2)] transition-colors select-none"
+              className="p-3.5 flex flex-wrap items-center justify-between gap-2 cursor-pointer bg-slate-50/70 hover:bg-slate-100/70 dark:bg-slate-900/40 dark:hover:bg-slate-900/70 transition-colors select-none"
             >
               <div className="flex flex-wrap items-center gap-2.5">
                 <span className="text-xs font-semibold text-[var(--ink)]">
                   Declarative Policy Arbiter & Safety Net
                 </span>
-                <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-[var(--surface-2)] border border-[var(--line)] text-[var(--ink-3)]">
+                <span className="bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-[11px] font-mono px-2 py-0.5 rounded">
                   Governance Layer
                 </span>
                 {agent5Status === "DEFECT" ? (
@@ -813,19 +813,19 @@ export function MultiAgentPipeline({
             </div>
 
             {isAgentExpanded(5) && (
-              <div className="p-4 border-t border-[var(--line)] bg-[var(--surface-2)] space-y-3 text-xs">
+              <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-[#161a30] space-y-3 text-xs">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div className="p-3 rounded-lg border border-[var(--line)] bg-[var(--surface)] space-y-1">
+                  <div className="p-3 rounded-lg border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 space-y-1">
                     <span className="label block">Discretionary Limits Check</span>
                     <p className="font-medium text-xs text-[var(--ink)]">
                       {formatMYR(invoice.amountMyr)} · Tier 2 Discretionary Boundary
                     </p>
-                    <span className="text-[11px] text-[var(--ink-3)]">
+                    <span className="text-[11px] text-slate-500">
                       Dual authorization mandatory for payments exceeding RM 20,000.
                     </span>
                   </div>
 
-                  <div className="p-3 rounded-lg border border-[var(--line)] bg-[var(--surface)] space-y-1">
+                  <div className="p-3 rounded-lg border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 space-y-1">
                     <span className="label block">4-Eyes Governance Rule</span>
                     <div className="space-y-1 pt-0.5">
                       <div className="flex items-center justify-between text-[11px]">
@@ -871,16 +871,16 @@ export function MultiAgentPipeline({
         {/* ============================================================== */}
         <div className="relative flex items-start gap-3.5">
           {renderStepCircle("06", agent6Status)}
-          <div className="flex-1 rounded-xl border border-[var(--line)] bg-[var(--surface)] overflow-hidden">
+          <div className="flex-1 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#171b33] overflow-hidden shadow-2xs">
             <div
               onClick={() => toggleAgent(6)}
-              className="p-3.5 flex flex-wrap items-center justify-between gap-2 cursor-pointer hover:bg-[var(--surface-2)] transition-colors select-none"
+              className="p-3.5 flex flex-wrap items-center justify-between gap-2 cursor-pointer bg-slate-50/70 hover:bg-slate-100/70 dark:bg-slate-900/40 dark:hover:bg-slate-900/70 transition-colors select-none"
             >
               <div className="flex flex-wrap items-center gap-2.5">
                 <span className="text-xs font-semibold text-[var(--ink)]">
                   Containment & Statutory Artifact Synthesis
                 </span>
-                <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-[var(--surface-2)] border border-[var(--line)] text-[var(--ink-3)]">
+                <span className="bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-[11px] font-mono px-2 py-0.5 rounded">
                   Response Layer
                 </span>
                 {agent6Status === "DEFECT" ? (
@@ -909,8 +909,8 @@ export function MultiAgentPipeline({
             </div>
 
             {isAgentExpanded(6) && (
-              <div className="p-4 border-t border-[var(--line)] bg-[var(--surface-2)] space-y-3 text-xs">
-                <div className="p-3 rounded-lg border border-[var(--line)] bg-[var(--surface)] space-y-1">
+              <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-[#161a30] space-y-3 text-xs">
+                <div className="p-3 rounded-lg border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 space-y-1">
                   <span className="label block">Statutory Action State</span>
                   <p className="font-semibold text-xs text-[var(--ink)]">
                     {voucherReleased
@@ -921,7 +921,7 @@ export function MultiAgentPipeline({
                           ? "VOUCHER PENDING: Quarantined pending second finance approval"
                           : "READY FOR RELEASE: Clean voucher synthesized for AutoCount ERP"}
                   </p>
-                  <span className="text-[11px] text-[var(--ink-3)] font-mono">
+                  <span className="text-[11px] text-slate-500 font-mono">
                     Ledger Event: EVT-INT-8841 (Recorded in immutable cryptographic log)
                   </span>
                 </div>
@@ -953,16 +953,16 @@ export function MultiAgentPipeline({
         {/* ============================================================== */}
         <div className="relative flex items-start gap-3.5">
           {renderStepCircle("07", agent7Status)}
-          <div className="flex-1 rounded-xl border border-[var(--line)] bg-[var(--surface)] overflow-hidden">
+          <div className="flex-1 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#171b33] overflow-hidden shadow-2xs">
             <div
               onClick={() => toggleAgent(7)}
-              className="p-3.5 flex flex-wrap items-center justify-between gap-2 cursor-pointer hover:bg-[var(--surface-2)] transition-colors select-none"
+              className="p-3.5 flex flex-wrap items-center justify-between gap-2 cursor-pointer bg-slate-50/70 hover:bg-slate-100/70 dark:bg-slate-900/40 dark:hover:bg-slate-900/70 transition-colors select-none"
             >
               <div className="flex flex-wrap items-center gap-2.5">
                 <span className="text-xs font-semibold text-[var(--ink)]">
                   OSINT Police Threat Intelligence Ingestion
                 </span>
-                <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-[var(--surface-2)] border border-[var(--line)] text-[var(--ink-3)]">
+                <span className="bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-[11px] font-mono px-2 py-0.5 rounded">
                   PDRM CCID SemakMule
                 </span>
                 {agent7Status === "DEFECT" ? (
@@ -991,9 +991,9 @@ export function MultiAgentPipeline({
             </div>
 
             {isAgentExpanded(7) && (
-              <div className="p-4 border-t border-[var(--line)] bg-[var(--surface-2)] space-y-3 text-xs">
+              <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-[#161a30] space-y-3 text-xs">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  <div className="p-3 rounded-lg border border-[var(--line)] bg-[var(--surface)] space-y-1">
+                  <div className="p-3 rounded-lg border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 space-y-1">
                     <span className="label block">SemakMule Account Query</span>
                     <p
                       className={`font-mono text-xs font-bold ${agent7Status === "DEFECT" ? "text-rose-600 dark:text-rose-400" : "text-emerald-600 dark:text-emerald-400"
@@ -1003,12 +1003,12 @@ export function MultiAgentPipeline({
                         ? "8009-4411-2299 (CIMB) · FLAGGED ON PDRM MULE BLACKLIST"
                         : "514012998877 (Maybank) · 0 Commercial Police Reports"}
                     </p>
-                    <span className="text-[11px] text-[var(--ink-3)]">
+                    <span className="text-[11px] text-slate-500">
                       Direct CCID commercial blacklist API query validated at runtime.
                     </span>
                   </div>
 
-                  <div className="p-3 rounded-lg border border-[var(--line)] bg-[var(--surface)] space-y-1">
+                  <div className="p-3 rounded-lg border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 space-y-1">
                     <span className="label block">Telephony & Fraud Risk</span>
                     <p className="font-medium text-xs text-[var(--ink)]">
                       {agent7Status === "DEFECT"
@@ -1017,7 +1017,7 @@ export function MultiAgentPipeline({
                           ? "Inbound telephone number has no prior verified commercial transaction history"
                           : "Landline +60 3-7722 8888 matches verified registered vendor business"}
                     </p>
-                    <span className="text-[11px] text-[var(--ink-3)]">
+                    <span className="text-[11px] text-slate-500">
                       CCID Commercial Crimes Investigation Department parity check.
                     </span>
                   </div>

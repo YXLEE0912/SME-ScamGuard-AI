@@ -251,7 +251,7 @@ export default function CaseDetailPage() {
               type="button"
               disabled={currentIndex <= 0}
               onClick={() => goToCase(currentIndex - 1)}
-              className="w-8 h-8 rounded-lg border border-[var(--line-strong)] bg-[var(--surface)] text-[var(--ink-2)] hover:text-[var(--ink)] hover:bg-[var(--surface-2)] disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors"
+              className="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors shadow-2xs cursor-pointer"
               aria-label="Previous case"
             >
               <ChevronLeft size={15} />
@@ -260,7 +260,7 @@ export default function CaseDetailPage() {
               type="button"
               disabled={currentIndex >= TOTAL_CASES - 1}
               onClick={() => goToCase(currentIndex + 1)}
-              className="w-8 h-8 rounded-lg border border-[var(--line-strong)] bg-[var(--surface)] text-[var(--ink-2)] hover:text-[var(--ink)] hover:bg-[var(--surface-2)] disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors"
+              className="w-8 h-8 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center transition-colors shadow-2xs cursor-pointer"
               aria-label="Next case"
             >
               <ChevronRight size={15} />
@@ -274,28 +274,28 @@ export default function CaseDetailPage() {
         {/* Left Column (~72% width) */}
         <div className="w-full lg:w-[72%] space-y-4">
           {/* Task 3: Case Header Card */}
-          <div className="card p-5 space-y-3.5">
+          <div className="bg-white dark:bg-[#171b33] rounded-xl border border-slate-200/80 dark:border-slate-800 p-5 space-y-3.5 shadow-[0_1px_3px_rgba(15,18,37,0.04)]">
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
               <div className="space-y-1">
-                <span className="font-mono text-xs text-[var(--ink-3)] block">
+                <span className="font-mono text-xs text-slate-400 dark:text-slate-500 block">
                   {invoice.id}
                 </span>
-                <h1 className="text-lg font-semibold text-[var(--ink)] leading-snug">
+                <h1 className="text-lg font-semibold text-[#0f1225] dark:text-[#f1ece6] leading-snug">
                   {invoice.subject}
                 </h1>
-                <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--ink-2)] pt-0.5">
-                  <span className="inline-flex items-center gap-1.5 font-mono text-[var(--ink-2)]">
-                    <Mail size={13} className="text-[var(--ink-3)] shrink-0" />
+                <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400 pt-0.5">
+                  <span className="inline-flex items-center gap-1.5 font-mono text-slate-700 dark:text-slate-300">
+                    <Mail size={13} className="text-slate-400 shrink-0" />
                     <span>{invoice.sender}</span>
                   </span>
-                  <span className="text-[var(--ink-3)]">•</span>
-                  <span className="text-[var(--ink-3)]">Received {invoice.receivedDate}</span>
+                  <span className="text-slate-300 dark:text-slate-600">•</span>
+                  <span className="text-slate-500 dark:text-slate-400">Received {invoice.receivedDate}</span>
                 </div>
               </div>
 
               <div className="flex items-center gap-2 shrink-0">
-                <span className="pill text-[11px] py-0.5 px-2.5 bg-[var(--surface-2)] text-[var(--ink)] border border-[var(--line-strong)] inline-flex items-center gap-1.5 font-medium">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--burgundy)]" />
+                <span className="pill text-[11px] py-0.5 px-2.5 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 inline-flex items-center gap-1.5 font-medium">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#1f4b8e]" />
                   <span>{invoice.threatCategory}</span>
                 </span>
                 <ThreatSeverityBadge status={invoice.status} />
@@ -303,13 +303,13 @@ export default function CaseDetailPage() {
             </div>
 
             {/* Attachment Chips */}
-            <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-[var(--line)]">
+            <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-100 dark:border-slate-800">
               {invoice.files.map((file, idx) => (
                 <span
                   key={idx}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[var(--surface-2)] border border-[var(--line)] text-[11px] font-mono text-[var(--ink-2)] select-none hover:text-[var(--ink)] transition-colors"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-xs font-mono select-none transition-colors"
                 >
-                  <Paperclip size={12} className="text-[var(--ink-3)] shrink-0" />
+                  <Paperclip size={12} className="text-slate-400 shrink-0" />
                   <span>{file}</span>
                 </span>
               ))}
@@ -320,15 +320,15 @@ export default function CaseDetailPage() {
               <button
                 type="button"
                 onClick={() => setShowEmail((prev) => !prev)}
-                className="text-xs font-semibold text-[var(--ink-2)] hover:text-[var(--ink)] cursor-pointer flex items-center gap-1.5 py-1 select-none transition-colors"
+                className="text-xs font-semibold text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 cursor-pointer flex items-center gap-1.5 py-1 select-none transition-colors"
               >
                 <span className="text-[10px] leading-none">{showEmail ? "▼" : "▶"}</span>
                 <span>Read the email</span>
               </button>
 
               {showEmail && (
-                <div className="mt-2.5 p-4 rounded-xl border border-[var(--line)] bg-[var(--surface-2)] overflow-y-auto max-h-[260px]">
-                  <div className="font-mono text-xs text-[var(--ink)] leading-relaxed tracking-tight select-text whitespace-pre-wrap">
+                <div className="mt-2.5 p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/50 overflow-y-auto max-h-[260px]">
+                  <div className="font-mono text-xs text-slate-800 dark:text-slate-200 leading-relaxed tracking-tight select-text whitespace-pre-wrap">
                     {invoice.emailBody}
                   </div>
                 </div>
@@ -338,8 +338,8 @@ export default function CaseDetailPage() {
 
           {/* Task 4: Forensic Guidance Banner */}
           {invoice.status === "DEFECT" ? (
-            <div className="p-4 rounded-xl border border-[var(--defect)]/40 bg-[var(--defect-tint)] text-[var(--defect)] flex items-start gap-3">
-              <ShieldAlert size={17} className="shrink-0 mt-0.5 text-[var(--defect)]" />
+            <div className="p-4 rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50/90 dark:bg-rose-950/30 text-rose-800 dark:text-rose-200 flex items-start gap-3 shadow-2xs">
+              <ShieldAlert size={17} className="shrink-0 mt-0.5 text-rose-600 dark:text-rose-400" />
               <div className="text-xs leading-relaxed">
                 <span className="font-bold uppercase tracking-wider block mb-0.5">
                   Banking Details Mismatch Detected
@@ -350,8 +350,8 @@ export default function CaseDetailPage() {
               </div>
             </div>
           ) : invoice.status === "NEEDS_REVIEW" ? (
-            <div className="p-4 rounded-xl border border-[var(--review)]/40 bg-[var(--review-tint)] text-[var(--review-ink)] flex items-start gap-3">
-              <AlertTriangle size={17} className="shrink-0 mt-0.5 text-[var(--review)]" />
+            <div className="p-4 rounded-xl border border-amber-200 dark:border-amber-900/60 bg-amber-50/90 dark:bg-amber-950/30 text-amber-800 dark:text-amber-200 flex items-start gap-3 shadow-2xs">
+              <AlertTriangle size={17} className="shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
               <div className="text-xs leading-relaxed">
                 <span className="font-bold uppercase tracking-wider block mb-0.5">
                   Operator Review Required
@@ -362,8 +362,8 @@ export default function CaseDetailPage() {
               </div>
             </div>
           ) : (
-            <div className="p-4 rounded-xl border border-[var(--ok)]/40 bg-[var(--ok-tint)] text-[var(--ok)] flex items-start gap-3">
-              <CheckCircle2 size={17} className="shrink-0 mt-0.5 text-[var(--ok)]" />
+            <div className="p-4 rounded-xl border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/90 dark:bg-emerald-950/30 text-emerald-800 dark:text-emerald-200 flex items-start gap-3 shadow-2xs">
+              <CheckCircle2 size={17} className="shrink-0 mt-0.5 text-emerald-600 dark:text-emerald-400" />
               <div className="text-xs leading-relaxed">
                 <span className="font-bold uppercase tracking-wider block mb-0.5">
                   Master Ledger Parity Confirmed
@@ -387,12 +387,12 @@ export default function CaseDetailPage() {
         {/* Right Column (~28% width, sticky) */}
         <div className="w-full lg:w-[28%] lg:sticky lg:top-4 self-start space-y-4 shrink-0">
           {/* Task 5: DECIDE Actions Card */}
-          <div className="bg-[var(--surface)] rounded-xl border border-[var(--line-strong)] p-4 space-y-3.5">
+          <div className="bg-white dark:bg-[#171b33] rounded-xl border border-slate-200/80 dark:border-slate-800 p-4 space-y-3.5 shadow-[0_1px_3px_rgba(15,18,37,0.04)]">
             <div>
-              <span className="text-[11px] font-semibold tracking-wider text-[var(--ink-3)] uppercase block mb-1">
+              <span className="text-[11px] font-semibold tracking-wider text-slate-400 uppercase block mb-1">
                 DECIDE
               </span>
-              <p className="text-xs text-[var(--ink-2)] leading-normal">
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-normal">
                 {invoice.status === "DEFECT"
                   ? "Defect flags exceed threshold. Dual authorization required to release or immediate freeze recommended."
                   : invoice.status === "NEEDS_REVIEW"
@@ -406,7 +406,7 @@ export default function CaseDetailPage() {
                 type="button"
                 onClick={handleReleasePayment}
                 disabled={voucherReleased}
-                className="w-full bg-[var(--ink)] text-[var(--paper)] hover:bg-black py-2.5 rounded-lg text-xs font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
+                className="w-full bg-[#0f1225] text-white hover:bg-[#1f4b8e] transition-colors font-medium py-2.5 rounded-lg text-xs disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
               >
                 <CheckCircle2 size={14} />
                 <span>{voucherReleased ? "Payment Authorized" : "Approve & Authorize Payment"}</span>
@@ -415,23 +415,23 @@ export default function CaseDetailPage() {
               <button
                 type="button"
                 onClick={() => handleHoldWire("Unauthorized bank account desync flagged.")}
-                className="w-full border border-[var(--review)] text-[var(--review-ink)] hover:bg-[var(--review-tint)] py-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                className="w-full border border-amber-300 dark:border-amber-800 text-amber-700 dark:text-amber-400 bg-amber-50/60 hover:bg-amber-100/60 dark:bg-amber-950/30 dark:hover:bg-amber-900/40 py-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
               >
                 <Flag size={14} />
                 <span>Escalate / Freeze Wire</span>
               </button>
             </div>
 
-            <div className="pt-2 border-t border-[var(--line)] space-y-1.5 text-[11px]">
-              <div className="flex items-center justify-between text-[var(--ink-2)]">
+            <div className="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-1.5 text-[11px]">
+              <div className="flex items-center justify-between text-slate-600 dark:text-slate-300">
                 <span>Clerk Sign-off:</span>
-                <span className={`font-mono font-medium ${clerkSigned ? "text-[var(--ok)]" : "text-[var(--ink-3)]"}`}>
+                <span className={`font-mono font-medium ${clerkSigned ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400"}`}>
                   {clerkSigned ? "Signed (Alex Tan)" : "Pending"}
                 </span>
               </div>
-              <div className="flex items-center justify-between text-[var(--ink-2)]">
+              <div className="flex items-center justify-between text-slate-600 dark:text-slate-300">
                 <span>Manager Approval:</span>
-                <span className={`font-mono font-medium ${managerSigned ? "text-[var(--ok)]" : "text-[var(--ink-3)]"}`}>
+                <span className={`font-mono font-medium ${managerSigned ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400"}`}>
                   {managerSigned ? "Signed (Controller)" : "Pending"}
                 </span>
               </div>
@@ -439,17 +439,17 @@ export default function CaseDetailPage() {
           </div>
 
           {/* Task 5: SUBMISSION / FORENSIC EVIDENCE Card */}
-          <div className="bg-[var(--surface)] rounded-xl border border-[var(--line-strong)] p-4 space-y-3">
-            <span className="text-[11px] font-semibold tracking-wider text-[var(--ink-3)] uppercase block mb-1">
+          <div className="bg-white dark:bg-[#171b33] rounded-xl border border-slate-200/80 dark:border-slate-800 p-4 space-y-3 shadow-[0_1px_3px_rgba(15,18,37,0.04)]">
+            <span className="text-[11px] font-semibold tracking-wider text-slate-400 uppercase block mb-1">
               SUBMISSION / EVIDENCE
             </span>
-            <div className="bg-[var(--surface-2)] border border-[var(--line)] rounded-lg p-3 text-[11px] font-mono text-[var(--ink-2)] overflow-x-auto max-h-[220px]">
+            <div className="bg-[#0f1225] border border-slate-800 rounded-lg p-3.5 text-[11px] font-mono text-emerald-400 overflow-x-auto max-h-[220px] shadow-inner">
               <pre>{JSON.stringify(evidencePayload, null, 2)}</pre>
             </div>
             <button
               type="button"
               onClick={() => window.print()}
-              className="w-full py-2 px-3 rounded-lg border border-[var(--line-strong)] bg-[var(--surface)] hover:bg-[var(--surface-2)] text-xs font-semibold text-[var(--ink)] flex items-center justify-center gap-1.5 transition-colors"
+              className="w-full py-2 px-3 rounded-lg border border-slate-200 hover:border-slate-300 dark:border-slate-700 bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700/60 text-xs font-semibold text-slate-700 dark:text-slate-200 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
             >
               <Printer size={13} />
               <span>Export Forensic Audit Record</span>

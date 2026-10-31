@@ -96,7 +96,7 @@ export default function InsightsPage() {
                 <span className="font-bold num text-[var(--ink-3)]">6%</span>
               </div>
               <div className="w-full h-2 rounded-full bg-[var(--surface-2)] overflow-hidden">
-                <div className="h-full bg-slate-400 rounded-full" style={{ width: "6%" }} />
+                <div className="h-full bg-[var(--color-muted)] rounded-full" style={{ width: "6%" }} />
               </div>
             </div>
           </div>
@@ -142,7 +142,7 @@ export default function InsightsPage() {
       {/* Bottom Card: SemakMule Integration Status */}
       <div className="card p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold">
+          <div className="w-9 h-9 rounded-xl bg-[var(--ink)] text-[var(--paper)] flex items-center justify-center font-bold">
             <Building2 size={18} />
           </div>
           <div>
