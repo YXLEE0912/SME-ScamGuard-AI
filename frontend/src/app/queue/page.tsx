@@ -181,60 +181,60 @@ function QueuePageContent() {
       try {
         const live = await fetchMailboxInvoices();
         if (live && live.length > 0) {
-            const adapted: UnifiedInvoice[] = live.map((inv: DemoInvoice, idx: number) => {
-              const isSpam = inv.category?.toLowerCase() === "spam" || inv.subject?.toLowerCase().includes("spam");
-              const isDefect = !isSpam && (inv.status === "DEFECT" || inv.status === "LOCKED_CRITICAL" || inv.risk_score >= 80);
-              const isReview = !isSpam && (inv.status === "NEEDS_REVIEW" || (inv.risk_score > 20 && inv.risk_score < 80));
+          const adapted: UnifiedInvoice[] = live.map((inv: DemoInvoice, idx: number) => {
+            const isSpam = inv.category?.toLowerCase() === "spam" || inv.subject?.toLowerCase().includes("spam");
+            const isDefect = !isSpam && (inv.status === "DEFECT" || inv.status === "LOCKED_CRITICAL" || inv.risk_score >= 80);
+            const isReview = !isSpam && (inv.status === "NEEDS_REVIEW" || (inv.risk_score > 20 && inv.risk_score < 80));
 
-              const rawAmt = inv.comparison?.amount?.draft || "18500";
-              const parsedAmt = parseFloat(rawAmt.replace(/[^0-9.]/g, "")) || 18500;
+            const rawAmt = inv.comparison?.amount?.draft || "18500";
+            const parsedAmt = parseFloat(rawAmt.replace(/[^0-9.]/g, "")) || 18500;
 
-              const claimedB = inv.comparison?.bank_name?.draft || "Maybank";
-              const masterB = inv.comparison?.bank_name?.truth || "Maybank";
-              const claimedA = inv.comparison?.account_no?.draft || "514012345678";
-              const masterA = inv.comparison?.account_no?.truth || "514012345678";
+            const claimedB = inv.comparison?.bank_name?.draft || "Maybank";
+            const masterB = inv.comparison?.bank_name?.truth || "Maybank";
+            const claimedA = inv.comparison?.account_no?.draft || "514012345678";
+            const masterA = inv.comparison?.account_no?.truth || "514012345678";
 
-              const numMatch = inv.id.match(/\d+/);
-              const num = numMatch ? parseInt(numMatch[0], 10) : idx + 8;
-              const emailId = inv.id.startsWith("email_") ? inv.id : `email_${String(num).padStart(3, "0")}`;
+            const numMatch = inv.id.match(/\d+/);
+            const num = numMatch ? parseInt(numMatch[0], 10) : idx + 8;
+            const emailId = inv.id.startsWith("email_") ? inv.id : `email_${String(num).padStart(3, "0")}`;
 
-              return {
-                id: emailId,
-                referenceId: emailId,
-                vendorName: inv.sender_name || "Malaysian Vendor Sdn Bhd",
-                sender: inv.sender_email,
-                subject: inv.subject,
-                category: isSpam ? "SPAM" : isDefect ? "BEC_WIRE_FRAUD" : isReview ? "COERCION" : "ROUTINE_AUDIT",
-                categoryLabel: isSpam ? "Spam" : inv.category || (isDefect ? "BEC Wire Scam" : "Routine Billing"),
-                status: isDefect ? "DEFECT" : isReview ? "NEEDS_REVIEW" : "VERIFIED",
-                riskScore: inv.risk_score,
-                amountMyr: parsedAmt,
-                claimedBank: claimedB,
-                claimedAccount: claimedA,
-                masterBank: masterB,
-                masterAccount: masterA,
-                discrepancyNote: inv.banner_message || "Master Procurement Ledger cross-reference evaluated.",
-                receivedTime: inv.received_date,
-              };
-            });
+            return {
+              id: emailId,
+              referenceId: emailId,
+              vendorName: inv.sender_name || "Malaysian Vendor Sdn Bhd",
+              sender: inv.sender_email,
+              subject: inv.subject,
+              category: isSpam ? "SPAM" : isDefect ? "BEC_WIRE_FRAUD" : isReview ? "COERCION" : "ROUTINE_AUDIT",
+              categoryLabel: isSpam ? "Spam" : inv.category || (isDefect ? "BEC Wire Scam" : "Routine Billing"),
+              status: isDefect ? "DEFECT" : isReview ? "NEEDS_REVIEW" : "VERIFIED",
+              riskScore: inv.risk_score,
+              amountMyr: parsedAmt,
+              claimedBank: claimedB,
+              claimedAccount: claimedA,
+              masterBank: masterB,
+              masterAccount: masterA,
+              discrepancyNote: inv.banner_message || "Master Procurement Ledger cross-reference evaluated.",
+              receivedTime: inv.received_date,
+            };
+          });
 
-            // Combine benchmarks with live data, avoiding duplicates
-            const seen = new Set(BENCHMARKS.map((b) => b.id));
-            const uniqueExtra = adapted.filter((a) => !seen.has(a.id));
-            setInvoices([...BENCHMARKS, ...uniqueExtra]);
-          }
-      } catch {
-          // Fallback to static benchmarks
+          // Combine benchmarks with live data, avoiding duplicates
+          const seen = new Set(BENCHMARKS.map((b) => b.id));
+          const uniqueExtra = adapted.filter((a) => !seen.has(a.id));
+          setInvoices([...BENCHMARKS, ...uniqueExtra]);
         }
+      } catch {
+        // Fallback to static benchmarks
       }
+    }
     loadMailbox();
 
-      const handleCreated = () => {
-        loadMailbox();
-      };
-      window.addEventListener("scamguard:verification-created", handleCreated);
-      return () => window.removeEventListener("scamguard:verification-created", handleCreated);
-    }, []);
+    const handleCreated = () => {
+      loadMailbox();
+    };
+    window.addEventListener("scamguard:verification-created", handleCreated);
+    return () => window.removeEventListener("scamguard:verification-created", handleCreated);
+  }, []);
 
   // Filtered rows
   const filteredRows = useMemo(() => {
@@ -384,135 +384,136 @@ function QueuePageContent() {
       </div>
 
       {/* Filter and Quick Search Bar */}
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="relative flex-1 min-w-[240px]">
-          <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--ink-3)]" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Filter by vendor name, invoice reference, bank account, or amount..."
-            className="field w-full pl-9 text-xs"
-          />
-          {searchQuery && (
-            <button
-              type="button"
-              onClick={() => setSearchQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink-3)] hover:text-[var(--ink)]"
+          <div className="w-full flex items-center justify-between gap-4">
+            <div className="relative flex items-center flex-1">
+              <Search className="absolute left-3.5 text-[var(--ink-3)] pointer-events-none w-4 h-4" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Filter by vendor name, invoice reference, bank account, or amount..."
+                className="w-full !pl-10 pr-10 text-xs h-10 rounded-lg border border-[var(--line-strong)] bg-[var(--surface)] text-[var(--ink)] placeholder:text-[var(--ink-3)] focus:outline-none focus:border-[var(--focus)] transition-colors"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"
+                  aria-label="Clear search"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            <select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className="h-10 px-3 rounded-lg border border-[var(--line-strong)] bg-[var(--surface)] text-xs font-medium text-[var(--ink)] cursor-pointer min-w-[170px] shrink-0 focus:outline-none focus:border-[var(--focus)] transition-colors"
             >
-              <X size={14} />
-            </button>
-          )}
-        </div>
+              <option value="ALL">All Categories</option>
+              <option value="BEC_WIRE_FRAUD">BEC Wire Scam</option>
+              <option value="SEMAKMULE_HIT">PDRM SemakMule Hit</option>
+              <option value="COERCION">Coercion / Urgency</option>
+              <option value="PROMPT_INJECTION">Prompt Injection</option>
+              <option value="ROUTINE_AUDIT">Routine Billing</option>
+              <option value="SPAM">Spam</option>
+            </select>
+          </div>
 
-        <select
-          value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)}
-          className="field text-xs cursor-pointer min-w-[160px]"
-        >
-          <option value="ALL">All Categories</option>
-          <option value="BEC_WIRE_FRAUD">BEC Wire Scam</option>
-          <option value="SEMAKMULE_HIT">PDRM SemakMule Hit</option>
-          <option value="COERCION">Coercion / Urgency</option>
-          <option value="PROMPT_INJECTION">Prompt Injection</option>
-          <option value="ROUTINE_AUDIT">Routine Billing</option>
-          <option value="SPAM">Spam</option>
-        </select>
-      </div>
-
-      {/* High-Density Data Table (Grabbers QueueTable) */}
-      <div className="card overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="border-b border-[var(--line)] bg-[var(--surface-2)] select-none">
-                <th className="py-3 px-4 label">Email ID</th>
-                <th className="py-3 px-4 label">Sender</th>
-                <th className="py-3 px-4 label">Subject</th>
-                <th className="py-3 px-4 label">Threat Category</th>
-                <th className="py-3 px-4 label text-center">Status</th>
-                <th className="py-3 px-4 label text-left">Risk Score</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[var(--line)] bg-[var(--surface)]">
-              {filteredRows.length === 0 ? (
-                <tr>
-                    <td colSpan={6} className="py-12 text-center text-[var(--ink-3)]">
-                      No matching invoices found in this queue scope.
-                    </td>
-                </tr>
-              ) : (
-                filteredRows.map((item, idx) => {
-                  const isSelected = idx === selectedIndex;
-                  return (
-                    <tr
-                      key={item.id}
-                      tabIndex={0}
-                      role="row"
-                      onClick={() => router.push(`/case/${encodeURIComponent(item.id)}`)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          router.push(`/case/${encodeURIComponent(item.id)}`);
-                        }
-                      }}
-                      className={`group transition-colors cursor-pointer select-none focus:outline-none focus:bg-[var(--surface-2)] ${isSelected
-                          ? "bg-amber-500/10 dark:bg-amber-500/15"
-                          : "hover:bg-[var(--surface-2)]"
-                        }`}
-                    >
-                        {/* Email ID */}
-                        <td className="py-3 px-4 whitespace-nowrap">
-                          <span className="font-mono text-xs text-[var(--ink-2)] font-medium tracking-tight">
-                            {item.id}
-                          </span>
-                        </td>
-
-                        {/* Sender */}
-                        <td className="py-3 px-4">
-                          <div className="font-medium text-[var(--ink)] truncate max-w-[200px]">
-                            {item.vendorName}
-                          </div>
-                          <div className="text-xs text-[var(--ink-3)] font-mono truncate max-w-[220px]">
-                            {item.sender}
-                          </div>
-                        </td>
-
-                        {/* Subject */}
-                        <td className="py-3 px-4">
-                          <div
-                            className="text-xs font-medium text-[var(--ink)] max-w-[280px] truncate"
-                            title={item.subject}
-                          >
-                            {item.subject}
-                          </div>
-                        </td>
-
-                        {/* Threat Category */}
-                        <td className="py-3 px-4 whitespace-nowrap">
-                          {item.category === "SPAM" ? (
-                            <span className="pill text-[11px] py-0.5 px-2 bg-[var(--surface-2)] text-[var(--ink-3)] border border-[var(--line-strong)] inline-flex items-center gap-1.5">
-                              <span className="text-[10px] leading-none opacity-80" aria-hidden="true">○</span>
-                              <span>Spam</span>
+          {/* High-Density Data Table (Grabbers QueueTable) */}
+          <div className="card overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-[var(--line)] bg-[var(--surface-2)] select-none">
+                    <th className="py-3 px-4 label">Email ID</th>
+                    <th className="py-3 px-4 label">Sender</th>
+                    <th className="py-3 px-4 label">Subject</th>
+                    <th className="py-3 px-4 label">Threat Category</th>
+                    <th className="py-3 px-4 label text-left">Status</th>
+                    <th className="py-3 px-4 label text-left">Risk Score</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--line)] bg-[var(--surface)]">
+                  {filteredRows.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="py-12 text-center text-[var(--ink-3)]">
+                        No matching invoices found in this queue scope.
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredRows.map((item, idx) => {
+                      const isSelected = idx === selectedIndex;
+                      return (
+                        <tr
+                          key={item.id}
+                          tabIndex={0}
+                          role="row"
+                          onClick={() => router.push(`/case/${encodeURIComponent(item.id)}`)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              router.push(`/case/${encodeURIComponent(item.id)}`);
+                            }
+                          }}
+                          className={`group transition-colors cursor-pointer select-none focus:outline-none focus:bg-[var(--surface-2)] ${isSelected
+                            ? "bg-amber-500/10 dark:bg-amber-500/15"
+                            : "hover:bg-[var(--surface-2)]"
+                            }`}
+                        >
+                          {/* Email ID */}
+                          <td className="py-3 px-4 whitespace-nowrap">
+                            <span className="font-mono text-xs text-[var(--ink-2)] font-medium tracking-tight">
+                              {item.id}
                             </span>
-                          ) : (
-                            <span
-                              className={`pill text-[11px] py-0.5 px-2 ${item.category === "BEC_WIRE_FRAUD"
+                          </td>
+
+                          {/* Sender */}
+                          <td className="py-3 px-4">
+                            <div className="font-medium text-[var(--ink)] truncate max-w-[200px]">
+                              {item.vendorName}
+                            </div>
+                            <div className="text-xs text-[var(--ink-3)] font-mono truncate max-w-[220px]">
+                              {item.sender}
+                            </div>
+                          </td>
+
+                          {/* Subject */}
+                          <td className="py-3 px-4">
+                            <div
+                              className="text-xs font-medium text-[var(--ink)] max-w-[280px] truncate"
+                              title={item.subject}
+                            >
+                              {item.subject}
+                            </div>
+                          </td>
+
+                          {/* Threat Category */}
+                          <td className="py-3 px-4 whitespace-nowrap">
+                            {item.category === "SPAM" ? (
+                              <span className="pill text-[11px] py-0.5 px-2 bg-[var(--surface-2)] text-[var(--ink-3)] border border-[var(--line-strong)] inline-flex items-center gap-1.5">
+                                <span className="text-[10px] leading-none opacity-80" aria-hidden="true">○</span>
+                                <span>Spam</span>
+                              </span>
+                            ) : (
+                              <span
+                                className={`pill text-[11px] py-0.5 px-2 ${item.category === "BEC_WIRE_FRAUD"
                                   ? "pill-defect"
                                   : item.category === "SEMAKMULE_HIT"
                                     ? "pill-defect font-bold"
                                     : item.category === "ROUTINE_AUDIT"
                                       ? "pill-ok"
                                       : "pill-review"
-                                }`}
-                            >
-                              {item.categoryLabel}
-                            </span>
-                          )}
-                        </td>
+                                  }`}
+                              >
+                                {item.categoryLabel}
+                              </span>
+                            )}
+                          </td>
 
-                        {/* Status Badge */}
-                          <td className="py-3 px-4 text-center whitespace-nowrap">
+                          {/* Status Badge */}
+                          <td className="py-3 px-4 text-left whitespace-nowrap">
                             <ThreatSeverityBadge status={item.status} />
                           </td>
 
@@ -529,11 +530,11 @@ function QueuePageContent() {
                                   : "bg-amber-500 dark:bg-amber-400";
 
                               return (
-                                <div className="flex items-center">
-                                  <span className="font-mono font-semibold text-xs text-[var(--ink)] num w-7 text-right">
+                                <div className="flex items-center justify-start gap-2.5 text-left">
+                                  <span className="font-mono font-semibold text-xs text-[var(--ink)] num text-left min-w-[24px]">
                                     {scoreVal}
                                   </span>
-                                  <div className="w-14 h-1.5 rounded-full bg-[var(--surface-2)] overflow-hidden relative inline-block align-middle ml-2 border border-[var(--line-strong)]/30">
+                                  <div className="w-14 h-1.5 rounded-full bg-[var(--surface-2)] overflow-hidden relative inline-block align-middle border border-[var(--line-strong)]/30">
                                     <div
                                       className={`h-full rounded-full transition-all duration-300 ${colorClass}`}
                                       style={{ width: `${Math.min(100, Math.max(0, scoreVal))}%` }}
@@ -546,12 +547,12 @@ function QueuePageContent() {
                             })()}
                           </td>
                         </tr>
-                        );
-                })
-              )}
-                      </tbody>
-                    </table>
-        </div>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
 
             {/* Footer info bar */}
             <div className="py-2.5 px-4 bg-[var(--surface-2)] border-t border-[var(--line)] flex items-center justify-between text-[11px] text-[var(--ink-3)] select-none">
@@ -564,104 +565,104 @@ function QueuePageContent() {
                 Direct CCID Blacklist Parity Active
               </div>
             </div>
-        </div>
+          </div>
 
-        {/* New Verification Modal */}
-        {uploadOpen && (
-          <div
-            role="dialog"
-            aria-modal="true"
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs"
-            onClick={() => setUploadOpen(false)}
-          >
+          {/* New Verification Modal */}
+          {uploadOpen && (
             <div
-              className="w-full max-w-lg rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
+              role="dialog"
+              aria-modal="true"
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs"
+              onClick={() => setUploadOpen(false)}
             >
-              <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center">
-                    <Upload size={16} />
+              <div
+                className="w-full max-w-lg rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center">
+                      <Upload size={16} />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-bold text-[var(--ink)]">Ingest New Verification</h3>
+                      <p className="text-xs text-[var(--ink-3)]">
+                        Upload inbound invoice and optional email body for 3-way forensic verification
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-base font-bold text-[var(--ink)]">Ingest New Verification</h3>
-                    <p className="text-xs text-[var(--ink-3)]">
-                      Upload inbound invoice and optional email body for 3-way forensic verification
-                    </p>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setUploadOpen(false)}
-                  className="icon-btn"
-                >
-                  <X size={18} />
-                </button>
-              </div>
-
-              <form onSubmit={handleUploadSubmit} className="mt-4 space-y-4">
-                <div>
-                  <label className="label block mb-1.5">Primary Invoice File (PDF, PNG, JPG)</label>
-                  <input
-                    type="file"
-                    accept=".pdf,.png,.jpg,.jpeg"
-                    required
-                    onChange={(e) => setPrimaryFile(e.target.files?.[0] || null)}
-                    className="field w-full pt-1.5 text-xs file:mr-3 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-900 file:text-white"
-                  />
-                </div>
-
-                <div>
-                  <label className="label block mb-1.5">Supporting Remittance Email / Instructions (Optional)</label>
-                  <input
-                    type="file"
-                    accept=".txt,.eml,.pdf"
-                    onChange={(e) => setSupportingFile(e.target.files?.[0] || null)}
-                    className="field w-full pt-1.5 text-xs file:mr-3 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-900 file:text-white"
-                  />
-                </div>
-
-                {uploadStatus && (
-                  <div className="p-3 rounded-lg bg-[var(--surface-2)] text-xs text-[var(--ink-2)] border border-[var(--line)]">
-                    {uploadStatus}
-                  </div>
-                )}
-
-                <div className="pt-2 flex items-center justify-end gap-2.5 border-t border-[var(--line)]">
                   <button
                     type="button"
                     onClick={() => setUploadOpen(false)}
-                    className="btn btn-ghost"
+                    className="icon-btn"
                   >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isUploading || !primaryFile}
-                    className="btn btn-primary"
-                  >
-                    {isUploading ? (
-                      <>
-                        <RefreshCw size={14} className="animate-spin" />
-                        <span>Ingesting & Cross-referencing...</span>
-                      </>
-                    ) : (
-                      <span>Start Forensic Verification</span>
-                    )}
+                    <X size={18} />
                   </button>
                 </div>
-              </form>
+
+                <form onSubmit={handleUploadSubmit} className="mt-4 space-y-4">
+                  <div>
+                    <label className="label block mb-1.5">Primary Invoice File (PDF, PNG, JPG)</label>
+                    <input
+                      type="file"
+                      accept=".pdf,.png,.jpg,.jpeg"
+                      required
+                      onChange={(e) => setPrimaryFile(e.target.files?.[0] || null)}
+                      className="field w-full pt-1.5 text-xs file:mr-3 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-900 file:text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="label block mb-1.5">Supporting Remittance Email / Instructions (Optional)</label>
+                    <input
+                      type="file"
+                      accept=".txt,.eml,.pdf"
+                      onChange={(e) => setSupportingFile(e.target.files?.[0] || null)}
+                      className="field w-full pt-1.5 text-xs file:mr-3 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-900 file:text-white"
+                    />
+                  </div>
+
+                  {uploadStatus && (
+                    <div className="p-3 rounded-lg bg-[var(--surface-2)] text-xs text-[var(--ink-2)] border border-[var(--line)]">
+                      {uploadStatus}
+                    </div>
+                  )}
+
+                  <div className="pt-2 flex items-center justify-end gap-2.5 border-t border-[var(--line)]">
+                    <button
+                      type="button"
+                      onClick={() => setUploadOpen(false)}
+                      className="btn btn-ghost"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={isUploading || !primaryFile}
+                      className="btn btn-primary"
+                    >
+                      {isUploading ? (
+                        <>
+                          <RefreshCw size={14} className="animate-spin" />
+                          <span>Ingesting & Cross-referencing...</span>
+                        </>
+                      ) : (
+                        <span>Start Forensic Verification</span>
+                      )}
+                    </button>
+                  </div>
+                </form>
+              </div>
             </div>
-          </div>
-        )}
-      </div>
-      );
+          )}
+        </div>
+        );
 }
 
-      export default function QueuePage() {
+        export default function QueuePage() {
   return (
-      <Suspense fallback={<div className="p-8 text-center text-xs text-[var(--ink-3)]">Loading queue...</div>}>
-        <QueuePageContent />
-      </Suspense>
-      );
+        <Suspense fallback={<div className="p-8 text-center text-xs text-[var(--ink-3)]">Loading queue...</div>}>
+          <QueuePageContent />
+        </Suspense>
+        );
 }
