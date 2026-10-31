@@ -424,21 +424,21 @@ function QueuePageContent() {
           {/* High-Density Data Table (Grabbers QueueTable) */}
           <div className="card overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse">
+              <table className="w-full min-w-[960px] table-fixed text-left text-xs border-collapse">
                 <thead>
-                  <tr className="border-b border-[var(--line)] bg-[var(--surface-2)] select-none">
-                    <th className="py-3 px-4 label">Email ID</th>
-                    <th className="py-3 px-4 label">Sender</th>
-                    <th className="py-3 px-4 label">Subject</th>
-                    <th className="py-3 px-4 label">Threat Category</th>
-                    <th className="py-3 px-4 label text-left">Status</th>
-                    <th className="py-3 px-4 label text-left">Risk Score</th>
+                  <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 select-none">
+                    <th className="py-3 pl-4 pr-3 w-[110px] font-semibold text-slate-500 uppercase tracking-wider text-[11px]">Email ID</th>
+                    <th className="py-3 px-3 w-[220px] font-semibold text-slate-500 uppercase tracking-wider text-[11px]">Sender</th>
+                    <th className="py-3 px-3 w-[320px] font-semibold text-slate-500 uppercase tracking-wider text-[11px]">Subject</th>
+                    <th className="py-3 px-3 w-[160px] font-semibold text-slate-500 uppercase tracking-wider text-[11px]">Threat Category</th>
+                    <th className="py-3 px-3 w-[170px] font-semibold text-slate-500 uppercase tracking-wider text-[11px] text-left">Status</th>
+                    <th className="py-3 pl-3 pr-4 w-[130px] font-semibold text-slate-500 uppercase tracking-wider text-[11px] text-left">Risk Score</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[var(--line)] bg-[var(--surface)]">
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80 bg-white dark:bg-[#171b33]">
                   {filteredRows.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="py-12 text-center text-[var(--ink-3)]">
+                      <td colSpan={6} className="py-12 text-center text-slate-400">
                         No matching invoices found in this queue scope.
                       </td>
                     </tr>
@@ -457,32 +457,32 @@ function QueuePageContent() {
                               router.push(`/case/${encodeURIComponent(item.id)}`);
                             }
                           }}
-                          className={`group transition-colors cursor-pointer select-none focus:outline-none focus:bg-[var(--surface-2)] ${isSelected
-                            ? "bg-amber-500/10 dark:bg-amber-500/15"
-                            : "hover:bg-[var(--surface-2)]"
+                          className={`group transition-colors cursor-pointer select-none focus:outline-none ${isSelected
+                            ? "bg-[#1f4b8e]/5 dark:bg-[#1f4b8e]/15 border-l-4 border-[#1f4b8e]"
+                            : "bg-white dark:bg-[#171b33] border-l-4 border-transparent hover:bg-slate-50/80 dark:hover:bg-slate-800/50"
                             }`}
                         >
                           {/* Email ID */}
-                          <td className="py-3 px-4 whitespace-nowrap">
-                            <span className="font-mono text-xs text-[var(--ink-2)] font-medium tracking-tight">
+                          <td className="py-3.5 pl-4 pr-3 align-middle whitespace-nowrap">
+                            <span className="font-mono text-xs text-[#1f4b8e] dark:text-[#3b74ca] font-medium tracking-tight">
                               {item.id}
                             </span>
                           </td>
 
                           {/* Sender */}
-                          <td className="py-3 px-4">
-                            <div className="font-medium text-[var(--ink)] truncate max-w-[200px]">
+                          <td className="py-3.5 px-3 align-middle">
+                            <div className="font-medium text-slate-900 dark:text-slate-100 truncate max-w-[210px] leading-tight">
                               {item.vendorName}
                             </div>
-                            <div className="text-xs text-[var(--ink-3)] font-mono truncate max-w-[220px]">
+                            <div className="text-[11px] text-slate-400 font-mono truncate max-w-[210px] mt-0.5 leading-tight">
                               {item.sender}
                             </div>
                           </td>
 
                           {/* Subject */}
-                          <td className="py-3 px-4">
+                          <td className="py-3.5 px-3 align-middle max-w-[320px]">
                             <div
-                              className="text-xs font-medium text-[var(--ink)] max-w-[280px] truncate"
+                              className="text-xs font-medium text-slate-800 dark:text-slate-200 truncate leading-normal"
                               title={item.subject}
                             >
                               {item.subject}
@@ -490,15 +490,15 @@ function QueuePageContent() {
                           </td>
 
                           {/* Threat Category */}
-                          <td className="py-3 px-4 whitespace-nowrap">
+                          <td className="py-3.5 px-3 align-middle whitespace-nowrap">
                             {item.category === "SPAM" ? (
-                              <span className="pill text-[11px] py-0.5 px-2 bg-[var(--surface-2)] text-[var(--ink-3)] border border-[var(--line-strong)] inline-flex items-center gap-1.5">
+                              <span className="pill text-[11px] py-0.5 px-2 bg-slate-100 text-slate-500 border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 inline-flex items-center gap-1.5 font-medium">
                                 <span className="text-[10px] leading-none opacity-80" aria-hidden="true">○</span>
                                 <span>Spam</span>
                               </span>
                             ) : (
                               <span
-                                className={`pill text-[11px] py-0.5 px-2 ${item.category === "BEC_WIRE_FRAUD"
+                                className={`pill text-[11px] py-0.5 px-2 inline-flex items-center gap-1 ${item.category === "BEC_WIRE_FRAUD"
                                   ? "pill-defect"
                                   : item.category === "SEMAKMULE_HIT"
                                     ? "pill-defect font-bold"
@@ -513,12 +513,12 @@ function QueuePageContent() {
                           </td>
 
                           {/* Status Badge */}
-                          <td className="py-3 px-4 text-left whitespace-nowrap">
+                          <td className="py-3.5 px-3 align-middle text-left whitespace-nowrap">
                             <ThreatSeverityBadge status={item.status} />
                           </td>
 
                           {/* Risk Score Column with Gauge Indicator */}
-                          <td className="py-3 px-4 text-left whitespace-nowrap">
+                          <td className="py-3.5 pl-3 pr-4 align-middle text-left whitespace-nowrap">
                             {(() => {
                               const isClean = item.status === "VERIFIED";
                               const isDefect = item.status === "DEFECT" || item.riskScore >= 80;
@@ -531,16 +531,16 @@ function QueuePageContent() {
 
                               return (
                                 <div className="flex items-center justify-start gap-2.5 text-left">
-                                  <span className="font-mono font-semibold text-xs text-[var(--ink)] num text-left min-w-[24px]">
+                                  <span className="font-mono font-semibold text-xs text-slate-900 dark:text-slate-100 num text-left min-w-[24px]">
                                     {scoreVal}
                                   </span>
-                                  <div className="w-14 h-1.5 rounded-full bg-[var(--surface-2)] overflow-hidden relative inline-block align-middle border border-[var(--line-strong)]/30">
+                                  <div className="w-14 h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden relative inline-block align-middle border border-slate-300/40 dark:border-slate-600">
                                     <div
                                       className={`h-full rounded-full transition-all duration-300 ${colorClass}`}
                                       style={{ width: `${Math.min(100, Math.max(0, scoreVal))}%` }}
                                     />
                                     {/* Subtle threshold marker at 80% */}
-                                    <span className="absolute top-0 bottom-0 left-[80%] w-[1px] bg-[var(--line-strong)] opacity-60 pointer-events-none" />
+                                    <span className="absolute top-0 bottom-0 left-[80%] w-[1px] bg-slate-400 dark:bg-slate-500 opacity-60 pointer-events-none" />
                                   </div>
                                 </div>
                               );
@@ -555,10 +555,10 @@ function QueuePageContent() {
             </div>
 
             {/* Footer info bar */}
-            <div className="py-2.5 px-4 bg-[var(--surface-2)] border-t border-[var(--line)] flex items-center justify-between text-[11px] text-[var(--ink-3)] select-none">
+            <div className="py-2.5 px-4 bg-slate-50 dark:bg-slate-900/60 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500 select-none">
               <div className="flex items-center gap-3">
                 <span>Showing {filteredRows.length} of {invoices.length} invoices</span>
-                <span className="hidden sm:inline">•</span>
+                <span className="hidden sm:inline text-slate-300 dark:text-slate-600">•</span>
                 <span className="hidden sm:inline font-mono">Shortcuts: J/K navigate · Enter inspect · / search</span>
               </div>
               <div className="font-mono">

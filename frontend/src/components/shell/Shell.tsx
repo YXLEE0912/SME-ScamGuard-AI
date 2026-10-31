@@ -15,6 +15,9 @@ import {
   X,
   Plus,
   Bell,
+  ChevronLeft,
+  ChevronRight,
+  Mail,
 } from "lucide-react";
 import ThemeToggle from "../ThemeToggle";
 import UserAccountMenu from "./UserAccountMenu";
@@ -26,7 +29,7 @@ const NAV = [
   { href: "/audit", label: "Audit", title: "Master Ledger & Audit Trail", icon: History },
 ];
 
-const RAIL = (compact: boolean) => (compact ? 68 : 224);
+const RAIL = (compact: boolean) => (compact ? 68 : 240);
 
 const isActive = (path: string, href: string) => {
   if (href === "/queue") {
@@ -160,107 +163,119 @@ export function Shell({ children }: { children: React.ReactNode }) {
       {/* Top signature accent hairline (Deep Steel Blue brand indicator) */}
       <div className="h-0.5 bg-[#1f4b8e] w-full" aria-hidden="true" />
 
-      {/* Floating Left Rail (Desktop: Midnight Navy #0f1225) */}
+      {/* Clean Light-Canvas Left Rail (DocuVerify Inspired) */}
       {!isNarrow && (
         <aside
-          className="fixed bottom-3 left-3 top-3.5 z-30 flex flex-col rounded-[24px] border border-white/10 bg-[#0f1225] text-[#f1ece6] transition-all duration-200 select-none shadow-md"
+          className="fixed bottom-3 left-3 top-3.5 z-30 flex flex-col rounded-[24px] border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#171b33] text-slate-800 dark:text-slate-100 transition-all duration-200 select-none shadow-[0_1px_3px_rgba(15,18,37,0.04)]"
           style={{ width: RAIL(compact) }}
         >
           {/* Top Brand Lockup */}
-          <div className={`flex h-16 shrink-0 items-center gap-2.5 ${compact ? "justify-center" : "px-4"}`}>
+          <div className={`flex h-16 shrink-0 items-center justify-between border-b border-slate-100 dark:border-slate-800/80 ${compact ? "px-3" : "px-4"}`}>
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-6 h-6 rounded-md bg-[#1f4b8e] text-white flex items-center justify-center shrink-0 shadow-2xs font-bold text-xs">
+                <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+              </div>
+              {!compact && (
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5 leading-none">
+                    <span className="text-[13px] font-semibold text-[#0f1225] dark:text-white tracking-tight">
+                      ScamGuard
+                    </span>
+                    <span className="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                      AP
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-slate-400 font-medium truncate mt-0.5">
+                    Accounts Payable Defense
+                  </div>
+                </div>
+              )}
+            </div>
+
             <button
               type="button"
               onClick={() => setCollapsed((c) => !c)}
-              className="flex items-center justify-center w-9 h-9 rounded-xl bg-[#1f4b8e] text-[#f1ece6] shadow-xs hover:bg-[#163666] transition-colors"
+              className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-1 rounded-md transition-colors cursor-pointer"
               title={compact ? "Click to expand sidebar" : "Click to collapse sidebar"}
             >
-              <Check className="w-5 h-5 stroke-[2.5]" />
+              {compact ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
             </button>
-            {!compact && (
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[14px] font-bold tracking-tight text-[#f1ece6]">
-                    ScamGuard
-                  </span>
-                  <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-white/10 border border-white/15 text-[#f1ece6]">
-                    AP
-                  </span>
-                </div>
-                <div className="text-[11px] text-[#adbccd] truncate">
-                  Accounts Payable Defense
-                </div>
-              </div>
-            )}
           </div>
 
-          {/* Mailbox Status Card */}
+          {/* Mailbox Ingestion Status Widget */}
           {!compact && (
-            <div className="px-3 pb-3">
-              <div className="flex items-center gap-2.5 rounded-2xl bg-white/5 p-2.5 border border-white/10">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                <div className="min-w-0 flex-1">
-                  <div className="truncate text-[12px] font-medium text-[#f1ece6]">
-                    ap-audit@target-sme.com.my
-                  </div>
-                  <div className="text-[11px] text-[#adbccd]">
-                    Direct Mailbox Feed
-                  </div>
-                </div>
+            <div className="bg-slate-50 dark:bg-slate-900/60 border border-slate-200/70 dark:border-slate-800 rounded-xl p-2.5 mx-3 mt-3">
+              <div className="flex items-center gap-2">
+                <Mail size={13} className="text-slate-400 shrink-0" />
+                <span className="truncate text-xs font-medium text-[#0f1225] dark:text-slate-200">
+                  ap-audit@target-sme.com.my
+                </span>
                 <button
                   type="button"
                   onClick={handleSyncMailbox}
-                  className="p-1 rounded-md text-[#adbccd] hover:text-[#f1ece6] hover:bg-white/10 transition-colors"
+                  className="ml-auto p-1 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                   title="Sync Mailbox"
                 >
-                  <RefreshCw size={13} className={isSyncing ? "animate-spin" : ""} />
+                  <RefreshCw size={11} className={isSyncing ? "animate-spin" : ""} />
                 </button>
+              </div>
+              <div className="flex items-center gap-1.5 mt-1 text-[10px] text-slate-400 font-mono">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                <span>Direct Mailbox Feed · Synced just now</span>
               </div>
             </div>
           )}
 
           {/* Navigation Links */}
-          <nav className="flex-1 p-2 space-y-1.5">
-            {NAV.map(({ href, label, icon: Icon }) => {
-              const on = isActive(path, href);
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  className={`flex items-center gap-3 rounded-xl transition-all ${compact ? "justify-center p-2.5" : "px-3 py-2.5"
-                    } ${on
-                      ? "bg-[#1f4b8e] text-[#f1ece6] font-semibold shadow-xs"
-                      : "text-[#adbccd] hover:bg-white/10 hover:text-[#f1ece6]"
-                    }`}
-                  title={label}
-                >
-                  <Icon size={18} className="shrink-0" />
-                  {!compact && (
-                    <div className="flex items-center justify-between flex-1 min-w-0">
-                      <span className="text-[13px] truncate">{label}</span>
-                      {href === "/queue" && (
-                        <span className="num text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400">
-                          13
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </Link>
-              );
-            })}
-          </nav>
+          <div className="flex-1 overflow-y-auto py-2">
+            {!compact && (
+              <div className="text-[10px] font-semibold text-slate-400 tracking-wider px-4 pt-3 pb-1 uppercase">
+                MAIN
+              </div>
+            )}
+            <nav className="space-y-1">
+              {NAV.map(({ href, label, icon: Icon }) => {
+                const on = isActive(path, href);
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    className={`px-3.5 py-2 mx-2.5 rounded-lg text-xs font-medium flex items-center gap-2.5 transition-colors cursor-pointer ${
+                      on
+                        ? "bg-[#1f4b8e]/10 text-[#1f4b8e] dark:bg-[#1f4b8e]/20 dark:text-[#3b74ca] font-semibold"
+                        : "text-slate-600 dark:text-slate-400 hover:text-[#0f1225] dark:hover:text-white hover:bg-slate-100/80 dark:hover:bg-slate-800/60"
+                    } ${compact ? "justify-center !mx-2 !px-2" : ""}`}
+                    title={label}
+                  >
+                    <Icon size={16} className={`shrink-0 ${on ? "text-[#1f4b8e] dark:text-[#3b74ca]" : "text-slate-400"}`} />
+                    {!compact && (
+                      <div className="flex items-center justify-between flex-1 min-w-0">
+                        <span className="text-[13px] truncate">{label}</span>
+                        {href === "/queue" && (
+                          <span className="ml-auto text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-400">
+                            13
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
 
           {/* Bottom Operator Profile */}
-          <div className={`p-3 border-t border-white/10 flex items-center gap-2.5 ${compact ? "justify-center" : "px-4"}`}>
-            <div className="w-8 h-8 rounded-full bg-[#1f4b8e] text-[#f1ece6] font-bold text-xs flex items-center justify-center shrink-0 border border-[#adbccd]/30">
-              AT
+          <div className={`p-3 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2.5 ${compact ? "justify-center" : "px-3.5"}`}>
+            <div className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-[#0f1225] dark:text-slate-200 font-semibold text-xs flex items-center justify-center border border-slate-200 dark:border-slate-700 shrink-0">
+              FI
             </div>
             {!compact && (
               <div className="min-w-0 flex-1">
-                <div className="text-[12px] font-medium truncate text-[#f1ece6]">
-                  Alex Tan
+                <div className="text-xs font-semibold text-[#0f1225] dark:text-white truncate leading-tight">
+                  Finance Ops
                 </div>
-                <div className="text-[10px] text-[#adbccd]">
-                  AP Lead Auditor
+                <div className="text-[10px] text-slate-400 font-mono truncate leading-tight">
+                  Tier-1 Interdiction
                 </div>
               </div>
             )}
@@ -452,23 +467,29 @@ export function Shell({ children }: { children: React.ReactNode }) {
           onClick={() => setDrawerOpen(false)}
         >
           <div
-            className="w-64 bg-[#0f1225] text-[#f1ece6] h-full p-4 flex flex-col justify-between border-r border-white/10"
+            className="w-64 bg-white dark:bg-[#171b33] text-slate-800 dark:text-slate-100 h-full p-4 flex flex-col justify-between border-r border-slate-200 dark:border-slate-800 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div>
-              <div className="flex items-center justify-between pb-4 border-b border-white/10">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-[#1f4b8e] text-[#f1ece6] flex items-center justify-center font-bold">
-                    <Check size={18} />
+                  <div className="w-6 h-6 rounded-md bg-[#1f4b8e] text-white flex items-center justify-center font-bold text-xs">
+                    <Check className="w-3.5 h-3.5 stroke-[2.5]" />
                   </div>
-                  <span className="font-bold text-sm text-[#f1ece6]">SME-ScamGuard</span>
+                  <div>
+                    <div className="font-semibold text-xs text-[#0f1225] dark:text-white">ScamGuard AP</div>
+                    <div className="text-[10px] text-slate-400 font-mono">Accounts Payable Defense</div>
+                  </div>
                 </div>
-                <button type="button" onClick={() => setDrawerOpen(false)} className="text-[#adbccd] hover:text-[#f1ece6]">
-                  <X size={18} />
+                <button type="button" onClick={() => setDrawerOpen(false)} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                  <X size={16} />
                 </button>
               </div>
 
-              <nav className="mt-4 space-y-1">
+              <div className="text-[10px] font-semibold text-slate-400 tracking-wider pt-4 pb-1 uppercase">
+                MAIN
+              </div>
+              <nav className="space-y-1">
                 {NAV.map(({ href, label, icon: Icon }) => {
                   const on = isActive(path, href);
                   return (
@@ -476,26 +497,31 @@ export function Shell({ children }: { children: React.ReactNode }) {
                       key={href}
                       href={href}
                       onClick={() => setDrawerOpen(false)}
-                      className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-colors ${on
-                          ? "bg-[#1f4b8e] text-[#f1ece6] font-semibold"
-                          : "text-[#adbccd] hover:bg-white/10 hover:text-[#f1ece6]"
+                      className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${on
+                          ? "bg-[#1f4b8e]/10 text-[#1f4b8e] dark:bg-[#1f4b8e]/20 dark:text-[#3b74ca] font-semibold"
+                          : "text-slate-600 dark:text-slate-400 hover:text-[#0f1225] hover:bg-slate-100/80 dark:hover:bg-slate-800/60"
                         }`}
                     >
-                      <Icon size={16} />
+                      <Icon size={16} className={on ? "text-[#1f4b8e] dark:text-[#3b74ca]" : "text-slate-400"} />
                       <span>{label}</span>
+                      {href === "/queue" && (
+                        <span className="ml-auto text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-400">
+                          13
+                        </span>
+                      )}
                     </Link>
                   );
                 })}
               </nav>
             </div>
 
-            <div className="pt-4 border-t border-white/10 flex items-center gap-2 text-xs">
-              <div className="w-7 h-7 rounded-full bg-[#1f4b8e] text-[#f1ece6] flex items-center justify-center font-bold border border-[#adbccd]/30">
-                AT
+            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2 text-xs">
+              <div className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-[#0f1225] dark:text-slate-200 flex items-center justify-center font-bold border border-slate-200 dark:border-slate-700">
+                FI
               </div>
               <div>
-                <div className="font-medium text-[#f1ece6]">Alex Tan</div>
-                <div className="text-[10px] text-[#adbccd]">AP Lead Auditor</div>
+                <div className="font-semibold text-xs text-[#0f1225] dark:text-white">Finance Ops</div>
+                <div className="text-[10px] text-slate-400 font-mono">Tier-1 Interdiction</div>
               </div>
             </div>
           </div>
