@@ -1,85 +1,337 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *, .dark, .dark *));
 
-@layer base {
-  :root {
-    --background: #f8fafc;
-    --foreground: #0f172a;
-    --card: #ffffff;
-    --border: #e2e8f0;
-    --primary: #1e293b;
-  }
+/* DocuVerify Clean Enterprise / Grabbers Design Tokens */
+:root {
+  color-scheme: light;
+  --paper: #faf8f6;
+  --surface: #ffffff;
+  --surface-2: #f3efec;
+  --search-bg: #ebe6e2;
+  --line: #e7e1dc;
+  --line-strong: #d6cec7;
+  --ink: #0a0a0a;
+  --ink-2: #4a4441;
+  --ink-3-on-2: #6b625d;
+  --ink-3: #7c736e;
 
+  /* Accent & Semantic Tokens */
+  --burgundy: #6d001a;
+  --burgundy-hover: #550014;
+  --burgundy-tint: #f4e6e9;
+
+  --review: #e78823;
+  --review-ink: #8a4a05;
+  --review-tint: #fdf1e2;
+
+  --ok: #1f7a4d;
+  --ok-tint: #e6f2ec;
+
+  --defect: #6d001a;
+  --defect-tint: #f4e6e9;
+
+  --focus: #6d001a;
+
+  /* Floating Shell Rail Tokens */
+  --rail: #e9e5e2;
+  --rail-line: #d6cec7;
+  --rail-ink: #0a0a0a;
+  --rail-ink-2: #4a4441;
+  --rail-fill: rgba(0, 0, 0, 0.05);
+  --rail-hover: rgba(0, 0, 0, 0.08);
+  --rail-focus: #6d001a;
+
+  --radius-card: 14px;
+  --radius-control: 10px;
+  --radius-modal: 18px;
+  --shadow-pop: 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+
+
+  [data-theme="dark"],
   .dark {
-    --background: #0b0f17;
-    --foreground: #f8fafc;
-    --card: #111827;
-    --border: #1e293b;
-    --primary: #1e293b;
+    color-scheme: dark;
+    --paper: #0b0a0a;
+    --surface: #141212;
+    --surface-2: #1c1919;
+    --search-bg: #262424;
+    --line: #2a2624;
+    --line-strong: #3a3431;
+    --ink: #f7f4f2;
+    --ink-2: #b8afaa;
+    --ink-3: #9a918c;
+    --ink-3-on-2: #9a918c;
+
+    --burgundy: #a81233;
+    --burgundy-hover: #c21b40;
+    --burgundy-tint: #24090e;
+
+    --review: #f2a24e;
+    --review-ink: #f2a24e;
+    --review-tint: #2b1d0c;
+
+    --ok: #3fa876;
+    --ok-tint: #0e2119;
+
+    --defect: #d8607a;
+    --defect-tint: #24090e;
+
+    --focus: #f2a24e;
+
+    /* Floating Shell Rail Tokens (Dark) */
+    --rail: #0a0a0a;
+    --rail-line: #3d3d3d;
+    --rail-ink: #ffffff;
+    --rail-ink-2: rgba(255, 255, 255, 0.7);
+    --rail-fill: rgba(255, 255, 255, 0.1);
+    --rail-hover: rgba(255, 255, 255, 0.15);
+    --rail-focus: #ffffff;
+
+    --shadow-pop: 0 12px 32px rgba(0, 0, 0, 0.5);
   }
 
-  body {
-    background-color: var(--background);
-    color: var(--foreground);
-    overflow-x: hidden;
-  }
-}
 
-/* Custom restrained scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
+    html {
+      background: var(--paper);
+    }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
 
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 3px;
-}
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font: 400 14px/20px var(--font-sans), system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
 
-.dark ::-webkit-scrollbar-thumb {
-  background: #334155;
-}
+    ::selection {
+      background: var(--burgundy);
+      color: #fff;
+    }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
+    :focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
 
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
-}
+    table {
+      border-collapse: collapse;
+    }
 
-/* Forensic Dossier Print Stylesheet */
-@media print {
-  body {
-    background: white !important;
-    color: #0f172a !important;
-    font-size: 11pt !important;
-  }
+    /* Monospace Tabular Numerals & High-Precision Technical IDs */
+    .num {
+      font-family: var(--font-mono), "JetBrains Mono", ui-monospace, monospace;
+      font-variant-numeric: tabular-nums;
+    }
 
-  .no-print,
-  header,
-  aside,
-  nav,
-  button,
-  input,
-  form,
-  details,
-  select,
-  textarea {
-    display: none !important;
-  }
+    /* Grabbers Signature: Uppercase micro-label */
+    .label {
+      font-size: 11px;
+      line-height: 14px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
 
-  .print-only {
-    display: block !important;
-  }
+      /* Cards & Surfaces */
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-card);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+      }
 
-  .print-break-inside-avoid {
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-}
+        .card-head {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
+          min-height: 40px;
+          padding: 12px 20px;
+          border-bottom: 1px solid var(--line);
+        }
+
+        /* Interactive Controls & Buttons */
+        .btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          height: 40px;
+          padding: 0 16px;
+          border-radius: var(--radius-control);
+          border: 1px solid var(--line-strong);
+          background: var(--surface);
+          color: var(--ink);
+          font-size: 14px;
+          font-weight: 500;
+          white-space: nowrap;
+          cursor: pointer;
+          transition: background 120ms, color 120ms, border-color 120ms, transform 80ms;
+        }
+
+
+          .btn:hover:not(:disabled) {
+            background: var(--surface-2);
+          }
+
+          .btn:active:not(:disabled) {
+            transform: scale(0.98);
+          }
+
+
+            .btn:disabled {
+              opacity: 0.45;
+              cursor: not-allowed;
+            }
+
+              .btn-sm {
+                height: 32px;
+                padding: 0 12px;
+                font-size: 13px;
+                border-radius: 8px;
+              }
+
+
+                .btn-primary {
+                  background: var(--ink);
+                  border-color: var(--ink);
+                  color: var(--paper);
+                }
+
+                .btn-primary:hover:not(:disabled) {
+                  background: var(--burgundy);
+                  border-color: var(--burgundy);
+                  color: #fff;
+                }
+
+                .btn-ghost {
+                  border-color: transparent;
+                  background: transparent;
+                  color: var(--ink-2);
+                }
+
+
+                  .btn-ghost:hover:not(:disabled) {
+                    background: var(--surface-2);
+                    color: var(--ink);
+                  }
+
+
+                    .btn-escalate {
+                      border-color: var(--review);
+                      color: var(--review-ink);
+                      background: var(--surface);
+                    }
+
+
+                      .btn-escalate:hover:not(:disabled) {
+                        background: var(--review-tint);
+                      }
+
+
+                      .btn-threat {
+                        border-color: var(--defect);
+                        color: #ffffff;
+                        background: var(--defect);
+                      }
+
+
+                      .btn-threat:hover:not(:disabled) {
+                        opacity: 0.9;
+                      }
+
+
+                      .icon-btn {
+                        display: inline-grid;
+                        place-items: center;
+                        width: 36px;
+                        height: 36px;
+                        border-radius: var(--radius-control);
+                        border: 1px solid transparent;
+                        background: transparent;
+                        color: var(--ink-2);
+                        cursor: pointer;
+                        transition: background 120ms, color 120ms;
+                      }
+
+                      .icon-btn:hover {
+                        background: var(--surface-2);
+                        color: var(--ink);
+                      }
+
+                      /* Input Fields */
+                      .field {
+                        height: 40px;
+                        padding: 0 12px;
+                        border-radius: var(--radius-control);
+                        border: 1px solid var(--line-strong);
+                        background: var(--surface);
+                        color: var(--ink);
+                        font-size: 13px;
+                        transition: border-color 120ms;
+                      }
+
+                      .field:focus {
+                        outline: none;
+                        border-color: var(--focus);
+                      }
+
+                      .field::placeholder {
+                        color: var(--ink-3);
+                      }
+
+                      /* Status & Category Pills */
+                      .pill {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 6px;
+                        height: 24px;
+                        padding: 0 10px;
+                        border-radius: 999px;
+                        font-size: 12px;
+                        font-weight: 500;
+                        white-space: nowrap;
+                      }
+
+                      .pill-ok {
+                        background: var(--ok-tint);
+                        color: var(--ok);
+                      }
+
+                      .pill-review {
+                        background: var(--review-tint);
+                        color: var(--review-ink);
+                      }
+
+                      .pill-defect {
+                        background: var(--defect-tint);
+                        color: var(--defect);
+                      }
+
+                      .pill-neutral {
+                        background: var(--surface-2);
+                        color: var(--ink-2);
+                        border: 1px solid var(--line);
+                      }
+
+                      /* Forensic Diff Highlights */
+                      .diff-del {
+                        background-color: var(--defect-tint);
+                        color: var(--defect);
+                        text-decoration: line-through;
+                        padding: 1px 4px;
+                        border-radius: 4px;
+                        font-weight: 600;
+                      }
+
+                      .diff-ins {
+                        background-color: var(--ok-tint);
+                        color: var(--ok);
+                        padding: 1px 4px;
+                        border-radius: 4px;
+                        font-weight: 600;
+                      }

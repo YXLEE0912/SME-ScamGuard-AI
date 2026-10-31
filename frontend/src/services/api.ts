@@ -39,6 +39,28 @@ export interface AuditEvent {
   operator_id: string;
 }
 
+export interface ReExtractResult {
+  status: string;
+  extracted_fields?: {
+    confidence_score?: number;
+    vendor_name?: string;
+    bank_name?: string;
+    account_no?: string;
+    amount?: string;
+  };
+}
+
+export interface UploadVerificationResult {
+  record?: DemoInvoice;
+  detail?: string;
+}
+
+export interface UploadLedgerResult {
+  vendors_loaded: number;
+  ledger_sha256: string;
+  detail?: string;
+}
+
 export async function fetchMailboxInvoices(): Promise<DemoInvoice[]> {
   try {
     const res = await fetch(`${API_BASE}/api/v1/demo/mailbox`, { cache: "no-store" });
@@ -66,7 +88,7 @@ export async function fetchInvoiceById(id: string): Promise<DemoInvoice | null> 
   return null;
 }
 
-export async function reExtractWithGemini(invoiceId: string): Promise<any> {
+export async function reExtractWithGemini(invoiceId: string): Promise<ReExtractResult> {
   const res = await fetch(`${API_BASE}/api/v1/demo/re-extract/${invoiceId}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -83,7 +105,7 @@ export async function correctInvoiceField(payload: {
   corrected_value: string;
   justification: string;
   clerk_id: string;
-}): Promise<any> {
+}): Promise<Record<string, unknown>> {
   const res = await fetch(`${API_BASE}/api/v1/demo/correct-field`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -95,14 +117,14 @@ export async function correctInvoiceField(payload: {
   return await res.json();
 }
 
-export async function approveInvoice(invoiceId: string, clerkId: string = "AP-CLERK-MY01"): Promise<any> {
+export async function approveInvoice(invoiceId: string, clerkId: string = "AP-CLERK-MY01"): Promise<Record<string, unknown>> {
   const res = await fetch(`${API_BASE}/api/v1/demo/approve/${invoiceId}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ clerk_id: clerkId }),
   });
   if (!res.ok) {
-    const data = await res.json().catch(() => ({}));
+    const data = (await res.json().catch(() => ({}))) as { detail?: string };
     throw new Error(data.detail || `Approval failed: ${res.statusText}`);
   }
   return await res.json();
@@ -112,7 +134,7 @@ export async function escalateInvoice(
   invoiceId: string,
   reason: string,
   clerkId: string = "AP-CLERK-MY01"
-): Promise<any> {
+): Promise<Record<string, unknown>> {
   const res = await fetch(`${API_BASE}/api/v1/demo/escalate/${invoiceId}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -137,7 +159,7 @@ export async function fetchAuditTrail(): Promise<AuditEvent[]> {
   return [];
 }
 
-export async function uploadNewVerification(file: File, supportingFile?: File): Promise<any> {
+export async function uploadNewVerification(file: File, supportingFile?: File): Promise<UploadVerificationResult> {
   const formData = new FormData();
   formData.append("file", file);
   if (supportingFile) {
@@ -148,13 +170,13 @@ export async function uploadNewVerification(file: File, supportingFile?: File): 
     body: formData,
   });
   if (!res.ok) {
-    const data = await res.json().catch(() => ({}));
+    const data = (await res.json().catch(() => ({}))) as { detail?: string };
     throw new Error(data.detail || `Upload failed: ${res.statusText}`);
   }
   return await res.json();
 }
 
-export async function uploadMasterLedgerCsv(file: File): Promise<any> {
+export async function uploadMasterLedgerCsv(file: File): Promise<UploadLedgerResult> {
   const formData = new FormData();
   formData.append("file", file);
   const res = await fetch(`${API_BASE}/api/v1/ledger/upload`, {
@@ -162,7 +184,7 @@ export async function uploadMasterLedgerCsv(file: File): Promise<any> {
     body: formData,
   });
   if (!res.ok) {
-    const data = await res.json().catch(() => ({}));
+    const data = (await res.json().catch(() => ({}))) as { detail?: string };
     throw new Error(data.detail || `CSV sync failed: ${res.statusText}`);
   }
   return await res.json();
