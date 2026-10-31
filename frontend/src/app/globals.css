@@ -1,0 +1,398 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *, .dark, .dark *));
+
+@theme {
+  --color-canvas: var(--color-canvas);
+  --color-surface: var(--color-surface);
+  --color-surface-hover: var(--color-surface-hover);
+  --color-surface-sunken: var(--color-surface-sunken);
+  --color-ink: var(--color-ink);
+  --color-ink-2: var(--color-ink-2);
+  --color-ink-3: var(--color-ink-3);
+  --color-brand-accent: var(--color-brand-accent);
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+  --color-muted: var(--color-muted);
+  --color-border: var(--color-border);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+}
+
+/* SME-ScamGuard-AI Brand Design Tokens (5-Color Palette) */
+:root {
+  color-scheme: light;
+
+  /* Brand Palette Variables */
+  --color-canvas: #f8fafc;
+  --color-surface: #ffffff;
+  --color-surface-sunken: #f1f5f9;
+  --color-ink: #0f1225;
+  --color-accent: #1f4b8e;
+  --color-accent-hover: #163666;
+  --color-muted: #adbccd;
+  --color-border: rgba(173, 188, 205, 0.35);
+
+  /* System Mappings */
+  --paper: #f8fafc;
+  --surface: #ffffff;
+  --surface-2: #f1f5f9;
+  --search-bg: #f8fafc;
+  --line: rgba(226, 232, 240, 0.9);
+  --line-strong: rgba(173, 188, 205, 0.45);
+  --ink: #0f1225;
+  --ink-2: #1f4b8e;
+  --ink-3: #64748b;
+  --ink-3-on-2: #475569;
+
+  /* Accent & Interactive Focus */
+  --accent: #1f4b8e;
+  --accent-hover: #163666;
+  --focus: #1f4b8e;
+
+  /* Preserved Semantic Status Tokens - Whitelisted (DO NOT ALTER FRAUD SIGNALS) */
+  --ok: #1f7a4d;
+  --ok-tint: #ecfdf5;
+
+  --review: #d97706;
+  --review-ink: #92400e;
+  --review-tint: #fffbeb;
+
+  --defect: #e11d48;
+  --defect-tint: #fff1f2;
+
+  --burgundy: #0f1225;
+  --burgundy-hover: #1f4b8e;
+  --burgundy-tint: #f1f5f9;
+
+  /* Floating Shell Rail Tokens */
+  --rail: #ffffff;
+  --rail-line: rgba(173, 188, 205, 0.25);
+  --rail-ink: #0f1225;
+  --rail-ink-2: #64748b;
+  --rail-fill: rgba(31, 75, 142, 0.08);
+  --rail-hover: rgba(31, 75, 142, 0.12);
+  --rail-focus: #1f4b8e;
+
+  --radius-card: 14px;
+  --radius-control: 10px;
+  --radius-modal: 18px;
+  --shadow-pop: 0 12px 32px rgba(15, 18, 37, 0.12);
+}
+
+[data-theme="dark"],
+.dark {
+  color-scheme: dark;
+
+  /* Deep true dark base surfaces */
+  --color-canvas: #090a0f;           /* True black canvas */
+  --color-surface: #11131a;          /* Charcoal dark card surface */
+  --color-surface-hover: #161a24;    /* Subtle hover elevation */
+  --color-surface-sunken: #0c0e14;   /* Recessed input / code block base */
+
+  /* Hairline slate dividers */
+  --color-line: rgba(173, 188, 205, 0.12);
+  --color-line-strong: rgba(173, 188, 205, 0.22);
+
+  /* High-contrast typography & accents */
+  --color-ink: #f8fafc;              /* Primary headers & metrics */
+  --color-ink-2: #cbd5e1;            /* Secondary body & descriptions */
+  --color-ink-3: #94a3b8;            /* Ice blue / slate labels & metadata */
+  --color-brand-accent: #3b82f6;     /* Active tabs, links & focus rings */
+  --color-accent: #3b82f6;
+  --color-accent-hover: #60a5fa;
+  --color-muted: #94a3b8;
+  --color-border: rgba(173, 188, 205, 0.12);
+
+  /* System Mappings */
+  --paper: #090a0f;
+  --surface: #11131a;
+  --surface-2: #161a24;
+  --search-bg: #0c0e14;
+  --line: rgba(173, 188, 205, 0.12);
+  --line-strong: rgba(173, 188, 205, 0.22);
+  --ink: #f8fafc;
+  --ink-2: #cbd5e1;
+  --ink-3: #94a3b8;
+  --ink-3-on-2: #e2e8f0;
+
+  /* Accent & Interactive Focus */
+  --accent: #3b82f6;
+  --accent-hover: #60a5fa;
+  --focus: #3b82f6;
+
+  /* Preserved Semantic Status Tokens - Whitelisted (Dark) */
+  --ok: #10b981;
+  --ok-tint: rgba(16, 185, 129, 0.15);
+
+  --review: #f59e0b;
+  --review-ink: #fbbf24;
+  --review-tint: rgba(245, 158, 11, 0.15);
+
+  --defect: #f43f5e;
+  --defect-tint: rgba(244, 63, 94, 0.15);
+
+  --burgundy: #3b82f6;
+  --burgundy-hover: #60a5fa;
+  --burgundy-tint: #161a24;
+
+  /* Floating Shell Rail Tokens (Dark) */
+  --rail: #11131a;
+  --rail-line: rgba(173, 188, 205, 0.12);
+  --rail-ink: #f8fafc;
+  --rail-ink-2: #94a3b8;
+  --rail-fill: rgba(173, 188, 205, 0.08);
+  --rail-hover: rgba(173, 188, 205, 0.14);
+  --rail-focus: #3b82f6;
+
+  --shadow-pop: 0 12px 32px rgba(0, 0, 0, 0.7);
+}
+
+html {
+  background: var(--paper);
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 14px/20px var(--font-sans), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: #ffffff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+/* Monospace Tabular Numerals & High-Precision Technical IDs */
+.num {
+  font-family: var(--font-mono), "JetBrains Mono", ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Signature Uppercase Micro-Label */
+.label {
+  font-size: 11px;
+  line-height: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* Cards & Surfaces */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-card);
+  box-shadow: 0 1px 3px rgba(15, 18, 37, 0.04);
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 40px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+/* Interactive Controls & Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 120ms, color 120ms, border-color 120ms, transform 80ms;
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--surface-2);
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-sm {
+  height: 32px;
+  padding: 0 12px;
+  font-size: 13px;
+  border-radius: 8px;
+}
+
+/* Primary Action Button: Midnight Navy #0f1225 with White/Alabaster text */
+.btn-primary {
+  background: #0f1225;
+  border-color: #0f1225;
+  color: #f1ece6;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #1f4b8e;
+  border-color: #1f4b8e;
+  color: #ffffff;
+}
+
+.dark .btn-primary,
+[data-theme="dark"] .btn-primary {
+  background: #1f4b8e;
+  border-color: #1f4b8e;
+  color: #f1ece6;
+}
+
+.dark .btn-primary:hover:not(:disabled),
+[data-theme="dark"] .btn-primary:hover:not(:disabled) {
+  background: #3b74ca;
+  border-color: #3b74ca;
+  color: #ffffff;
+}
+
+.btn-ghost {
+  border-color: transparent;
+  background: transparent;
+  color: var(--ink-2);
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+.btn-escalate {
+  border-color: var(--review);
+  color: var(--review-ink);
+  background: var(--surface);
+}
+
+.btn-escalate:hover:not(:disabled) {
+  background: var(--review-tint);
+}
+
+.btn-threat {
+  border-color: var(--defect);
+  color: #ffffff;
+  background: var(--defect);
+}
+
+.btn-threat:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-control);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: background 120ms, color 120ms;
+}
+
+.icon-btn:hover {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+/* Input Fields */
+.field {
+  height: 40px;
+  padding: 0 12px;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 13px;
+  transition: border-color 120ms;
+}
+
+.field:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
+.field::placeholder {
+  color: var(--ink-3);
+}
+
+/* Status & Category Pills */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.pill-ok {
+  background: var(--ok-tint);
+  color: var(--ok);
+}
+
+.pill-review {
+  background: var(--review-tint);
+  color: var(--review-ink);
+}
+
+.pill-defect {
+  background: var(--defect-tint);
+  color: var(--defect);
+}
+
+.pill-neutral {
+  background: var(--surface-2);
+  color: var(--ink-2);
+  border: 1px solid var(--line);
+}
+
+/* Forensic Diff Highlights */
+.diff-del {
+  background-color: var(--defect-tint);
+  color: var(--defect);
+  text-decoration: line-through;
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.diff-ins {
+  background-color: var(--ok-tint);
+  color: var(--ok);
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-weight: 600;
+}

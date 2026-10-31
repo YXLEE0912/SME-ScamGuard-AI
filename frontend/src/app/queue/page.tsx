@@ -387,289 +387,289 @@ function QueuePageContent() {
       </div>
 
       {/* Filter and Quick Search Bar */}
-      <div className="w-full flex items-center justify-between gap-4">
-        <div className="relative flex items-center flex-1">
-          <Search className="absolute left-3.5 text-[var(--ink-3)] pointer-events-none w-4 h-4" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Filter by vendor name, invoice reference, bank account, or amount..."
-            className="w-full !pl-10 pr-10 text-xs h-10 rounded-lg border border-[var(--line-strong)] bg-[var(--surface)] text-[var(--ink)] placeholder:text-[var(--ink-3)] focus:outline-none focus:border-[var(--focus)] transition-colors"
-          />
-          {searchQuery && (
-            <button
-              type="button"
-              onClick={() => setSearchQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"
-              aria-label="Clear search"
-            >
-              <X size={14} />
-            </button>
-          )}
-        </div>
-
-        <select
-          value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)}
-          className="h-10 px-3 rounded-lg border border-[var(--line-strong)] bg-[var(--surface)] text-xs font-medium text-[var(--ink)] cursor-pointer min-w-[170px] shrink-0 focus:outline-none focus:border-[var(--focus)] transition-colors"
-        >
-          <option value="ALL">All Categories</option>
-          <option value="BEC_WIRE_FRAUD">BEC Wire Scam</option>
-          <option value="SEMAKMULE_HIT">PDRM SemakMule Hit</option>
-          <option value="COERCION">Coercion / Urgency</option>
-          <option value="PROMPT_INJECTION">Prompt Injection</option>
-          <option value="ROUTINE_AUDIT">Routine Billing</option>
-          <option value="SPAM">Spam</option>
-        </select>
-      </div>
-
-      {/* High-Density Data Table (Grabbers QueueTable) */}
-      <div className="card overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[960px] table-fixed text-left text-xs border-collapse">
-            <thead>
-              <tr className="border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#0c0e14] select-none">
-                <th className="py-3 pl-4 pr-3 w-[110px] font-semibold text-slate-500 uppercase tracking-wider text-[11px]">Email ID</th>
-                <th className="py-3 px-3 w-[220px] font-semibold text-slate-500 uppercase tracking-wider text-[11px]">Sender</th>
-                <th className="py-3 px-3 w-[320px] font-semibold text-slate-500 uppercase tracking-wider text-[11px]">Subject</th>
-                <th className="py-3 px-3 w-[160px] font-semibold text-slate-500 uppercase tracking-wider text-[11px]">Threat Category</th>
-                <th className="py-3 px-3 w-[170px] font-semibold text-slate-500 uppercase tracking-wider text-[11px] text-left">Status</th>
-                <th className="py-3 pl-3 pr-4 w-[130px] font-semibold text-slate-500 uppercase tracking-wider text-[11px] text-left">Risk Score</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-white/5 bg-white dark:bg-[#11131a]">
-              {filteredRows.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="py-12 text-center text-slate-400">
-                    No matching invoices found in this queue scope.
-                  </td>
-                </tr>
-              ) : (
-                filteredRows.map((item) => {
-                  const isSelected = selectedId !== null && selectedId === item.id;
-                  return (
-                    <tr
-                      key={item.id}
-                      tabIndex={0}
-                      role="row"
-                      onClick={() => {
-                        setSelectedId(item.id);
-                        router.push(`/case/${encodeURIComponent(item.id)}`);
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          setSelectedId(item.id);
-                          router.push(`/case/${encodeURIComponent(item.id)}`);
-                        }
-                      }}
-                      className={`group transition-colors cursor-pointer select-none focus:outline-none ${isSelected
-                        ? "bg-[#1f4b8e]/5 dark:bg-[#1f4b8e]/15 border-l-4 border-[#1f4b8e] dark:border-[#3b82f6]"
-                        : "bg-white dark:bg-[#11131a] border-l-4 border-transparent hover:bg-slate-50/80 dark:hover:bg-[#161a24]"
-                        }`}
-                    >
-                      {/* Email ID */}
-                      <td className="py-3.5 pl-4 pr-3 align-middle whitespace-nowrap">
-                        <span className="font-mono text-xs text-[#1f4b8e] dark:text-[#3b74ca] font-medium tracking-tight">
-                          {item.id}
-                        </span>
-                      </td>
-
-                      {/* Sender */}
-                      <td className="py-3.5 px-3 align-middle">
-                        <div className="font-medium text-slate-900 dark:text-slate-100 truncate max-w-[210px] leading-tight">
-                          {item.vendorName}
-                        </div>
-                        <div className="text-[11px] text-slate-400 font-mono truncate max-w-[210px] mt-0.5 leading-tight">
-                          {item.sender}
-                        </div>
-                      </td>
-
-                      {/* Subject */}
-                      <td className="py-3.5 px-3 align-middle max-w-[320px]">
-                        <div
-                          className="text-xs font-medium text-slate-800 dark:text-slate-200 truncate leading-normal"
-                          title={item.subject}
-                        >
-                          {item.subject}
-                        </div>
-                      </td>
-
-                      {/* Threat Category */}
-                      <td className="py-3.5 px-3 align-middle whitespace-nowrap">
-                        {item.category === "SPAM" ? (
-                          <span className="pill text-[11px] py-0.5 px-2 bg-slate-100 text-slate-500 border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 inline-flex items-center gap-1.5 font-medium">
-                            <span className="text-[10px] leading-none opacity-80" aria-hidden="true">○</span>
-                            <span>Spam</span>
-                          </span>
-                        ) : (
-                          <span
-                            className={`pill text-[11px] py-0.5 px-2 inline-flex items-center gap-1 ${item.category === "BEC_WIRE_FRAUD"
-                              ? "pill-defect"
-                              : item.category === "SEMAKMULE_HIT"
-                                ? "pill-defect font-bold"
-                                : item.category === "ROUTINE_AUDIT"
-                                  ? "pill-ok"
-                                  : "pill-review"
-                              }`}
-                          >
-                            {item.categoryLabel}
-                          </span>
-                        )}
-                      </td>
-
-                      {/* Status Badge */}
-                      <td className="py-3.5 px-3 align-middle text-left whitespace-nowrap">
-                        <ThreatSeverityBadge status={item.status} />
-                      </td>
-
-                      {/* Risk Score Column with Gauge Indicator */}
-                      <td className="py-3.5 pl-3 pr-4 align-middle text-left whitespace-nowrap">
-                        {(() => {
-                          const isClean = item.status === "VERIFIED";
-                          const isDefect = item.status === "DEFECT" || item.riskScore >= 80;
-                          const scoreVal = isClean ? 100 : item.riskScore || (isDefect ? 95 : 70);
-                          const colorClass = isClean
-                            ? "bg-emerald-500 dark:bg-emerald-400"
-                            : isDefect
-                              ? "bg-rose-500 dark:bg-rose-400"
-                              : "bg-amber-500 dark:bg-amber-400";
-
-                          return (
-                            <div className="flex items-center justify-start gap-2.5 text-left">
-                              <span className="font-mono font-semibold text-xs text-slate-900 dark:text-slate-100 num text-left min-w-[24px]">
-                                {scoreVal}
-                              </span>
-                              <div className="w-14 h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden relative inline-block align-middle border border-slate-300/40 dark:border-slate-600">
-                                <div
-                                  className={`h-full rounded-full transition-all duration-300 ${colorClass}`}
-                                  style={{ width: `${Math.min(100, Math.max(0, scoreVal))}%` }}
-                                />
-                                {/* Subtle threshold marker at 80% */}
-                                <span className="absolute top-0 bottom-0 left-[80%] w-[1px] bg-slate-400 dark:bg-slate-500 opacity-60 pointer-events-none" />
-                              </div>
-                            </div>
-                          );
-                        })()}
-                      </td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Footer info bar */}
-        <div className="py-2.5 px-4 bg-slate-50 dark:bg-[#0c0e14] border-t border-slate-200 dark:border-white/10 flex items-center justify-between text-[11px] text-slate-500 select-none">
-          <div className="flex items-center gap-3">
-            <span>Showing {filteredRows.length} of {invoices.length} invoices</span>
-            <span className="hidden sm:inline text-slate-300 dark:text-slate-600">•</span>
-            <span className="hidden sm:inline font-mono">Shortcuts: J/K navigate · Enter inspect · / search</span>
-          </div>
-          <div className="font-mono">
-            Direct CCID Blacklist Parity Active
-          </div>
-        </div>
-      </div>
-
-      {/* New Verification Modal */}
-      {uploadOpen && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs"
-          onClick={() => setUploadOpen(false)}
-        >
-          <div
-            className="w-full max-w-lg rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center">
-                  <Upload size={16} />
-                </div>
-                <div>
-                  <h3 className="text-base font-bold text-[var(--ink)]">Ingest New Verification</h3>
-                  <p className="text-xs text-[var(--ink-3)]">
-                    Upload inbound invoice and optional email body for 3-way forensic verification
-                  </p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setUploadOpen(false)}
-                className="icon-btn"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            <form onSubmit={handleUploadSubmit} className="mt-4 space-y-4">
-              <div>
-                <label className="label block mb-1.5">Primary Invoice File (PDF, PNG, JPG)</label>
-                <input
-                  type="file"
-                  accept=".pdf,.png,.jpg,.jpeg"
-                  required
-                  onChange={(e) => setPrimaryFile(e.target.files?.[0] || null)}
-                  className="field w-full pt-1.5 text-xs file:mr-3 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-900 file:text-white"
-                />
-              </div>
-
-              <div>
-                <label className="label block mb-1.5">Supporting Remittance Email / Instructions (Optional)</label>
-                <input
-                  type="file"
-                  accept=".txt,.eml,.pdf"
-                  onChange={(e) => setSupportingFile(e.target.files?.[0] || null)}
-                  className="field w-full pt-1.5 text-xs file:mr-3 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-900 file:text-white"
-                />
-              </div>
-
-              {uploadStatus && (
-                <div className="p-3 rounded-lg bg-[var(--surface-2)] text-xs text-[var(--ink-2)] border border-[var(--line)]">
-                  {uploadStatus}
-                </div>
-              )}
-
-              <div className="pt-2 flex items-center justify-end gap-2.5 border-t border-[var(--line)]">
+          <div className="w-full flex items-center justify-between gap-4">
+            <div className="relative flex items-center flex-1">
+              <Search className="absolute left-3.5 text-[var(--ink-3)] pointer-events-none w-4 h-4" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Filter by vendor name, invoice reference, bank account, or amount..."
+                className="w-full !pl-10 pr-10 text-xs h-10 rounded-lg border border-[var(--line-strong)] bg-[var(--surface)] text-[var(--ink)] placeholder:text-[var(--ink-3)] focus:outline-none focus:border-[var(--focus)] transition-colors"
+              />
+              {searchQuery && (
                 <button
                   type="button"
-                  onClick={() => setUploadOpen(false)}
-                  className="btn btn-ghost"
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"
+                  aria-label="Clear search"
                 >
-                  Cancel
+                  <X size={14} />
                 </button>
-                <button
-                  type="submit"
-                  disabled={isUploading || !primaryFile}
-                  className="btn btn-primary"
-                >
-                  {isUploading ? (
-                    <>
-                      <RefreshCw size={14} className="animate-spin" />
-                      <span>Ingesting & Cross-referencing...</span>
-                    </>
-                  ) : (
-                    <span>Start Forensic Verification</span>
-                  )}
-                </button>
-              </div>
-            </form>
+              )}
+            </div>
+
+            <select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+              className="h-10 px-3 rounded-lg border border-[var(--line-strong)] bg-[var(--surface)] text-xs font-medium text-[var(--ink)] cursor-pointer min-w-[170px] shrink-0 focus:outline-none focus:border-[var(--focus)] transition-colors"
+            >
+              <option value="ALL">All Categories</option>
+              <option value="BEC_WIRE_FRAUD">BEC Wire Scam</option>
+              <option value="SEMAKMULE_HIT">PDRM SemakMule Hit</option>
+              <option value="COERCION">Coercion / Urgency</option>
+              <option value="PROMPT_INJECTION">Prompt Injection</option>
+              <option value="ROUTINE_AUDIT">Routine Billing</option>
+              <option value="SPAM">Spam</option>
+            </select>
           </div>
+
+          {/* High-Density Data Table (Grabbers QueueTable) */}
+          <div className="card overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[960px] table-fixed text-left text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#0c0e14] select-none">
+                    <th className="py-3 pl-4 pr-3 w-[110px] font-semibold text-slate-500 uppercase tracking-wider text-[11px]">Email ID</th>
+                    <th className="py-3 px-3 w-[220px] font-semibold text-slate-500 uppercase tracking-wider text-[11px]">Sender</th>
+                    <th className="py-3 px-3 w-[320px] font-semibold text-slate-500 uppercase tracking-wider text-[11px]">Subject</th>
+                    <th className="py-3 px-3 w-[160px] font-semibold text-slate-500 uppercase tracking-wider text-[11px]">Threat Category</th>
+                    <th className="py-3 px-3 w-[170px] font-semibold text-slate-500 uppercase tracking-wider text-[11px] text-left">Status</th>
+                    <th className="py-3 pl-3 pr-4 w-[130px] font-semibold text-slate-500 uppercase tracking-wider text-[11px] text-left">Risk Score</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-white/5 bg-white dark:bg-[#11131a]">
+                  {filteredRows.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="py-12 text-center text-slate-400">
+                        No matching invoices found in this queue scope.
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredRows.map((item) => {
+                      const isSelected = selectedId !== null && selectedId === item.id;
+                      return (
+                        <tr
+                          key={item.id}
+                          tabIndex={0}
+                          role="row"
+                          onClick={() => {
+                            setSelectedId(item.id);
+                            router.push(`/case/${encodeURIComponent(item.id)}`);
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault();
+                              setSelectedId(item.id);
+                              router.push(`/case/${encodeURIComponent(item.id)}`);
+                            }
+                          }}
+                          className={`group transition-colors cursor-pointer select-none focus:outline-none ${isSelected
+                            ? "bg-[#1f4b8e]/5 dark:bg-[#1f4b8e]/15 border-l-4 border-[#1f4b8e] dark:border-[#3b82f6]"
+                            : "bg-white dark:bg-[#11131a] border-l-4 border-transparent hover:bg-slate-50/80 dark:hover:bg-[#161a24]"
+                            }`}
+                        >
+                          {/* Email ID */}
+                          <td className="py-3.5 pl-4 pr-3 align-middle whitespace-nowrap">
+                            <span className="font-mono text-xs text-[#1f4b8e] dark:text-[#3b74ca] font-medium tracking-tight">
+                              {item.id}
+                            </span>
+                          </td>
+
+                          {/* Sender */}
+                          <td className="py-3.5 px-3 align-middle">
+                            <div className="font-medium text-slate-900 dark:text-slate-100 truncate max-w-[210px] leading-tight">
+                              {item.vendorName}
+                            </div>
+                            <div className="text-[11px] text-slate-400 font-mono truncate max-w-[210px] mt-0.5 leading-tight">
+                              {item.sender}
+                            </div>
+                          </td>
+
+                          {/* Subject */}
+                          <td className="py-3.5 px-3 align-middle max-w-[320px]">
+                            <div
+                              className="text-xs font-medium text-slate-800 dark:text-slate-200 truncate leading-normal"
+                              title={item.subject}
+                            >
+                              {item.subject}
+                            </div>
+                          </td>
+
+                          {/* Threat Category */}
+                          <td className="py-3.5 px-3 align-middle whitespace-nowrap">
+                            {item.category === "SPAM" ? (
+                              <span className="pill text-[11px] py-0.5 px-2 bg-slate-100 text-slate-500 border border-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 inline-flex items-center gap-1.5 font-medium">
+                                <span className="text-[10px] leading-none opacity-80" aria-hidden="true">○</span>
+                                <span>Spam</span>
+                              </span>
+                            ) : (
+                              <span
+                                className={`pill text-[11px] py-0.5 px-2 inline-flex items-center gap-1 ${item.category === "BEC_WIRE_FRAUD"
+                                  ? "pill-defect"
+                                  : item.category === "SEMAKMULE_HIT"
+                                    ? "pill-defect font-bold"
+                                    : item.category === "ROUTINE_AUDIT"
+                                      ? "pill-ok"
+                                      : "pill-review"
+                                  }`}
+                              >
+                                {item.categoryLabel}
+                              </span>
+                            )}
+                          </td>
+
+                          {/* Status Badge */}
+                          <td className="py-3.5 px-3 align-middle text-left whitespace-nowrap">
+                            <ThreatSeverityBadge status={item.status} />
+                          </td>
+
+                          {/* Risk Score Column with Gauge Indicator */}
+                          <td className="py-3.5 pl-3 pr-4 align-middle text-left whitespace-nowrap">
+                            {(() => {
+                              const isClean = item.status === "VERIFIED";
+                              const isDefect = item.status === "DEFECT" || item.riskScore >= 80;
+                              const scoreVal = isClean ? 100 : item.riskScore || (isDefect ? 95 : 70);
+                              const colorClass = isClean
+                                ? "bg-emerald-500 dark:bg-emerald-400"
+                                : isDefect
+                                  ? "bg-rose-500 dark:bg-rose-400"
+                                  : "bg-amber-500 dark:bg-amber-400";
+
+                              return (
+                                <div className="flex items-center justify-start gap-2.5 text-left">
+                                  <span className="font-mono font-semibold text-xs text-slate-900 dark:text-slate-100 num text-left min-w-[24px]">
+                                    {scoreVal}
+                                  </span>
+                                  <div className="w-14 h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden relative inline-block align-middle border border-slate-300/40 dark:border-slate-600">
+                                    <div
+                                      className={`h-full rounded-full transition-all duration-300 ${colorClass}`}
+                                      style={{ width: `${Math.min(100, Math.max(0, scoreVal))}%` }}
+                                    />
+                                    {/* Subtle threshold marker at 80% */}
+                                    <span className="absolute top-0 bottom-0 left-[80%] w-[1px] bg-slate-400 dark:bg-slate-500 opacity-60 pointer-events-none" />
+                                  </div>
+                                </div>
+                              );
+                            })()}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Footer info bar */}
+            <div className="py-2.5 px-4 bg-slate-50 dark:bg-[#0c0e14] border-t border-slate-200 dark:border-white/10 flex items-center justify-between text-[11px] text-slate-500 select-none">
+              <div className="flex items-center gap-3">
+                <span>Showing {filteredRows.length} of {invoices.length} invoices</span>
+                <span className="hidden sm:inline text-slate-300 dark:text-slate-600">•</span>
+                <span className="hidden sm:inline font-mono">Shortcuts: J/K navigate · Enter inspect · / search</span>
+              </div>
+              <div className="font-mono">
+                Direct CCID Blacklist Parity Active
+              </div>
+            </div>
+          </div>
+
+          {/* New Verification Modal */}
+          {uploadOpen && (
+            <div
+              role="dialog"
+              aria-modal="true"
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs"
+              onClick={() => setUploadOpen(false)}
+            >
+              <div
+                className="w-full max-w-lg rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center">
+                      <Upload size={16} />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-bold text-[var(--ink)]">Ingest New Verification</h3>
+                      <p className="text-xs text-[var(--ink-3)]">
+                        Upload inbound invoice and optional email body for 3-way forensic verification
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setUploadOpen(false)}
+                    className="icon-btn"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+
+                <form onSubmit={handleUploadSubmit} className="mt-4 space-y-4">
+                  <div>
+                    <label className="label block mb-1.5">Primary Invoice File (PDF, PNG, JPG)</label>
+                    <input
+                      type="file"
+                      accept=".pdf,.png,.jpg,.jpeg"
+                      required
+                      onChange={(e) => setPrimaryFile(e.target.files?.[0] || null)}
+                      className="field w-full pt-1.5 text-xs file:mr-3 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-900 file:text-white"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="label block mb-1.5">Supporting Remittance Email / Instructions (Optional)</label>
+                    <input
+                      type="file"
+                      accept=".txt,.eml,.pdf"
+                      onChange={(e) => setSupportingFile(e.target.files?.[0] || null)}
+                      className="field w-full pt-1.5 text-xs file:mr-3 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-900 file:text-white"
+                    />
+                  </div>
+
+                  {uploadStatus && (
+                    <div className="p-3 rounded-lg bg-[var(--surface-2)] text-xs text-[var(--ink-2)] border border-[var(--line)]">
+                      {uploadStatus}
+                    </div>
+                  )}
+
+                  <div className="pt-2 flex items-center justify-end gap-2.5 border-t border-[var(--line)]">
+                    <button
+                      type="button"
+                      onClick={() => setUploadOpen(false)}
+                      className="btn btn-ghost"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={isUploading || !primaryFile}
+                      className="btn btn-primary"
+                    >
+                      {isUploading ? (
+                        <>
+                          <RefreshCw size={14} className="animate-spin" />
+                          <span>Ingesting & Cross-referencing...</span>
+                        </>
+                      ) : (
+                        <span>Start Forensic Verification</span>
+                      )}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
         </div>
-      )}
-    </div>
-  );
+        );
 }
 
-export default function QueuePage() {
+        export default function QueuePage() {
   return (
-    <Suspense fallback={<div className="p-8 text-center text-xs text-[var(--ink-3)]">Loading queue...</div>}>
-      <QueuePageContent />
-    </Suspense>
-  );
+        <Suspense fallback={<div className="p-8 text-center text-xs text-[var(--ink-3)]">Loading queue...</div>}>
+          <QueuePageContent />
+        </Suspense>
+        );
 }
