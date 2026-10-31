@@ -15,6 +15,7 @@ import {
   X,
 } from "lucide-react";
 import ThemeToggle from "../ThemeToggle";
+import UserAccountMenu from "./UserAccountMenu";
 
 const NAV = [
   { href: "/insights", label: "Insights", title: "AP Insights & Cockpit", icon: LayoutDashboard },
@@ -292,6 +293,8 @@ const isActive = (path: string, href: string) => {
                 <div id={HEADER_ACTIONS_ID} className="flex items-center gap-2" />
 
                 <ThemeToggle />
+
+                <UserAccountMenu />
               </div>
             </div>
           </header>
