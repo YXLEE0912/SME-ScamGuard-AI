@@ -10,7 +10,6 @@ import {
   X,
 } from "lucide-react";
 import { AuditEvent, fetchAuditTrail, uploadMasterLedgerCsv } from "@/services/api";
-import { HeaderActions } from "@/components/shell/Shell";
 
 export default function AuditTrailPage() {
   const [events, setEvents] = useState<AuditEvent[]>([]);
@@ -129,35 +128,6 @@ export default function AuditTrailPage() {
 
   return (
     <div className="grid gap-5">
-      <HeaderActions>
-        <button
-          type="button"
-          onClick={loadAuditData}
-          className="icon-btn"
-          title="Refresh audit events"
-        >
-          <RefreshCw size={15} className={isLoading ? "animate-spin" : ""} />
-        </button>
-
-        <button
-          type="button"
-          onClick={handleExportCsv}
-          className="btn btn-sm btn-ghost"
-        >
-          <FileSpreadsheet size={14} className="text-emerald-600 dark:text-emerald-400" />
-          <span>Export CSV</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={handleExportJson}
-          className="btn btn-sm btn-primary"
-        >
-          <FileCode size={14} />
-          <span>Export JSON</span>
-        </button>
-      </HeaderActions>
-
       {/* Subtitle */}
       <div>
         <p className="max-w-3xl text-[14px] text-[var(--ink-2)]">
@@ -248,11 +218,10 @@ export default function AuditTrailPage() {
 
               {ledgerStatus && (
                 <div
-                  className={`text-[11px] font-medium ${
-                    ledgerStatus.startsWith("Error")
+                  className={`text-[11px] font-medium ${ledgerStatus.startsWith("Error")
                       ? "text-[var(--defect)]"
                       : "text-emerald-600 dark:text-emerald-400"
-                  }`}
+                    }`}
                 >
                   {ledgerStatus}
                 </div>
@@ -270,73 +239,104 @@ export default function AuditTrailPage() {
         </div>
       </div>
 
-      {/* Search Bar & Filter Row: Optical alignment with flexible width and right-pinned event counter */}
-      <div className="flex items-center justify-between gap-4 w-full mt-6 mb-4">
-        <div className="relative flex-1">
-          <Search
-            size={15}
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--ink-3)] pointer-events-none"
-          />
-          <input
-            type="text"
-            value={searchFilter}
-            onChange={(e) => setSearchFilter(e.target.value)}
-            placeholder="Search action, operator ID, or justification..."
-            className="h-10 w-full pl-10 pr-3.5 rounded-lg border border-[var(--line-strong)] bg-[var(--surface)] text-xs text-[var(--ink)] placeholder:text-[var(--ink-3)] focus:outline-none focus:border-[var(--focus)] transition-colors shadow-2xs"
-          />
-        </div>
-        <span className="label text-xs font-semibold uppercase tracking-wider text-[var(--ink-3)] whitespace-nowrap shrink-0">
-          {filteredEvents.length} Events Logged
-        </span>
-      </div>
+        {/* Search Bar & Filter Row: Optical alignment with flexible width, clean export buttons, and right-pinned event counter */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 w-full mt-6 mb-4">
+          {/* Search input (flexible left) */}
+          <div className="relative flex-1">
+            <Search
+              size={15}
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--ink-3)] pointer-events-none"
+            />
+            <input
+              type="text"
+              value={searchFilter}
+              onChange={(e) => setSearchFilter(e.target.value)}
+              placeholder="Search action, operator ID, or justification..."
+              className="h-10 w-full pl-10 pr-3.5 rounded-lg border border-[var(--line-strong)] bg-[var(--surface)] text-xs text-[var(--ink)] placeholder:text-[var(--ink-3)] focus:outline-none focus:border-[var(--focus)] transition-colors shadow-2xs"
+            />
+          </div>
 
-      {/* Audit Events Table */}
-      <div className="card overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="border-b border-[var(--line)] bg-[var(--surface-2)]">
-                <th className="py-3 px-4 label">Timestamp (UTC)</th>
-                <th className="py-3 px-4 label">Action Type</th>
-                <th className="py-3 px-4 label">Event Description</th>
-                <th className="py-3 px-4 label">Operator Justification</th>
-                <th className="py-3 px-4 label text-right">Operator ID</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[var(--line)] bg-[var(--surface)]">
-              {filteredEvents.map((evt) => (
-                <tr key={evt.id} className="hover:bg-[var(--surface-2)] transition-colors">
-                  <td className="py-3 px-4 font-mono text-[11px] text-[var(--ink-3)] whitespace-nowrap">
-                    {evt.timestamp}
-                  </td>
-                  <td className="py-3 px-4 whitespace-nowrap">
-                    <span
-                      className={`pill text-[11px] ${
-                        evt.action.includes("Hold") || evt.action.includes("Threat")
-                          ? "pill-defect"
-                          : evt.action.includes("Release") || evt.action.includes("Approve")
-                          ? "pill-ok"
-                          : "pill-neutral"
-                      }`}
-                    >
-                      {evt.action}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 text-[var(--ink)] font-medium max-w-md">
-                    {evt.description}
-                  </td>
-                  <td className="py-3 px-4 text-[var(--ink-2)] max-w-xs truncate" title={evt.justification}>
-                    {evt.justification}
-                  </td>
-                  <td className="py-3 px-4 text-right font-mono text-[11px] text-[var(--ink-3)]">
-                    {evt.operator_id}
-                  </td>
+          {/* Action Controls & Event Counter */}
+          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+            <button
+              type="button"
+              onClick={loadAuditData}
+              className="h-10 px-2.5 rounded-lg border border-[var(--line-strong)] bg-[var(--surface)] hover:bg-[var(--surface-2)] text-[var(--ink)] transition-colors flex items-center justify-center shadow-2xs cursor-pointer"
+              title="Refresh audit events"
+            >
+              <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} />
+            </button>
+
+            <button
+              type="button"
+              onClick={handleExportCsv}
+              className="h-10 border border-[var(--line-strong)] bg-[var(--surface)] hover:bg-[var(--surface-2)] text-xs font-medium text-[var(--ink)] flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors shadow-2xs cursor-pointer"
+            >
+              <FileSpreadsheet size={14} className="text-emerald-600 dark:text-emerald-400" />
+              <span>Export CSV</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleExportJson}
+              className="h-10 border border-[var(--line-strong)] bg-[var(--surface)] hover:bg-[var(--surface-2)] text-xs font-medium text-[var(--ink)] flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors shadow-2xs cursor-pointer"
+            >
+              <FileCode size={14} className="text-[var(--ink-2)]" />
+              <span>Export JSON</span>
+            </button>
+
+            <span className="label text-xs font-semibold uppercase tracking-wider text-[var(--ink-3)] whitespace-nowrap ml-1">
+              {filteredEvents.length} Events Logged
+            </span>
+          </div>
+        </div>
+
+        {/* Audit Events Table */}
+        <div className="card overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="border-b border-[var(--line)] bg-[var(--surface-2)]">
+                  <th className="py-3 px-4 label">Timestamp (UTC)</th>
+                  <th className="py-3 px-4 label">Action Type</th>
+                  <th className="py-3 px-4 label">Event Description</th>
+                  <th className="py-3 px-4 label">Operator Justification</th>
+                  <th className="py-3 px-4 label text-right">Operator ID</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-[var(--line)] bg-[var(--surface)]">
+                {filteredEvents.map((evt) => (
+                  <tr key={evt.id} className="hover:bg-[var(--surface-2)] transition-colors">
+                    <td className="py-3 px-4 font-mono text-[11px] text-[var(--ink-3)] whitespace-nowrap">
+                      {evt.timestamp}
+                    </td>
+                    <td className="py-3 px-4 whitespace-nowrap">
+                      <span
+                        className={`pill text-[11px] ${evt.action.includes("Hold") || evt.action.includes("Threat")
+                            ? "pill-defect"
+                            : evt.action.includes("Release") || evt.action.includes("Approve")
+                              ? "pill-ok"
+                              : "pill-neutral"
+                          }`}
+                      >
+                        {evt.action}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-[var(--ink)] font-medium max-w-md">
+                      {evt.description}
+                    </td>
+                    <td className="py-3 px-4 text-[var(--ink-2)] max-w-xs truncate" title={evt.justification}>
+                      {evt.justification}
+                    </td>
+                    <td className="py-3 px-4 text-right font-mono text-[11px] text-[var(--ink-3)]">
+                      {evt.operator_id}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
-  );
+      );
 }

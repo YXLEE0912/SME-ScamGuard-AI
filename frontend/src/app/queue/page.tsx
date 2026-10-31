@@ -5,13 +5,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Search,
-  Plus,
   RefreshCw,
   Upload,
   X,
   ChevronRight,
 } from "lucide-react";
-import { HeaderActions } from "@/components/shell/Shell";
 import { ThreatSeverityBadge } from "@/components/ThreatSeverityBadge";
 import { formatMYR } from "@/lib/diff";
 import { uploadNewVerification, fetchMailboxInvoices, DemoInvoice } from "@/services/api";
@@ -210,6 +208,12 @@ function QueuePageContent() {
       }
     }
     loadMailbox();
+
+    const handleCreated = () => {
+      loadMailbox();
+    };
+    window.addEventListener("scamguard:verification-created", handleCreated);
+    return () => window.removeEventListener("scamguard:verification-created", handleCreated);
   }, []);
 
   // Filtered rows
@@ -298,18 +302,6 @@ function QueuePageContent() {
 
   return (
     <div className="grid gap-5">
-      {/* Top Header Actions (Injected into Shell Sticky Header) */}
-      <HeaderActions>
-        <button
-          type="button"
-          onClick={() => setUploadOpen(true)}
-          className="btn btn-primary"
-        >
-          <Plus size={16} aria-hidden="true" />
-          <span>New verification</span>
-        </button>
-      </HeaderActions>
-
       {/* Subtitle Description */}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
@@ -326,8 +318,8 @@ function QueuePageContent() {
           type="button"
           onClick={() => setActiveScope("ALL")}
           className={`pill cursor-pointer transition-all ${activeScope === "ALL"
-              ? "bg-[var(--ink)] text-[var(--paper)] font-semibold"
-              : "pill-neutral hover:bg-[var(--surface)]"
+            ? "bg-[var(--ink)] text-[var(--paper)] font-semibold"
+            : "pill-neutral hover:bg-[var(--surface)]"
             }`}
         >
           <span>All</span>
@@ -338,8 +330,8 @@ function QueuePageContent() {
           type="button"
           onClick={() => setActiveScope("NEEDS_REVIEW")}
           className={`pill cursor-pointer transition-all ${activeScope === "NEEDS_REVIEW"
-              ? "bg-[var(--review)] text-white font-semibold ring-2 ring-[var(--review)]/30"
-              : "pill-review hover:opacity-90"
+            ? "bg-[var(--review)] text-white font-semibold ring-2 ring-[var(--review)]/30"
+            : "pill-review hover:opacity-90"
             }`}
         >
           <span>Needs review</span>
@@ -350,8 +342,8 @@ function QueuePageContent() {
           type="button"
           onClick={() => setActiveScope("DEFECT")}
           className={`pill cursor-pointer transition-all ${activeScope === "DEFECT"
-              ? "bg-[var(--defect)] text-white font-semibold ring-2 ring-[var(--defect)]/30"
-              : "pill-defect hover:opacity-90"
+            ? "bg-[var(--defect)] text-white font-semibold ring-2 ring-[var(--defect)]/30"
+            : "pill-defect hover:opacity-90"
             }`}
         >
           <span>Locked BEC Defect</span>
@@ -362,8 +354,8 @@ function QueuePageContent() {
           type="button"
           onClick={() => setActiveScope("VERIFIED")}
           className={`pill cursor-pointer transition-all ${activeScope === "VERIFIED"
-              ? "bg-[var(--ok)] text-white font-semibold ring-2 ring-[var(--ok)]/30"
-              : "pill-ok hover:opacity-90"
+            ? "bg-[var(--ok)] text-white font-semibold ring-2 ring-[var(--ok)]/30"
+            : "pill-ok hover:opacity-90"
             }`}
         >
           <span>Verified Clean</span>
@@ -438,8 +430,8 @@ function QueuePageContent() {
                       onClick={() => setSelectedIndex(idx)}
                       onDoubleClick={() => router.push(`/case/${encodeURIComponent(item.id)}`)}
                       className={`group transition-colors cursor-pointer ${isSelected
-                          ? "bg-amber-500/10 dark:bg-amber-500/15"
-                          : "hover:bg-[var(--surface-2)]"
+                        ? "bg-amber-500/10 dark:bg-amber-500/15"
+                        : "hover:bg-[var(--surface-2)]"
                         }`}
                     >
                       {/* Ref ID */}
@@ -466,12 +458,12 @@ function QueuePageContent() {
                       <td className="py-3 px-4">
                         <span
                           className={`pill text-[11px] py-0.5 px-2 ${item.category === "BEC_WIRE_FRAUD"
-                              ? "pill-defect"
-                              : item.category === "SEMAKMULE_HIT"
-                                ? "pill-defect font-bold"
-                                : item.category === "ROUTINE_AUDIT"
-                                  ? "pill-ok"
-                                  : "pill-review"
+                            ? "pill-defect"
+                            : item.category === "SEMAKMULE_HIT"
+                              ? "pill-defect font-bold"
+                              : item.category === "ROUTINE_AUDIT"
+                                ? "pill-ok"
+                                : "pill-review"
                             }`}
                         >
                           {item.categoryLabel}
