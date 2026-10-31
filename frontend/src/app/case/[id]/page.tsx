@@ -274,13 +274,13 @@ export default function CaseDetailPage() {
         {/* Left Column (~72% width) */}
         <div className="w-full lg:w-[72%] space-y-4">
           {/* Task 3: Case Header Card */}
-          <div className="bg-white dark:bg-[#171b33] rounded-xl border border-slate-200/80 dark:border-slate-800 p-5 space-y-3.5 shadow-[0_1px_3px_rgba(15,18,37,0.04)]">
+          <div className="bg-white dark:bg-[#11131a] rounded-xl border border-slate-200/80 dark:border-white/10 p-5 space-y-3.5 shadow-[0_1px_3px_rgba(15,18,37,0.04)]">
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
               <div className="space-y-1">
                 <span className="font-mono text-xs text-slate-400 dark:text-slate-500 block">
                   {invoice.id}
                 </span>
-                <h1 className="text-lg font-semibold text-[#0f1225] dark:text-[#f1ece6] leading-snug">
+                <h1 className="text-lg font-semibold text-[#0f1225] dark:text-[#f8fafc] leading-snug">
                   {invoice.subject}
                 </h1>
                 <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400 pt-0.5">
@@ -387,7 +387,7 @@ export default function CaseDetailPage() {
         {/* Right Column (~28% width, sticky) */}
         <div className="w-full lg:w-[28%] lg:sticky lg:top-4 self-start space-y-4 shrink-0">
           {/* Task 5: DECIDE Actions Card */}
-          <div className="bg-white dark:bg-[#171b33] rounded-xl border border-slate-200/80 dark:border-slate-800 p-4 space-y-3.5 shadow-[0_1px_3px_rgba(15,18,37,0.04)]">
+          <div className="bg-white dark:bg-[#11131a] rounded-xl border border-slate-200/80 dark:border-white/10 p-4 space-y-3.5 shadow-[0_1px_3px_rgba(15,18,37,0.04)]">
             <div>
               <span className="text-[11px] font-semibold tracking-wider text-slate-400 uppercase block mb-1">
                 DECIDE
@@ -439,7 +439,7 @@ export default function CaseDetailPage() {
           </div>
 
           {/* Task 5: SUBMISSION / FORENSIC EVIDENCE Card */}
-          <div className="bg-white dark:bg-[#171b33] rounded-xl border border-slate-200/80 dark:border-slate-800 p-4 space-y-3 shadow-[0_1px_3px_rgba(15,18,37,0.04)]">
+          <div className="bg-white dark:bg-[#11131a] rounded-xl border border-slate-200/80 dark:border-white/10 p-4 space-y-3 shadow-[0_1px_3px_rgba(15,18,37,0.04)]">
             <span className="text-[11px] font-semibold tracking-wider text-slate-400 uppercase block mb-1">
               SUBMISSION / EVIDENCE
             </span>

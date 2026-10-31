@@ -166,11 +166,11 @@ export function Shell({ children }: { children: React.ReactNode }) {
       {/* Clean Light-Canvas Left Rail (DocuVerify Inspired) */}
       {!isNarrow && (
         <aside
-          className="fixed bottom-3 left-3 top-3.5 z-30 flex flex-col rounded-[24px] border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#171b33] text-slate-800 dark:text-slate-100 transition-all duration-200 select-none shadow-[0_1px_3px_rgba(15,18,37,0.04)]"
+          className="fixed bottom-3 left-3 top-3.5 z-30 flex flex-col rounded-[24px] border border-slate-200/80 dark:border-white/10 bg-white dark:bg-[#11131a] text-slate-800 dark:text-slate-100 transition-all duration-200 select-none shadow-[0_1px_3px_rgba(15,18,37,0.04)]"
           style={{ width: RAIL(compact) }}
         >
           {/* Top Brand Lockup */}
-          <div className={`flex h-16 shrink-0 items-center justify-between border-b border-slate-100 dark:border-slate-800/80 ${compact ? "px-3" : "px-4"}`}>
+          <div className={`flex h-16 shrink-0 items-center justify-between border-b border-slate-100 dark:border-white/10 ${compact ? "px-3" : "px-4"}`}>
             <div className="flex items-center gap-2.5 min-w-0">
               <div className="w-6 h-6 rounded-md bg-[#1f4b8e] text-white flex items-center justify-center shrink-0 shadow-2xs font-bold text-xs">
                 <Check className="w-3.5 h-3.5 stroke-[2.5]" />
@@ -178,10 +178,10 @@ export function Shell({ children }: { children: React.ReactNode }) {
               {!compact && (
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5 leading-none">
-                    <span className="text-[13px] font-semibold text-[#0f1225] dark:text-white tracking-tight">
+                    <span className="text-[13px] font-semibold text-[#0f1225] dark:text-[#f8fafc] tracking-tight">
                       ScamGuard
                     </span>
-                    <span className="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                    <span className="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-white/10">
                       AP
                     </span>
                   </div>
@@ -204,16 +204,16 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
           {/* Mailbox Ingestion Status Widget */}
           {!compact && (
-            <div className="bg-slate-50 dark:bg-slate-900/60 border border-slate-200/70 dark:border-slate-800 rounded-xl p-2.5 mx-3 mt-3">
+            <div className="bg-slate-50 dark:bg-[#11131a] border border-slate-200/70 dark:border-white/10 rounded-xl p-2.5 mx-3 mt-3">
               <div className="flex items-center gap-2">
                 <Mail size={13} className="text-slate-400 shrink-0" />
-                <span className="truncate text-xs font-medium text-[#0f1225] dark:text-slate-200">
+                <span className="truncate text-xs font-medium text-[#0f1225] dark:text-[#f8fafc]">
                   ap-audit@target-sme.com.my
                 </span>
                 <button
                   type="button"
                   onClick={handleSyncMailbox}
-                  className="ml-auto p-1 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                  className="ml-auto p-1 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-white/10 transition-colors cursor-pointer"
                   title="Sync Mailbox"
                 >
                   <RefreshCw size={11} className={isSyncing ? "animate-spin" : ""} />
@@ -229,7 +229,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           {/* Navigation Links */}
           <div className="flex-1 overflow-y-auto py-2">
             {!compact && (
-              <div className="text-[10px] font-semibold text-slate-400 tracking-wider px-4 pt-3 pb-1 uppercase">
+              <div className="text-[10px] font-semibold text-slate-400 tracking-wider px-4 pt-4 pb-1 uppercase">
                 MAIN
               </div>
             )}
@@ -240,14 +240,13 @@ export function Shell({ children }: { children: React.ReactNode }) {
                   <Link
                     key={href}
                     href={href}
-                    className={`px-3.5 py-2 mx-2.5 rounded-lg text-xs font-medium flex items-center gap-2.5 transition-colors cursor-pointer ${
-                      on
-                        ? "bg-[#1f4b8e]/10 text-[#1f4b8e] dark:bg-[#1f4b8e]/20 dark:text-[#3b74ca] font-semibold"
-                        : "text-slate-600 dark:text-slate-400 hover:text-[#0f1225] dark:hover:text-white hover:bg-slate-100/80 dark:hover:bg-slate-800/60"
-                    } ${compact ? "justify-center !mx-2 !px-2" : ""}`}
+                    className={`px-3.5 py-2 mx-2.5 rounded-lg text-xs font-medium flex items-center gap-2.5 transition-colors cursor-pointer ${on
+                        ? "bg-[#1f4b8e]/10 text-[#1f4b8e] dark:bg-[#1f4b8e]/20 dark:text-[#60a5fa] font-semibold"
+                        : "text-slate-600 dark:text-slate-400 hover:text-[#0f1225] dark:hover:text-white hover:bg-slate-100/80 dark:hover:bg-white/5"
+                      } ${compact ? "justify-center !mx-2 !px-2" : ""}`}
                     title={label}
                   >
-                    <Icon size={16} className={`shrink-0 ${on ? "text-[#1f4b8e] dark:text-[#3b74ca]" : "text-slate-400"}`} />
+                    <Icon size={16} className={`shrink-0 ${on ? "text-[#1f4b8e] dark:text-[#60a5fa]" : "text-slate-400"}`} />
                     {!compact && (
                       <div className="flex items-center justify-between flex-1 min-w-0">
                         <span className="text-[13px] truncate">{label}</span>
@@ -265,17 +264,17 @@ export function Shell({ children }: { children: React.ReactNode }) {
           </div>
 
           {/* Bottom Operator Profile */}
-          <div className={`p-3 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2.5 ${compact ? "justify-center" : "px-3.5"}`}>
-            <div className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-[#0f1225] dark:text-slate-200 font-semibold text-xs flex items-center justify-center border border-slate-200 dark:border-slate-700 shrink-0">
+          <div className={`p-3 border-t border-slate-100 dark:border-white/10 flex items-center gap-2.5 ${compact ? "justify-center" : "px-3.5"}`}>
+            <div className="w-7 h-7 rounded-full bg-slate-100 dark:bg-[#161a24] text-[#0f1225] dark:text-[#f8fafc] font-semibold text-xs flex items-center justify-center border border-slate-200 dark:border-white/10 shrink-0">
               FI
             </div>
             {!compact && (
               <div className="min-w-0 flex-1">
-                <div className="text-xs font-semibold text-[#0f1225] dark:text-white truncate leading-tight">
+                <div className="text-xs font-semibold text-[#0f1225] dark:text-[#f8fafc] truncate leading-tight">
                   Finance Ops
                 </div>
                 <div className="text-[10px] text-slate-400 font-mono truncate leading-tight">
-                  Tier-1 Interdiction
+                  Operator
                 </div>
               </div>
             )}
@@ -467,17 +466,17 @@ export function Shell({ children }: { children: React.ReactNode }) {
           onClick={() => setDrawerOpen(false)}
         >
           <div
-            className="w-64 bg-white dark:bg-[#171b33] text-slate-800 dark:text-slate-100 h-full p-4 flex flex-col justify-between border-r border-slate-200 dark:border-slate-800 shadow-xl"
+            className="w-64 bg-white dark:bg-[#11131a] text-slate-800 dark:text-slate-100 h-full p-4 flex flex-col justify-between border-r border-slate-200 dark:border-white/10 shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
             <div>
-              <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-white/10">
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 rounded-md bg-[#1f4b8e] text-white flex items-center justify-center font-bold text-xs">
                     <Check className="w-3.5 h-3.5 stroke-[2.5]" />
                   </div>
                   <div>
-                    <div className="font-semibold text-xs text-[#0f1225] dark:text-white">ScamGuard AP</div>
+                    <div className="font-semibold text-xs text-[#0f1225] dark:text-[#f8fafc]">ScamGuard AP</div>
                     <div className="text-[10px] text-slate-400 font-mono">Accounts Payable Defense</div>
                   </div>
                 </div>
@@ -498,11 +497,11 @@ export function Shell({ children }: { children: React.ReactNode }) {
                       href={href}
                       onClick={() => setDrawerOpen(false)}
                       className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${on
-                          ? "bg-[#1f4b8e]/10 text-[#1f4b8e] dark:bg-[#1f4b8e]/20 dark:text-[#3b74ca] font-semibold"
-                          : "text-slate-600 dark:text-slate-400 hover:text-[#0f1225] hover:bg-slate-100/80 dark:hover:bg-slate-800/60"
+                        ? "bg-[#1f4b8e]/10 text-[#1f4b8e] dark:bg-[#1f4b8e]/20 dark:text-[#60a5fa] font-semibold"
+                        : "text-slate-600 dark:text-slate-400 hover:text-[#0f1225] dark:hover:text-white hover:bg-slate-100/80 dark:hover:bg-white/5"
                         }`}
                     >
-                      <Icon size={16} className={on ? "text-[#1f4b8e] dark:text-[#3b74ca]" : "text-slate-400"} />
+                      <Icon size={16} className={on ? "text-[#1f4b8e] dark:text-[#60a5fa]" : "text-slate-400"} />
                       <span>{label}</span>
                       {href === "/queue" && (
                         <span className="ml-auto text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-400">
@@ -515,13 +514,13 @@ export function Shell({ children }: { children: React.ReactNode }) {
               </nav>
             </div>
 
-            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2 text-xs">
-              <div className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 text-[#0f1225] dark:text-slate-200 flex items-center justify-center font-bold border border-slate-200 dark:border-slate-700">
+            <div className="pt-3 border-t border-slate-100 dark:border-white/10 flex items-center gap-2 text-xs">
+              <div className="w-7 h-7 rounded-full bg-slate-100 dark:bg-[#161a24] text-[#0f1225] dark:text-[#f8fafc] flex items-center justify-center font-bold border border-slate-200 dark:border-white/10">
                 FI
               </div>
               <div>
-                <div className="font-semibold text-xs text-[#0f1225] dark:text-white">Finance Ops</div>
-                <div className="text-[10px] text-slate-400 font-mono">Tier-1 Interdiction</div>
+                <div className="font-semibold text-xs text-[#0f1225] dark:text-[#f8fafc]">Finance Ops</div>
+                <div className="text-[10px] text-slate-400 font-mono">Operator</div>
               </div>
             </div>
           </div>

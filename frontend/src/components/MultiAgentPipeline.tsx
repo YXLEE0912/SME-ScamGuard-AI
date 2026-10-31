@@ -356,9 +356,9 @@ export function MultiAgentPipeline({
   };
 
   return (
-    <div className="bg-white dark:bg-[#171b33] rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-[0_1px_3px_rgba(15,18,37,0.04)] overflow-hidden">
+    <div className="bg-white dark:bg-[#11131a] rounded-xl border border-slate-200/80 dark:border-white/10 shadow-[0_1px_3px_rgba(15,18,37,0.04)] overflow-hidden">
       {/* Component Title & Stepper Header */}
-      <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-[#171b33] flex flex-wrap items-center justify-between gap-2">
+      <div className="p-4 border-b border-slate-100 dark:border-white/10 bg-white dark:bg-[#11131a] flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <ShieldCheck size={16} className="text-[#1f4b8e]" />
           <span className="text-xs font-semibold tracking-wider text-slate-500 uppercase">7-Agent Defense Pipeline</span>
@@ -395,7 +395,7 @@ export function MultiAgentPipeline({
         {/* ============================================================== */}
         <div className="relative flex items-start gap-3.5">
           {renderStepCircle("01", "VERIFIED")}
-          <div className="flex-1 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#171b33] overflow-hidden shadow-2xs">
+          <div className="flex-1 rounded-xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-[#11131a] overflow-hidden shadow-2xs">
             <div className="p-3.5 flex flex-wrap items-center justify-between gap-2 bg-slate-50/70 dark:bg-slate-900/40">
               <div className="flex flex-wrap items-center gap-2.5">
                 <span className="text-xs font-semibold text-[var(--ink)]">
@@ -420,7 +420,7 @@ export function MultiAgentPipeline({
         {/* ============================================================== */}
         <div className="relative flex items-start gap-3.5">
           {renderStepCircle("02", agent2Status)}
-          <div className="flex-1 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#171b33] overflow-hidden shadow-2xs">
+          <div className="flex-1 rounded-xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-[#11131a] overflow-hidden shadow-2xs">
             <div
               onClick={() => toggleAgent(2)}
               className="p-3.5 flex flex-wrap items-center justify-between gap-2 cursor-pointer bg-slate-50/70 hover:bg-slate-100/70 dark:bg-slate-900/40 dark:hover:bg-slate-900/70 transition-colors select-none"
@@ -458,7 +458,7 @@ export function MultiAgentPipeline({
             </div>
 
             {isAgentExpanded(2) && (
-              <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-[#161a30] space-y-3 text-xs">
+              <div className="p-4 border-t border-slate-100 dark:border-white/10 bg-white dark:bg-[#0c0e14] space-y-3 text-xs">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="p-3 rounded-lg border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 space-y-1">
                     <span className="label block">Producer Tool Metadata</span>
@@ -516,7 +516,7 @@ export function MultiAgentPipeline({
         {/* ============================================================== */}
         <div className="relative flex items-start gap-3.5">
           {renderStepCircle("03", agent3Status)}
-          <div className="flex-1 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#171b33] overflow-hidden shadow-2xs">
+          <div className="flex-1 rounded-xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-[#11131a] overflow-hidden shadow-2xs">
             <div
               onClick={() => toggleAgent(3)}
               className="p-3.5 flex flex-wrap items-center justify-between gap-2 cursor-pointer bg-slate-50/70 hover:bg-slate-100/70 dark:bg-slate-900/40 dark:hover:bg-slate-900/70 transition-colors select-none"
@@ -554,7 +554,7 @@ export function MultiAgentPipeline({
             </div>
 
             {isAgentExpanded(3) && (
-              <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-[#161a30] space-y-4">
+              <div className="p-4 border-t border-slate-100 dark:border-white/10 bg-white dark:bg-[#0c0e14] space-y-4">
                 {/* Embedded 3-Way Reconciliation Table */}
                 <div className="rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden bg-white dark:bg-slate-900">
                   <div className="px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
@@ -679,7 +679,7 @@ export function MultiAgentPipeline({
         {/* ============================================================== */}
         <div className="relative flex items-start gap-3.5">
           {renderStepCircle("04", agent4Status)}
-          <div className="flex-1 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#171b33] overflow-hidden shadow-2xs">
+          <div className="flex-1 rounded-xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-[#11131a] overflow-hidden shadow-2xs">
             <div
               onClick={() => toggleAgent(4)}
               className="p-3.5 flex flex-wrap items-center justify-between gap-2 cursor-pointer bg-slate-50/70 hover:bg-slate-100/70 dark:bg-slate-900/40 dark:hover:bg-slate-900/70 transition-colors select-none"
@@ -717,7 +717,7 @@ export function MultiAgentPipeline({
             </div>
 
             {isAgentExpanded(4) && (
-              <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-[#161a30] space-y-3 text-xs">
+              <div className="p-4 border-t border-slate-100 dark:border-white/10 bg-white dark:bg-[#0c0e14] space-y-3 text-xs">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="p-3 rounded-lg border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 space-y-1">
                     <span className="label block">NLP Urgency & Pressure Signal</span>
@@ -775,7 +775,7 @@ export function MultiAgentPipeline({
         {/* ============================================================== */}
         <div className="relative flex items-start gap-3.5">
           {renderStepCircle("05", agent5Status)}
-          <div className="flex-1 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#171b33] overflow-hidden shadow-2xs">
+          <div className="flex-1 rounded-xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-[#11131a] overflow-hidden shadow-2xs">
             <div
               onClick={() => toggleAgent(5)}
               className="p-3.5 flex flex-wrap items-center justify-between gap-2 cursor-pointer bg-slate-50/70 hover:bg-slate-100/70 dark:bg-slate-900/40 dark:hover:bg-slate-900/70 transition-colors select-none"
@@ -813,7 +813,7 @@ export function MultiAgentPipeline({
             </div>
 
             {isAgentExpanded(5) && (
-              <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-[#161a30] space-y-3 text-xs">
+              <div className="p-4 border-t border-slate-100 dark:border-white/10 bg-white dark:bg-[#0c0e14] space-y-3 text-xs">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="p-3 rounded-lg border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 space-y-1">
                     <span className="label block">Discretionary Limits Check</span>
@@ -871,7 +871,7 @@ export function MultiAgentPipeline({
         {/* ============================================================== */}
         <div className="relative flex items-start gap-3.5">
           {renderStepCircle("06", agent6Status)}
-          <div className="flex-1 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#171b33] overflow-hidden shadow-2xs">
+          <div className="flex-1 rounded-xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-[#11131a] overflow-hidden shadow-2xs">
             <div
               onClick={() => toggleAgent(6)}
               className="p-3.5 flex flex-wrap items-center justify-between gap-2 cursor-pointer bg-slate-50/70 hover:bg-slate-100/70 dark:bg-slate-900/40 dark:hover:bg-slate-900/70 transition-colors select-none"
@@ -909,7 +909,7 @@ export function MultiAgentPipeline({
             </div>
 
             {isAgentExpanded(6) && (
-              <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-[#161a30] space-y-3 text-xs">
+              <div className="p-4 border-t border-slate-100 dark:border-white/10 bg-white dark:bg-[#0c0e14] space-y-3 text-xs">
                 <div className="p-3 rounded-lg border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 space-y-1">
                   <span className="label block">Statutory Action State</span>
                   <p className="font-semibold text-xs text-[var(--ink)]">
@@ -953,7 +953,7 @@ export function MultiAgentPipeline({
         {/* ============================================================== */}
         <div className="relative flex items-start gap-3.5">
           {renderStepCircle("07", agent7Status)}
-          <div className="flex-1 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#171b33] overflow-hidden shadow-2xs">
+          <div className="flex-1 rounded-xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-[#11131a] overflow-hidden shadow-2xs">
             <div
               onClick={() => toggleAgent(7)}
               className="p-3.5 flex flex-wrap items-center justify-between gap-2 cursor-pointer bg-slate-50/70 hover:bg-slate-100/70 dark:bg-slate-900/40 dark:hover:bg-slate-900/70 transition-colors select-none"
@@ -991,7 +991,7 @@ export function MultiAgentPipeline({
             </div>
 
             {isAgentExpanded(7) && (
-              <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-[#161a30] space-y-3 text-xs">
+              <div className="p-4 border-t border-slate-100 dark:border-white/10 bg-white dark:bg-[#0c0e14] space-y-3 text-xs">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="p-3 rounded-lg border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 space-y-1">
                     <span className="label block">SemakMule Account Query</span>
