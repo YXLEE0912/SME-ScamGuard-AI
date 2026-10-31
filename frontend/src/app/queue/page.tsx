@@ -17,8 +17,7 @@ interface UnifiedInvoice {
   vendorName: string;
   sender: string;
   subject: string;
-  category: "BEC_WIRE_FRAUD" | "SEMAKMULE_HIT" | "LEGIT_CLAIM" | "FAIL_CLOSED" | "COERCION" | "PROMPT_INJECTION" | "ROUTINE_AUDIT" | "SPAM";
-  categoryLabel: string;
+  category: string;
   status: "NEEDS_REVIEW" | "DEFECT" | "VERIFIED" | "RESOLVED";
   riskScore: number;
   amountMyr: number;
@@ -79,8 +78,7 @@ function QueuePageContent() {
               vendorName: inv.sender_name || "Malaysian Vendor Sdn Bhd",
               sender: inv.sender_email,
               subject: inv.subject,
-              category: isSpam ? "SPAM" : isDefect ? "BEC_WIRE_FRAUD" : isReview ? "COERCION" : "ROUTINE_AUDIT",
-              categoryLabel: isSpam ? "Spam" : inv.category || (isDefect ? "BEC Wire Scam" : "Routine Billing"),
+              category: inv.category || "General Procurement",
               status: isDefect ? "DEFECT" : isReview ? "NEEDS_REVIEW" : "VERIFIED",
               riskScore: inv.risk_score,
               amountMyr: parsedAmt,
@@ -149,6 +147,11 @@ function QueuePageContent() {
       defect: invoices.filter((x) => x.status === "DEFECT").length,
       verified: invoices.filter((x) => x.status === "VERIFIED").length,
     };
+  }, [invoices]);
+
+  // Derived unique categories for filter dropdown
+  const availableCategories = useMemo(() => {
+    return Array.from(new Set(invoices.map((i) => i.category).filter(Boolean))).sort();
   }, [invoices]);
 
   // Keyboard navigation: J/K to traverse, Enter to inspect
@@ -290,12 +293,11 @@ function QueuePageContent() {
           className="h-9 px-3 rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-[#11131a] text-xs font-medium text-zinc-700 dark:text-zinc-300 focus:outline-none cursor-pointer"
         >
           <option value="ALL">All Categories</option>
-          <option value="BEC_WIRE_FRAUD">BEC Wire Scam</option>
-          <option value="SEMAKMULE_HIT">PDRM SemakMule Hit</option>
-          <option value="COERCION">Coercion / Urgency</option>
-          <option value="PROMPT_INJECTION">Prompt Injection</option>
-          <option value="ROUTINE_AUDIT">Routine Billing</option>
-          <option value="SPAM">Spam</option>
+          {availableCategories.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
         </select>
 
         <select
@@ -319,7 +321,7 @@ function QueuePageContent() {
                 <th className="py-3 pl-4 pr-3 w-[110px] text-[11px] font-semibold tracking-wider text-zinc-400 dark:text-zinc-500 uppercase text-left">Email ID</th>
                 <th className="py-3 px-3 w-[220px] text-[11px] font-semibold tracking-wider text-zinc-400 dark:text-zinc-500 uppercase text-left">Sender</th>
                 <th className="py-3 px-3 w-[320px] text-[11px] font-semibold tracking-wider text-zinc-400 dark:text-zinc-500 uppercase text-left">Subject</th>
-                <th className="py-3 px-3 w-[160px] text-[11px] font-semibold tracking-wider text-zinc-400 dark:text-zinc-500 uppercase text-left">Threat Category</th>
+                <th className="py-3 px-3 w-[160px] min-w-[140px] text-[11px] font-semibold tracking-wider text-zinc-400 dark:text-zinc-500 uppercase text-left">Category</th>
                 <th className="py-3 px-3 w-[170px] text-[11px] font-semibold tracking-wider text-zinc-400 dark:text-zinc-500 uppercase text-left">Status</th>
                 <th className="py-3 pl-3 pr-4 w-[130px] text-[11px] font-semibold tracking-wider text-zinc-400 dark:text-zinc-500 uppercase text-left">Risk Score</th>
               </tr>
@@ -388,27 +390,11 @@ function QueuePageContent() {
                         </div>
                       </td>
 
-                      {/* Threat Category */}
+                      {/* Category */}
                       <td className="py-3.5 px-3 align-middle whitespace-nowrap">
-                        {item.category === "SPAM" ? (
-                          <span className="rounded-md text-[11px] py-0.5 px-2 bg-zinc-100 text-zinc-600 border border-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700 inline-flex items-center gap-1.5 font-medium">
-                            <span className="text-[10px] leading-none opacity-80" aria-hidden="true">○</span>
-                            <span>Spam</span>
-                          </span>
-                        ) : (
-                          <span
-                            className={`rounded-md text-[11px] py-0.5 px-2 inline-flex items-center gap-1 font-medium ${item.category === "BEC_WIRE_FRAUD"
-                              ? "bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-800"
-                              : item.category === "SEMAKMULE_HIT"
-                                ? "bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-800 font-semibold"
-                                : item.category === "ROUTINE_AUDIT"
-                                  ? "bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800"
-                                  : "bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-400 dark:border-amber-800"
-                              }`}
-                          >
-                            {item.categoryLabel}
-                          </span>
-                        )}
+                        <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-white/10 font-medium inline-flex items-center">
+                          {item.category}
+                        </span>
                       </td>
 
                       {/* Status Badge */}

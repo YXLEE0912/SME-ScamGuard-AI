@@ -73,7 +73,7 @@ All UI components adhere strictly to a 3-tier geometry contract:
    - Border: Hairline `1px` (`border-zinc-200` in light, `border-white/10` in dark)
 3. **Triage Chips, Pills & Category Tags**:
    - Semantic Status Badges: `rounded-full` (pills) with `px-2.5 py-0.5 text-xs font-semibold`
-   - Category Meta Tags: `rounded-md` (tags) with `px-2 py-0.5 text-[11px] font-medium`
+   - Category Meta Badges: `rounded-full` with `px-2.5 py-0.5 text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-white/10` (strictly neutral styling for business categories)
 
 ---
 
@@ -150,7 +150,8 @@ The horizontal risk score gauge renders an inline track (`w-14 h-1.5 rounded-ful
   - Category Dropdown: `h-9 px-3 rounded-lg border border-zinc-200 dark:border-white/10`.
   - Status Dropdown: `h-9 px-3 rounded-lg border border-zinc-200 dark:border-white/10`.
 - **Table Data Grid (`table-fixed min-w-[960px]`)**:
-  - Explicit Column Width Allocation: `EMAIL ID` (110px), `SENDER` (220px), `SUBJECT` (320px truncate), `THREAT CATEGORY` (160px), `STATUS` (170px), `RISK SCORE` (130px).
+  - Explicit Column Width Allocation: `EMAIL ID` (110px), `SENDER` (220px), `SUBJECT` (320px truncate), `CATEGORY` (160px), `STATUS` (170px), `RISK SCORE` (130px).
+  - Category Column Presentation: Display business / procurement domain classifications (e.g., `Logistics`, `Manufacturing`, `Raw Materials`) with neutral slate badges (`bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300`). Never apply danger red/rose styling to benign business categories.
   - Vertical Centering: Strict `py-3.5 align-middle` on all table cells.
   - Initial Selection State: Initialized to `selectedId = null`. The first row (`email_001`) **must not** render with an active blue border on load.
   - Row States:

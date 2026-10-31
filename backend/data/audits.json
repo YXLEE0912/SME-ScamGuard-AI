@@ -362,5 +362,109 @@
     },
     "prior_hash": "bb8ad8bf8f8a41db6fc5ae9e64ea3923c6a0fcad61d23881cfedf82e36c80821",
     "event_hash": "3370f8e81643ca0873fd0fb1eb676327dcb362b96518ce8157d5e8a33bae1673"
+  },
+  {
+    "event_id": "EVT-1793461589285-0021",
+    "timestamp_utc": "2026-10-31T15:46:29.285188+00:00",
+    "case_id": "email_001",
+    "action": "Escalated",
+    "disposition": "LOCKED_CRITICAL",
+    "risk_score": 0,
+    "operator_id": "AP-CLERK-MY01",
+    "evidence_hashes": [],
+    "details": {
+      "instruction_type": "ERP_PAYMENT_VOUCHER_FREEZE",
+      "voucher_hold_id": "VCH-HOLD-2026-il_001",
+      "case_id": "email_001",
+      "status": "PAYMENT_LOCKED",
+      "held_amount_myr": 0.0,
+      "freeze_reason": "Unauthorized bank account desync flagged.",
+      "erp_system_target": "AutoCount / SAP / SQL Account Financial Gateway",
+      "effective_timestamp_utc": "2026-10-31T15:46:29.283668+00:00"
+    },
+    "prior_hash": "3370f8e81643ca0873fd0fb1eb676327dcb362b96518ce8157d5e8a33bae1673",
+    "event_hash": "b9f84c5c385d74bc0155eb82246e74c95cf76b39a141404e049d670dea8377d6"
+  },
+  {
+    "event_id": "EVT-1793461590461-0022",
+    "timestamp_utc": "2026-10-31T15:46:30.461517+00:00",
+    "case_id": "email_001",
+    "action": "Escalated",
+    "disposition": "LOCKED_CRITICAL",
+    "risk_score": 0,
+    "operator_id": "AP-CLERK-MY01",
+    "evidence_hashes": [],
+    "details": {
+      "instruction_type": "ERP_PAYMENT_VOUCHER_FREEZE",
+      "voucher_hold_id": "VCH-HOLD-2026-il_001",
+      "case_id": "email_001",
+      "status": "PAYMENT_LOCKED",
+      "held_amount_myr": 0.0,
+      "freeze_reason": "Unauthorized bank account desync flagged.",
+      "erp_system_target": "AutoCount / SAP / SQL Account Financial Gateway",
+      "effective_timestamp_utc": "2026-10-31T15:46:30.461517+00:00"
+    },
+    "prior_hash": "b9f84c5c385d74bc0155eb82246e74c95cf76b39a141404e049d670dea8377d6",
+    "event_hash": "0529a944cfd256c243ea4b9820aa1c726e421de124bea4e50eaa2c71340aeee9"
+  },
+  {
+    "event_id": "EVT-1793461593367-0023",
+    "timestamp_utc": "2026-10-31T15:46:33.367935+00:00",
+    "case_id": "email_001",
+    "action": "Payment Approved",
+    "disposition": "VERIFIED",
+    "risk_score": 0,
+    "operator_id": "Clerk & Controller dual 4-Eyes sign-off completed.",
+    "evidence_hashes": [],
+    "details": {
+      "manager_id": null,
+      "notes": "Pre-disbursement 3-way reconciliation verified."
+    },
+    "prior_hash": "0529a944cfd256c243ea4b9820aa1c726e421de124bea4e50eaa2c71340aeee9",
+    "event_hash": "a90feab76894ca99e67ccbc48afeb98ee159655775c2a4cfb4c557b2735936f2"
+  },
+  {
+    "event_id": "EVT-1793461603490-0024",
+    "timestamp_utc": "2026-10-31T15:46:43.490819+00:00",
+    "case_id": "email_032",
+    "action": "Escalated",
+    "disposition": "LOCKED_CRITICAL",
+    "risk_score": 75,
+    "operator_id": "AP-CLERK-MY01",
+    "evidence_hashes": [],
+    "details": {
+      "instruction_type": "ERP_PAYMENT_VOUCHER_FREEZE",
+      "voucher_hold_id": "VCH-HOLD-2026-il_032",
+      "case_id": "email_032",
+      "status": "PAYMENT_LOCKED",
+      "held_amount_myr": 7500.0,
+      "freeze_reason": "Unauthorized bank account desync flagged.",
+      "erp_system_target": "AutoCount / SAP / SQL Account Financial Gateway",
+      "effective_timestamp_utc": "2026-10-31T15:46:43.490819+00:00"
+    },
+    "prior_hash": "a90feab76894ca99e67ccbc48afeb98ee159655775c2a4cfb4c557b2735936f2",
+    "event_hash": "0394be3e17dfaf7bfa700f48fb53ebb121d5db9068544dc2060732eb8e8d9046"
+  },
+  {
+    "event_id": "EVT-1793461616646-0025",
+    "timestamp_utc": "2026-10-31T15:46:56.646643+00:00",
+    "case_id": "email_032",
+    "action": "Escalated",
+    "disposition": "LOCKED_CRITICAL",
+    "risk_score": 75,
+    "operator_id": "AP-CLERK-MY01",
+    "evidence_hashes": [],
+    "details": {
+      "instruction_type": "ERP_PAYMENT_VOUCHER_FREEZE",
+      "voucher_hold_id": "VCH-HOLD-2026-il_032",
+      "case_id": "email_032",
+      "status": "PAYMENT_LOCKED",
+      "held_amount_myr": 7500.0,
+      "freeze_reason": "Unauthorized bank account desync flagged.",
+      "erp_system_target": "AutoCount / SAP / SQL Account Financial Gateway",
+      "effective_timestamp_utc": "2026-10-31T15:46:56.646643+00:00"
+    },
+    "prior_hash": "0394be3e17dfaf7bfa700f48fb53ebb121d5db9068544dc2060732eb8e8d9046",
+    "event_hash": "db9fdec7f6887cb553a0ad621915acabbdc85eada682b96db2485adf0ad4275e"
   }
 ]

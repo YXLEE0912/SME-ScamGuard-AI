@@ -27,7 +27,8 @@ export interface MultiAgentPipelineProps {
     producerTool: string;
     riskScore: number;
     certaintyConfidence: number;
-    threatCategory: string;
+    category?: string;
+    threatCategory?: string;
     status: "VERIFIED" | "NEEDS_REVIEW" | "DEFECT" | "RESOLVED";
     reasoning: string;
     files: string[];

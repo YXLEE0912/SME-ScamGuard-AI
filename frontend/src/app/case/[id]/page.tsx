@@ -42,7 +42,8 @@ interface UnifiedCase {
   producerTool: string;
   riskScore: number;
   certaintyConfidence: number;
-  threatCategory: string;
+  category: string;
+  threatCategory?: string;
   status: "VERIFIED" | "NEEDS_REVIEW" | "DEFECT" | "RESOLVED";
   reasoning: string;
   files: string[];
@@ -126,6 +127,7 @@ export default function CaseDetailPage() {
         producerTool: rawWithBody.producer_tool || (isDefect ? "iLovePDF Spliced (Binary Desync)" : "AutoCount ERP / Acrobat Pro"),
         riskScore: raw.risk_score,
         certaintyConfidence: rawWithBody.certainty_confidence || (isDefect ? 98 : 96),
+        category: raw.category || "General Procurement",
         threatCategory: raw.category || (isDefect ? "BEC Wire Scam" : "Routine Billing"),
         status: isDefect ? "DEFECT" : isReview ? "NEEDS_REVIEW" : "VERIFIED",
         reasoning: raw.banner_message || (isDefect
@@ -171,7 +173,8 @@ export default function CaseDetailPage() {
       vendor: invoice.vendorName,
       inbound_sender: invoice.sender,
       status: invoice.status,
-      threat_category: invoice.threatCategory,
+      category: invoice.category,
+      threat_category: invoice.category,
       risk_score: invoice.riskScore,
       model_confidence: `${invoice.certaintyConfidence}%`,
       amount_myr: invoice.amountMyr,
@@ -269,9 +272,9 @@ export default function CaseDetailPage() {
               </div>
 
               <div className="flex items-center gap-2 shrink-0">
-                <span className="pill text-[11px] py-0.5 px-2.5 bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 inline-flex items-center gap-1.5 font-medium">
+                <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-white/10 font-medium inline-flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#1f4b8e]" />
-                  <span>{invoice.threatCategory}</span>
+                  <span>{invoice.category}</span>
                 </span>
                 <ThreatSeverityBadge status={invoice.status} />
               </div>

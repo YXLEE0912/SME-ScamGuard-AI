@@ -247,7 +247,7 @@ This blueprint specifies the end-to-end engineering tasks required to build, ver
 - **Governing Document**: `frontend/DESIGN_SYSTEM.md`
 - **MANDATORY UI RULES**:
   1. **Strictly Preserve Design System Tokens**: Do NOT modify colors, fonts, or component styles when connecting endpoints. Keep Inter sans-serif for general UI and monospace strictly for IDs, hashes, and timestamps.
-  2. **Do NOT Alter Queue Table Column Allocations**: Keep fixed widths (`110px`, `220px`, `320px`, `160px`, `170px`, `130px`) and `py-3.5 align-middle`.
+  2. **Do NOT Alter Queue Table Column Allocations**: Keep fixed widths (`EMAIL ID` 110px, `SENDER` 220px, `SUBJECT` 320px, `CATEGORY` 160px, `STATUS` 170px, `RISK SCORE` 130px) and `py-3.5 align-middle`. Display business domain classification in neutral slate pill styling.
   3. **Preserve Initial Selection State**: The table must initialize with `selectedId = null` (no pre-selected blue border on load).
   4. **Preserve 7-Agent Defense Accordions**: Maintain clean step headers (Agent number, name, layer, status badge, confidence gauge, and expand chevron) without redundant inner row icons.
 

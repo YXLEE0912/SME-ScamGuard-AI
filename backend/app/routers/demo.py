@@ -31,7 +31,10 @@ def init_demo_mailbox_if_needed():
     if data_file.exists():
         raw_list = json.loads(data_file.read_text(encoding="utf-8"))
         for rec in raw_list:
-            SESSION_DEMO_MAILBOX[rec["id"]] = copy.deepcopy(rec)
+            rec_copy = copy.deepcopy(rec)
+            rec_copy["category"] = rec_copy.get("category") or rec_copy.get("threat_category") or "General Procurement"
+            rec_copy["threat_category"] = rec_copy["category"]
+            SESSION_DEMO_MAILBOX[rec["id"]] = rec_copy
 
     # Initial session audit log
     if not SESSION_AUDIT_TRAIL:

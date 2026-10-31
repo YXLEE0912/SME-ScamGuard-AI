@@ -223,6 +223,11 @@ async def get_case_detail(case_id: str):
         is_defect = rec.get("status") in ("DEFECT", "LOCKED_CRITICAL") or rec.get("risk_score", 0) >= 80
         rec["certainty_confidence"] = 98 if is_defect else 96
 
+    # Normalize category attribute and provide backward-compatible alias
+    canon_cat = rec.get("category") or rec.get("threat_category") or "General Procurement"
+    rec["category"] = canon_cat
+    rec["threat_category"] = canon_cat
+
     return rec
 
 
@@ -232,6 +237,7 @@ async def verify_invoice(
     supporting_file: Optional[UploadFile] = File(None),
     sender_email: Optional[str] = Form("billing@external-supplier.com.my"),
     subject: Optional[str] = Form("Inbound Invoice Payment Claim"),
+    category: Optional[str] = Form("Logistics"),
 ):
     """
     Ingests raw PDF bytes, executes the 7-Agent Defense Pipeline, generates
@@ -259,12 +265,14 @@ async def verify_invoice(
     new_id = f"inv_{len(SESSION_DEMO_MAILBOX) + 1:03d}"
     
     # Format demo record
+    resolved_category = category or "Logistics"
     record = {
         "id": new_id,
         "subject": subject,
         "sender_name": payload_dict["vendor_name"],
         "sender_email": sender_email,
-        "category": "Routine Billing" if pipeline_res["risk_score"] < 50 else "BEC Wire Scam",
+        "category": resolved_category,
+        "threat_category": resolved_category,
         "status": pipeline_res["status"],
         "risk_score": pipeline_res["risk_score"],
         "received_date": datetime.now(timezone.utc).strftime("%b %d, %Y, %I:%M %p UTC"),
