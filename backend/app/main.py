@@ -36,6 +36,9 @@ from backend.app.routers.mule_intel import router as mule_intel_router
 app.include_router(ledger_router)
 app.include_router(demo_router)
 app.include_router(mule_intel_router)
+
+from backend.app.routers.queue import router as queue_router
+app.include_router(queue_router)
 VOUCHER_STORE: Dict[str, Dict[str, Any]] = {}
 
 def load_eval_cases() -> list:

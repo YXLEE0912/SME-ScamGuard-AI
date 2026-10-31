@@ -12,6 +12,7 @@ import {
   X,
 } from "lucide-react";
 import { formatMYR } from "@/lib/diff";
+import { correctInvoiceField } from "@/services/api";
 
 export interface MultiAgentPipelineProps {
   invoice: {
@@ -113,6 +114,15 @@ export function MultiAgentPipeline({
         reason: overrideReason,
       },
     }));
+
+    // Persist to backend canonical override endpoint
+    correctInvoiceField({
+      invoice_id: invoice.id,
+      field_name: overrideModal.fieldName,
+      corrected_value: overrideInput,
+      justification: overrideReason,
+      clerk_id: "AP-CLERK-MY01",
+    }).catch((err) => console.warn("Failed to persist field override to backend:", err));
 
     setSuccessToast(`Manual override saved for ${overrideModal.fieldName}. Status updated.`);
     setOverrideModal(null);

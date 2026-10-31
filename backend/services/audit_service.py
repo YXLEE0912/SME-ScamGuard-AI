@@ -25,16 +25,8 @@ IN_MEMORY_AUDIT_LOG: List[Dict[str, Any]] = []
 
 
 def get_audit_file_path() -> Path:
-    """Resolve path to audits.json."""
-    paths = [
-        Path(__file__).resolve().parent.parent / "data" / "audits.json",
-        Path("backend/data/audits.json"),
-        Path("data/audits.json"),
-    ]
-    for p in paths:
-        if p.exists():
-            return p
-    return paths[0]
+    """Resolve path to backend/data/audits.json."""
+    return Path(__file__).resolve().parent.parent / "data" / "audits.json"
 
 
 def canonicalize_event(event_dict: Dict[str, Any]) -> str:
