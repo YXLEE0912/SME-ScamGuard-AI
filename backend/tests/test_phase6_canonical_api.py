@@ -40,6 +40,21 @@ def test_get_queue_returns_unified_records(client):
     assert "comparison" in sample
 
 
+def test_get_queue_metrics(client):
+    """Verifies GET /api/v1/queue/metrics computes aggregated telemetry."""
+    res = client.get("/api/v1/queue/metrics")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["status"] == "success"
+    assert data["total_inbound"] >= 50
+    assert "defect_count" in data
+    assert "review_count" in data
+    assert "verified_count" in data
+    assert "total_intercepted_amount" in data
+    assert "field_defects" in data
+    assert "bank_override_pct" in data["field_defects"]
+
+
 def test_get_queue_case_detail_resolution(client):
     """Verifies GET /api/v1/queue/{case_id} resolves both inv_001 and email_001."""
     # Test numeric resolution email_001

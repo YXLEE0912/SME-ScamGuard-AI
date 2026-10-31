@@ -20,7 +20,6 @@ import {
   escalateInvoice,
   DemoInvoice,
 } from "@/services/api";
-import staticMailbox from "@/data/demo_mailbox.json";
 import { ThreatSeverityBadge } from "@/components/ThreatSeverityBadge";
 import { MultiAgentPipeline } from "@/components/MultiAgentPipeline";
 
@@ -50,7 +49,7 @@ interface UnifiedCase {
   comparison: Record<string, ComparisonFieldData>;
 }
 
-const TOTAL_CASES = (staticMailbox as DemoInvoice[]).length || 50;
+const TOTAL_CASES = 50;
 
 export default function CaseDetailPage() {
   const params = useParams();
@@ -80,19 +79,16 @@ export default function CaseDetailPage() {
   useEffect(() => {
     async function loadRecord() {
       setIsLoading(true);
-      const normalized = caseId.startsWith("email_") ? caseId.replace("email_", "inv_") : caseId;
       try {
-        let live = await fetchInvoiceById(caseId);
-        if (!live && normalized !== caseId) {
-          live = await fetchInvoiceById(normalized);
-        }
+        const live = await fetchInvoiceById(caseId);
         if (live) {
           adaptDemoInvoice(live);
         } else {
-          fallbackStatic(caseId);
+          setInvoice(null);
         }
-      } catch {
-        fallbackStatic(caseId);
+      } catch (err) {
+        console.warn(`Failed to fetch case ${caseId} from live backend:`, err);
+        setInvoice(null);
       } finally {
         setIsLoading(false);
       }
@@ -113,7 +109,7 @@ export default function CaseDetailPage() {
       const rawNum = raw.id.match(/\d+/)?.[0] || "001";
       const emailId = raw.id.startsWith("email_") ? raw.id : `email_${rawNum.padStart(3, "0")}`;
 
-      const rawWithBody = raw as DemoInvoice & { email_body?: string };
+      const rawWithBody = raw as DemoInvoice & { email_body?: string; producer_tool?: string; certainty_confidence?: number };
       const emailBody = rawWithBody.email_body || (isDefect
         ? `Dear Finance,\n\nOur standard Maybank account is under annual audit and temporarily frozen.\nPlease remit the outstanding milestone claim of RM ${parsedAmt.toLocaleString()}.00 today to our backup account:\nBank: CIMB Bank\nAccount: 8009-4411-2299\n\nPayment must be made before 5:00 PM today to prevent work stoppage on site.\nDirect inquiries to mobile 012-3456789.\n\nRegards,\nAlex Tan\n${raw.sender_name || "Mega Logistics"} AP Team`
         : `From: ${raw.sender_email}\nTo: finance-ap@sme-enterprise.com.my\nDate: ${raw.received_date}\nSubject: ${raw.subject}\n\nDear Accounts Payable Team,\n\nPlease find attached our official tax invoice and milestone claim for verified procurement deliverables.\nAll banking details remain consistent with our verified Master Procurement Ledger.\nPayment terms: Net 30 Days.\n\nThank you,\n${raw.sender_name || "Commercial Billing Desk"}`);
@@ -127,9 +123,9 @@ export default function CaseDetailPage() {
         amountMyr: parsedAmt,
         receivedDate: raw.received_date,
         emailBody,
-        producerTool: isDefect ? "iLovePDF Spliced (Binary Desync)" : "AutoCount ERP / Acrobat Pro",
+        producerTool: rawWithBody.producer_tool || (isDefect ? "iLovePDF Spliced (Binary Desync)" : "AutoCount ERP / Acrobat Pro"),
         riskScore: raw.risk_score,
-        certaintyConfidence: isDefect ? 98 : 96,
+        certaintyConfidence: rawWithBody.certainty_confidence || (isDefect ? 98 : 96),
         threatCategory: raw.category || (isDefect ? "BEC Wire Scam" : "Routine Billing"),
         status: isDefect ? "DEFECT" : isReview ? "NEEDS_REVIEW" : "VERIFIED",
         reasoning: raw.banner_message || (isDefect
@@ -138,42 +134,6 @@ export default function CaseDetailPage() {
         files,
         comparison: comp,
       });
-    }
-
-    function fallbackStatic(id: string) {
-      const normalized = id.startsWith("email_") ? id.replace("email_", "inv_") : id;
-      const numMatch = id.match(/\d+/);
-      const numStr = numMatch ? String(parseInt(numMatch[0], 10)).padStart(3, "0") : "001";
-      const targetInvId = `inv_${numStr}`;
-
-      const match = (staticMailbox as DemoInvoice[]).find(
-        (x) => x.id === id || x.id === normalized || x.id === targetInvId || id === x.id.replace("inv_", "email_")
-      );
-      if (match) {
-        adaptDemoInvoice(match);
-      } else {
-        // High-priority BEC benchmark case
-        adaptDemoInvoice({
-          id: id || "email_001",
-          sender_name: "Mega Logistics Sdn Bhd",
-          sender_email: "billing@mega-bu1ld.com.my",
-          subject: "REQUEST REVISED BANKING REMITTANCE DETAILS - INV-2026-8841",
-          category: "BEC Wire Scam",
-          status: "DEFECT",
-          risk_score: 99,
-          received_date: "Today at 09:42 AM",
-          files: ["email_001_invoice.pdf", "vendor_remittance.pdf"],
-          comparison: {
-            vendor_name: { truth: "Mega Logistics Sdn Bhd", draft: "Mega Logistics Sdn Bhd", status: "match", score: 100 },
-            bank_name: { truth: "Maybank", draft: "CIMB Bank", status: "defect", score: 70 },
-            account_no: { truth: "514012998877", draft: "8009-4411-2299", status: "defect", score: 70 },
-            landline: { truth: "+60 3-7722 8888", draft: "+60 11-2345 6789", status: "defect", score: 70 },
-            amount: { truth: "Baseline Verified", draft: "RM 98,500.00", status: "match", score: 100 },
-            po_number: { truth: "PO-ML-8841", draft: "PO-OVERRIDE", status: "defect", score: 70 },
-          },
-          banner_message: "Discrepancy Trap: Inbound payment remittance details contradict Master Procurement Ledger baseline.",
-        } as unknown as DemoInvoice);
-      }
     }
 
     loadRecord();
@@ -221,10 +181,25 @@ export default function CaseDetailPage() {
     };
   }, [invoice]);
 
-  if (isLoading || !invoice) {
+  if (isLoading) {
     return (
       <div className="p-12 text-center text-xs text-[var(--ink-3)] font-mono">
         Loading forensic verification dossier...
+      </div>
+    );
+  }
+
+  if (!invoice) {
+    return (
+      <div className="p-12 text-center text-xs text-[var(--ink-3)] font-mono space-y-3">
+        <div>Case &ldquo;{caseId}&rdquo; not found in active verification queue.</div>
+        <button
+          type="button"
+          onClick={() => router.push("/queue")}
+          className="px-3.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+        >
+          Return to Queue
+        </button>
       </div>
     );
   }

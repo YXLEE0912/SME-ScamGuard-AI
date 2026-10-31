@@ -29,6 +29,9 @@ export interface DemoInvoice {
   is_escalated?: boolean;
   sha256?: string;
   is_duplicate_submission?: boolean;
+  email_body?: string;
+  producer_tool?: string;
+  certainty_confidence?: number;
 }
 
 export interface AuditEvent {
@@ -41,6 +44,23 @@ export interface AuditEvent {
   operator_id: string;
   event_hash?: string;
   prior_hash?: string;
+}
+
+export interface QueueMetrics {
+  status: string;
+  total_inbound: number;
+  defect_count: number;
+  review_count: number;
+  verified_count: number;
+  total_intercepted_amount: number;
+  total_intercepted_amount_formatted: string;
+  field_defects: {
+    bank_override_pct: number;
+    account_desync_pct: number;
+    spliced_metadata_pct: number;
+    domain_impersonation_pct: number;
+    coercion_urgency_pct: number;
+  };
 }
 
 export interface ReExtractResult {
@@ -74,56 +94,29 @@ export interface PoliceAlertPayload {
   content: string;
 }
 
-export async function fetchMailboxInvoices(): Promise<DemoInvoice[]> {
-  // 1. Try canonical queue endpoint first (Phase 6)
-  try {
-    const res = await fetch(`${API_BASE}/api/v1/queue`, { cache: "no-store" });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.invoices && Array.isArray(data.invoices)) {
-        return data.invoices;
-      }
-    }
-  } catch (err) {
-    console.warn("Queue endpoint unavailable, attempting demo mailbox fallback:", err);
+export async function fetchQueueMetrics(): Promise<QueueMetrics> {
+  const res = await fetch(`${API_BASE}/api/v1/queue/metrics`, { cache: "no-store" });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch queue metrics: ${res.statusText}`);
   }
-
-  // 2. Fallback to demo mailbox endpoint
-  try {
-    const res = await fetch(`${API_BASE}/api/v1/demo/mailbox`, { cache: "no-store" });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.invoices && Array.isArray(data.invoices)) {
-        return data.invoices;
-      }
-    }
-  } catch (err) {
-    console.warn("Backend API unavailable, falling back to local session store:", err);
-  }
-  return [];
+  return await res.json();
 }
 
-export async function fetchInvoiceById(id: string): Promise<DemoInvoice | null> {
-  // 1. Try canonical queue detail endpoint first (Phase 6)
-  try {
-    const res = await fetch(`${API_BASE}/api/v1/queue/${id}`, { cache: "no-store" });
-    if (res.ok) {
-      return await res.json();
-    }
-  } catch (err) {
-    console.warn(`Queue case detail failed for ${id}, attempting demo fallback:`, err);
+export async function fetchMailboxInvoices(): Promise<DemoInvoice[]> {
+  const res = await fetch(`${API_BASE}/api/v1/queue`, { cache: "no-store" });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch verification queue: ${res.statusText}`);
   }
+  const data = await res.json();
+  return data.invoices || [];
+}
 
-  // 2. Fallback to demo mailbox detail endpoint
-  try {
-    const res = await fetch(`${API_BASE}/api/v1/demo/mailbox/${id}`, { cache: "no-store" });
-    if (res.ok) {
-      return await res.json();
-    }
-  } catch (err) {
-    console.warn("Backend API unavailable:", err);
+export async function fetchInvoiceById(id: string): Promise<DemoInvoice> {
+  const res = await fetch(`${API_BASE}/api/v1/queue/${id}`, { cache: "no-store" });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch case ${id}: ${res.statusText}`);
   }
-  return null;
+  return await res.json();
 }
 
 export async function reExtractWithGemini(invoiceId: string): Promise<ReExtractResult> {
@@ -145,34 +138,20 @@ export async function correctInvoiceField(payload: {
   clerk_id: string;
   official_landline_dialed?: string;
 }): Promise<Record<string, unknown>> {
-  // 1. Try canonical override endpoint (Phase 6)
-  try {
-    const res = await fetch(`${API_BASE}/api/v1/queue/${payload.invoice_id}/override`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        field_name: payload.field_name,
-        corrected_value: payload.corrected_value,
-        justification: payload.justification,
-        clerk_id: payload.clerk_id,
-        official_landline_dialed: payload.official_landline_dialed || null,
-      }),
-    });
-    if (res.ok) {
-      return await res.json();
-    }
-  } catch (err) {
-    console.warn("Canonical override endpoint failed, falling back to demo endpoint:", err);
-  }
-
-  // 2. Fallback to demo correct-field endpoint
-  const res = await fetch(`${API_BASE}/api/v1/demo/correct-field`, {
+  const res = await fetch(`${API_BASE}/api/v1/queue/${payload.invoice_id}/override`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({
+      field_name: payload.field_name,
+      corrected_value: payload.corrected_value,
+      justification: payload.justification,
+      clerk_id: payload.clerk_id,
+      official_landline_dialed: payload.official_landline_dialed || null,
+    }),
   });
   if (!res.ok) {
-    throw new Error(`Field correction failed: ${res.statusText}`);
+    const data = (await res.json().catch(() => ({}))) as { detail?: string };
+    throw new Error(data.detail || `Field correction failed: ${res.statusText}`);
   }
   return await res.json();
 }
@@ -182,29 +161,14 @@ export async function approveInvoice(
   clerkId: string = "AP-CLERK-MY01",
   notes?: string
 ): Promise<Record<string, unknown>> {
-  // 1. Try canonical decide endpoint (Phase 6)
-  try {
-    const res = await fetch(`${API_BASE}/api/v1/queue/${invoiceId}/decide`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        action: "APPROVE",
-        clerk_id: clerkId,
-        reason: notes || "Pre-disbursement 3-way reconciliation verified.",
-      }),
-    });
-    if (res.ok) {
-      return await res.json();
-    }
-  } catch (err) {
-    console.warn("Canonical decide APPROVE failed, falling back to demo approve:", err);
-  }
-
-  // 2. Fallback to demo approve endpoint
-  const res = await fetch(`${API_BASE}/api/v1/demo/approve/${invoiceId}`, {
+  const res = await fetch(`${API_BASE}/api/v1/queue/${invoiceId}/decide`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ clerk_id: clerkId, notes }),
+    body: JSON.stringify({
+      action: "APPROVE",
+      clerk_id: clerkId,
+      reason: notes || "Pre-disbursement 3-way reconciliation verified.",
+    }),
   });
   if (!res.ok) {
     const data = (await res.json().catch(() => ({}))) as { detail?: string };
@@ -218,69 +182,40 @@ export async function escalateInvoice(
   reason: string,
   clerkId: string = "AP-CLERK-MY01"
 ): Promise<Record<string, unknown>> {
-  // 1. Try canonical decide endpoint (Phase 6)
-  try {
-    const res = await fetch(`${API_BASE}/api/v1/queue/${invoiceId}/decide`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        action: "FREEZE",
-        clerk_id: clerkId,
-        reason: reason,
-      }),
-    });
-    if (res.ok) {
-      return await res.json();
-    }
-  } catch (err) {
-    console.warn("Canonical decide FREEZE failed, falling back to demo escalate:", err);
-  }
-
-  // 2. Fallback to demo escalate endpoint
-  const res = await fetch(`${API_BASE}/api/v1/demo/escalate/${invoiceId}`, {
+  const res = await fetch(`${API_BASE}/api/v1/queue/${invoiceId}/decide`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ reason, clerk_id: clerkId }),
+    body: JSON.stringify({
+      action: "FREEZE",
+      clerk_id: clerkId,
+      reason: reason,
+    }),
   });
   if (!res.ok) {
-    throw new Error(`Escalation failed: ${res.statusText}`);
+    const data = (await res.json().catch(() => ({}))) as { detail?: string };
+    throw new Error(data.detail || `Escalation failed: ${res.statusText}`);
   }
   return await res.json();
 }
 
 export async function fetchAuditTrail(): Promise<AuditEvent[]> {
-  // 1. Try canonical chained audit trail endpoint (Phase 6)
-  try {
-    const res = await fetch(`${API_BASE}/api/v1/audit/trail`, { cache: "no-store" });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.events && Array.isArray(data.events)) {
-        return data.events.map((raw: Record<string, unknown>, idx: number) => ({
-          id: String(raw.id || raw.event_id || `evt_${idx + 1}`),
-          timestamp: String(raw.timestamp || raw.timestamp_utc || new Date().toISOString()),
-          action: String(raw.action || "Audit Record"),
-          badge_color: String(raw.badge_color || "neutral"),
-          description: String(raw.description || `Audit event for case ${raw.case_id || ""}`),
-          justification: String(raw.justification || ""),
-          operator_id: String(raw.operator_id || "AP-CLERK-MY01"),
-          event_hash: raw.event_hash ? String(raw.event_hash) : undefined,
-          prior_hash: raw.prior_hash ? String(raw.prior_hash) : undefined,
-        }));
-      }
-    }
-  } catch (err) {
-    console.warn("Audit trail endpoint unavailable, attempting demo fallback:", err);
+  const res = await fetch(`${API_BASE}/api/v1/audit/trail`, { cache: "no-store" });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch audit trail: ${res.statusText}`);
   }
-
-  // 2. Fallback to demo session audit
-  try {
-    const res = await fetch(`${API_BASE}/api/v1/demo/audit`, { cache: "no-store" });
-    if (res.ok) {
-      const data = await res.json();
-      return data.events || [];
-    }
-  } catch (err) {
-    console.warn("Demo audit trail fetch failed:", err);
+  const data = await res.json();
+  if (data.events && Array.isArray(data.events)) {
+    return data.events.map((raw: Record<string, unknown>, idx: number) => ({
+      id: String(raw.id || raw.event_id || `evt_${idx + 1}`),
+      timestamp: String(raw.timestamp || raw.timestamp_utc || new Date().toISOString()),
+      action: String(raw.action || "Audit Record"),
+      badge_color: String(raw.badge_color || "neutral"),
+      description: String(raw.description || `Audit event for case ${raw.case_id || ""}`),
+      justification: String(raw.justification || ""),
+      operator_id: String(raw.operator_id || "AP-CLERK-MY01"),
+      event_hash: raw.event_hash ? String(raw.event_hash) : undefined,
+      prior_hash: raw.prior_hash ? String(raw.prior_hash) : undefined,
+    }));
   }
   return [];
 }
@@ -292,21 +227,7 @@ export async function uploadNewVerification(file: File, supportingFile?: File): 
     formData.append("supporting_file", supportingFile);
   }
 
-  // 1. Try canonical /api/v1/verify endpoint (Phase 6)
-  try {
-    const res = await fetch(`${API_BASE}/api/v1/verify`, {
-      method: "POST",
-      body: formData,
-    });
-    if (res.ok) {
-      return await res.json();
-    }
-  } catch (err) {
-    console.warn("Canonical verify endpoint failed, attempting demo upload:", err);
-  }
-
-  // 2. Fallback to demo upload
-  const res = await fetch(`${API_BASE}/api/v1/demo/new-verification`, {
+  const res = await fetch(`${API_BASE}/api/v1/verify`, {
     method: "POST",
     body: formData,
   });

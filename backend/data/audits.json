@@ -272,5 +272,95 @@
     },
     "prior_hash": "d1c5c64ffc89dfb11c725bb52f7a9c1a574266313eb722d777ccbf8cfd062e7a",
     "event_hash": "d5bd881d271339a3252b5cd16420cbda4131a9655aad472b1ae8818bd1103ece"
+  },
+  {
+    "event_id": "EVT-1793460921206-0016",
+    "timestamp_utc": "2026-10-31T15:35:21.206367+00:00",
+    "case_id": "inv_001",
+    "action": "Clerk Correction",
+    "disposition": "VERIFIED",
+    "risk_score": 0,
+    "operator_id": "AP-CLERK-MY01",
+    "evidence_hashes": [],
+    "details": {
+      "field": "account_no",
+      "corrected_to": "514012998877",
+      "justification": "Verified via official landline callback to +60 3-7722 8888",
+      "switchboard_dialed": "+60 3-7722 8888"
+    },
+    "prior_hash": "d5bd881d271339a3252b5cd16420cbda4131a9655aad472b1ae8818bd1103ece",
+    "event_hash": "397a55947cf70411ef016b86296d8345063e69cf558def5b594f495ca063672e"
+  },
+  {
+    "event_id": "EVT-1793460921233-0017",
+    "timestamp_utc": "2026-10-31T15:35:21.233150+00:00",
+    "case_id": "inv_002",
+    "action": "Escalated",
+    "disposition": "LOCKED_CRITICAL",
+    "risk_score": 0,
+    "operator_id": "AP-CLERK-MY01",
+    "evidence_hashes": [],
+    "details": {
+      "instruction_type": "ERP_PAYMENT_VOUCHER_FREEZE",
+      "voucher_hold_id": "VCH-HOLD-2026-nv_002",
+      "case_id": "inv_002",
+      "status": "PAYMENT_LOCKED",
+      "held_amount_myr": 0.0,
+      "freeze_reason": "Mule account hit detected; immediate freeze requested.",
+      "erp_system_target": "AutoCount / SAP / SQL Account Financial Gateway",
+      "effective_timestamp_utc": "2026-10-31T15:35:21.233150+00:00"
+    },
+    "prior_hash": "397a55947cf70411ef016b86296d8345063e69cf558def5b594f495ca063672e",
+    "event_hash": "7c06cc8ddf9b921dc976d412764883dc70d61c4ff3013cf8ea7562ff67ee14ec"
+  },
+  {
+    "event_id": "EVT-1793460921259-0018",
+    "timestamp_utc": "2026-10-31T15:35:21.259834+00:00",
+    "case_id": "inv_003",
+    "action": "Payment Approved",
+    "disposition": "VERIFIED",
+    "risk_score": 0,
+    "operator_id": "AP-CLERK-MY01",
+    "evidence_hashes": [],
+    "details": {
+      "manager_id": null,
+      "notes": "Master Procurement Ledger matched. AutoCount signed."
+    },
+    "prior_hash": "7c06cc8ddf9b921dc976d412764883dc70d61c4ff3013cf8ea7562ff67ee14ec",
+    "event_hash": "623053ecf5697035963258a9093f7258dd8a25b441a381e61e5a0b3aed3202fe"
+  },
+  {
+    "event_id": "EVT-1793460921318-0019",
+    "timestamp_utc": "2026-10-31T15:35:21.318235+00:00",
+    "case_id": "inv_051",
+    "action": "New Ingestion",
+    "disposition": "LOCKED_CRITICAL",
+    "risk_score": 80,
+    "operator_id": "OP-MY-7EF8B351",
+    "evidence_hashes": [
+      "b01fe9412bb8ff64d170d57b07a68e24d8effdde07e2c81b7f1afcb7a421aae8"
+    ],
+    "details": {
+      "filename": "vendor_invoice_claim.pdf",
+      "is_duplicate": false
+    },
+    "prior_hash": "623053ecf5697035963258a9093f7258dd8a25b441a381e61e5a0b3aed3202fe",
+    "event_hash": "bb8ad8bf8f8a41db6fc5ae9e64ea3923c6a0fcad61d23881cfedf82e36c80821"
+  },
+  {
+    "event_id": "EVT-1793461123489-0020",
+    "timestamp_utc": "2026-10-31T15:38:43.489320+00:00",
+    "case_id": "email_001",
+    "action": "Payment Approved",
+    "disposition": "VERIFIED",
+    "risk_score": 0,
+    "operator_id": "Clerk & Controller dual 4-Eyes sign-off completed.",
+    "evidence_hashes": [],
+    "details": {
+      "manager_id": null,
+      "notes": "Pre-disbursement 3-way reconciliation verified."
+    },
+    "prior_hash": "bb8ad8bf8f8a41db6fc5ae9e64ea3923c6a0fcad61d23881cfedf82e36c80821",
+    "event_hash": "3370f8e81643ca0873fd0fb1eb676327dcb362b96518ce8157d5e8a33bae1673"
   }
 ]

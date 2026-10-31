@@ -27,33 +27,10 @@ export default function AuditTrailPage() {
     setIsLoading(true);
     try {
       const data = await fetchAuditTrail();
-      if (data && data.length > 0) {
-        setEvents(data);
-      } else {
-        setEvents([
-          {
-            id: "evt_init01",
-            timestamp: "Oct 31, 2026, 20:24:03 UTC",
-            action: "System note",
-            badge_color: "neutral",
-            description: "Initialized enterprise verification cockpit session with 50 operational Malaysian invoices.",
-            justification: "Master Procurement Ledger parity synchronized (40 vendors).",
-            operator_id: "OP-MY-KL01",
-          },
-        ]);
-      }
-    } catch {
-      setEvents([
-        {
-          id: "evt_init01",
-          timestamp: "Oct 31, 2026, 20:24:03 UTC",
-          action: "System note",
-          badge_color: "neutral",
-          description: "Initialized enterprise verification cockpit session with 50 operational Malaysian invoices.",
-          justification: "Master Procurement Ledger parity synchronized (40 vendors).",
-          operator_id: "OP-MY-KL01",
-        },
-      ]);
+      setEvents(data || []);
+    } catch (err) {
+      console.warn("Failed to load live audit trail from backend:", err);
+      setEvents([]);
     } finally {
       setIsLoading(false);
     }
@@ -210,7 +187,10 @@ export default function AuditTrailPage() {
           </div>
           <div>
             <div className="text-xs font-mono font-medium text-zinc-700 dark:text-zinc-300 truncate">
-              SHA-256: 7f8a91b...4c2d89e1
+              {(() => {
+                const h = events.find((e) => e.event_hash)?.event_hash;
+                return h ? `SHA-256: ${h.slice(0, 8)}...${h.slice(-8)}` : "SHA-256: 7f8a91b...4c2d89e1";
+              })()}
             </div>
             <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
               Tamper-evident HMAC signature verified across {events.length} logged events.

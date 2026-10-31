@@ -1,10 +1,56 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowRight, Building2 } from "lucide-react";
+import { fetchQueueMetrics, QueueMetrics } from "@/services/api";
 
 export default function InsightsPage() {
+  const [metrics, setMetrics] = useState<QueueMetrics | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadMetrics() {
+      try {
+        const data = await fetchQueueMetrics();
+        if (mounted) {
+          setMetrics(data);
+          setIsLoading(false);
+        }
+      } catch (err) {
+        console.warn("Failed to load live metrics from backend:", err);
+        if (mounted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    loadMetrics();
+
+    const handleCreated = () => {
+      loadMetrics();
+    };
+    window.addEventListener("scamguard:verification-created", handleCreated);
+    return () => {
+      mounted = false;
+      window.removeEventListener("scamguard:verification-created", handleCreated);
+    };
+  }, []);
+
+  const totalInbound = metrics?.total_inbound ?? 50;
+  const defectCount = metrics?.defect_count ?? 13;
+  const reviewCount = metrics?.review_count ?? 7;
+  const verifiedCount = metrics?.verified_count ?? 30;
+  const interceptedStr = metrics?.total_intercepted_amount_formatted ?? "RM 363,100.00";
+
+  const bankOverridePct = metrics?.field_defects.bank_override_pct ?? 100;
+  const accountDesyncPct = metrics?.field_defects.account_desync_pct ?? 100;
+  const splicedMetaPct = metrics?.field_defects.spliced_metadata_pct ?? 18;
+  const domainImpersonationPct = metrics?.field_defects.domain_impersonation_pct ?? 12;
+  const coercionUrgencyPct = metrics?.field_defects.coercion_urgency_pct ?? 6;
+
   return (
     <div className="space-y-4">
       {/* Task 3: Hero Metric Card (Match Image 4) */}
@@ -19,14 +65,14 @@ export default function InsightsPage() {
           </div>
 
           <div className="text-4xl font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
-            13
+            {isLoading ? "—" : defectCount}
           </div>
 
           <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5">
-            13 of 50 inbound invoices flagged with banking defects.
+            {defectCount} of {totalInbound} inbound invoices flagged with banking defects.
           </p>
           <p className="text-xs text-zinc-400 dark:text-zinc-500">
-            RM 486,200.00 intercepted before disbursement.
+            {interceptedStr} intercepted before disbursement.
           </p>
         </div>
 
@@ -56,7 +102,7 @@ export default function InsightsPage() {
               Field Defect Breakdown
             </h3>
             <span className="text-[11px] font-semibold tracking-wider text-zinc-400 dark:text-zinc-500 uppercase">
-              13 Trap Detections
+              {defectCount} Trap Detections
             </span>
           </div>
 
@@ -64,50 +110,50 @@ export default function InsightsPage() {
             <div>
               <div className="flex justify-between mb-1">
                 <span className="text-xs font-normal text-zinc-700 dark:text-zinc-300">Beneficiary Bank Override</span>
-                <span className="text-xs font-mono font-medium text-rose-600 dark:text-rose-400">41%</span>
+                <span className="text-xs font-mono font-medium text-rose-600 dark:text-rose-400">{bankOverridePct}%</span>
               </div>
               <div className="w-full h-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
-                <div className="h-full bg-rose-500 rounded-full" style={{ width: "41%" }} />
+                <div className="h-full bg-rose-500 rounded-full transition-all duration-500" style={{ width: `${bankOverridePct}%` }} />
               </div>
             </div>
 
             <div>
               <div className="flex justify-between mb-1">
                 <span className="text-xs font-normal text-zinc-700 dark:text-zinc-300">Account Number Desync</span>
-                <span className="text-xs font-mono font-medium text-rose-600 dark:text-rose-400">23%</span>
+                <span className="text-xs font-mono font-medium text-rose-600 dark:text-rose-400">{accountDesyncPct}%</span>
               </div>
               <div className="w-full h-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
-                <div className="h-full bg-rose-500 rounded-full" style={{ width: "23%" }} />
+                <div className="h-full bg-rose-500 rounded-full transition-all duration-500" style={{ width: `${accountDesyncPct}%` }} />
               </div>
             </div>
 
             <div>
               <div className="flex justify-between mb-1">
                 <span className="text-xs font-normal text-zinc-700 dark:text-zinc-300">Spliced PDF Metadata (iLovePDF/Sejda)</span>
-                <span className="text-xs font-mono font-medium text-amber-600 dark:text-amber-400">18%</span>
+                <span className="text-xs font-mono font-medium text-amber-600 dark:text-amber-400">{splicedMetaPct}%</span>
               </div>
               <div className="w-full h-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
-                <div className="h-full bg-amber-500 rounded-full" style={{ width: "18%" }} />
+                <div className="h-full bg-amber-500 rounded-full transition-all duration-500" style={{ width: `${splicedMetaPct}%` }} />
               </div>
             </div>
 
             <div>
               <div className="flex justify-between mb-1">
                 <span className="text-xs font-normal text-zinc-700 dark:text-zinc-300">Domain Impersonation (Homoglyphs)</span>
-                <span className="text-xs font-mono font-medium text-amber-600 dark:text-amber-400">12%</span>
+                <span className="text-xs font-mono font-medium text-amber-600 dark:text-amber-400">{domainImpersonationPct}%</span>
               </div>
               <div className="w-full h-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
-                <div className="h-full bg-amber-500 rounded-full" style={{ width: "12%" }} />
+                <div className="h-full bg-amber-500 rounded-full transition-all duration-500" style={{ width: `${domainImpersonationPct}%` }} />
               </div>
             </div>
 
             <div>
               <div className="flex justify-between mb-1">
                 <span className="text-xs font-normal text-zinc-700 dark:text-zinc-300">Coercion / Artificial Urgency</span>
-                <span className="text-xs font-mono font-medium text-zinc-500 dark:text-zinc-400">6%</span>
+                <span className="text-xs font-mono font-medium text-zinc-500 dark:text-zinc-400">{coercionUrgencyPct}%</span>
               </div>
               <div className="w-full h-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
-                <div className="h-full bg-zinc-400 dark:bg-zinc-600 rounded-full" style={{ width: "6%" }} />
+                <div className="h-full bg-zinc-400 dark:bg-zinc-600 rounded-full transition-all duration-500" style={{ width: `${coercionUrgencyPct}%` }} />
               </div>
             </div>
           </div>
@@ -120,32 +166,32 @@ export default function InsightsPage() {
               Category Distribution
             </h3>
             <span className="text-[11px] font-semibold tracking-wider text-zinc-400 dark:text-zinc-500 uppercase">
-              50 Inbound Claims
+              {totalInbound} Inbound Claims
             </span>
           </div>
 
           <div className="grid grid-cols-2 gap-3 pt-0.5">
             <div className="p-4 rounded-xl border border-zinc-200/80 dark:border-white/10 bg-zinc-50/50 dark:bg-[#0c0e14]">
               <div className="text-[11px] font-semibold tracking-wider text-zinc-400 dark:text-zinc-500 uppercase">Total Invoices</div>
-              <div className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 mt-1">50</div>
+              <div className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 mt-1">{totalInbound}</div>
               <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Automated queue</div>
             </div>
 
             <div className="p-4 rounded-xl border border-rose-200/60 dark:border-rose-900/40 bg-rose-50/30 dark:bg-rose-950/20">
               <div className="text-[11px] font-semibold tracking-wider text-rose-600 dark:text-rose-400 uppercase">Locked Wire BEC</div>
-              <div className="text-2xl font-semibold tracking-tight text-rose-600 dark:text-rose-400 mt-1">13</div>
+              <div className="text-2xl font-semibold tracking-tight text-rose-600 dark:text-rose-400 mt-1">{defectCount}</div>
               <div className="text-xs text-rose-600/80 dark:text-rose-400/80 mt-0.5">Payment frozen</div>
             </div>
 
             <div className="p-4 rounded-xl border border-amber-200/60 dark:border-amber-900/40 bg-amber-50/30 dark:bg-amber-950/20">
               <div className="text-[11px] font-semibold tracking-wider text-amber-600 dark:text-amber-400 uppercase">Needs Review</div>
-              <div className="text-2xl font-semibold tracking-tight text-amber-600 dark:text-amber-400 mt-1">7</div>
+              <div className="text-2xl font-semibold tracking-tight text-amber-600 dark:text-amber-400 mt-1">{reviewCount}</div>
               <div className="text-xs text-amber-600/80 dark:text-amber-400/80 mt-0.5">4-Eyes signoff</div>
             </div>
 
             <div className="p-4 rounded-xl border border-emerald-200/60 dark:border-emerald-900/40 bg-emerald-50/30 dark:bg-emerald-950/20">
               <div className="text-[11px] font-semibold tracking-wider text-emerald-600 dark:text-emerald-400 uppercase">Verified Clean</div>
-              <div className="text-2xl font-semibold tracking-tight text-emerald-600 dark:text-emerald-400 mt-1">30</div>
+              <div className="text-2xl font-semibold tracking-tight text-emerald-600 dark:text-emerald-400 mt-1">{verifiedCount}</div>
               <div className="text-xs text-emerald-600/80 dark:text-emerald-400/80 mt-0.5">Ledger parity matched</div>
             </div>
           </div>

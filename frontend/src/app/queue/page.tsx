@@ -30,141 +30,13 @@ interface UnifiedInvoice {
   receivedTime: string;
 }
 
-const BENCHMARKS: UnifiedInvoice[] = [
-  {
-    id: "email_001",
-    referenceId: "email_001",
-    vendorName: "Mega Logistics Sdn Bhd",
-    sender: "billing@mega-bu1ld.com.my",
-    subject: "REQUEST REVISED BANKING REMITTANCE DETAILS - INV-2026-8841",
-    category: "BEC_WIRE_FRAUD",
-    categoryLabel: "BEC Wire Scam",
-    status: "DEFECT",
-    riskScore: 99,
-    amountMyr: 98500.0,
-    claimedBank: "CIMB Bank",
-    claimedAccount: "8009-4411-2299",
-    masterBank: "Maybank",
-    masterAccount: "514012998877",
-    discrepancyNote: "Unauthorized bank change: Claimed CIMB vs Ledger Maybank",
-    receivedTime: "Today at 09:42 AM",
-  },
-  {
-    id: "email_002",
-    referenceId: "email_002",
-    vendorName: "Mega Logistics Sdn Bhd",
-    sender: "remit@megalogistics-corp.com",
-    subject: "Statutory Trustee Account Allocation Claim #0391",
-    category: "SEMAKMULE_HIT",
-    categoryLabel: "PDRM SemakMule Hit",
-    status: "DEFECT",
-    riskScore: 100,
-    amountMyr: 42000.0,
-    claimedBank: "Public Bank",
-    claimedAccount: "1410029000123456",
-    masterBank: "Maybank",
-    masterAccount: "514012998877",
-    discrepancyNote: "PDRM SemakMule Blacklist: Commercial Mule Flagged",
-    receivedTime: "Today at 10:15 AM",
-  },
-  {
-    id: "email_003",
-    referenceId: "email_003",
-    vendorName: "Apex Office Supplies Sdn Bhd",
-    sender: "invoicing@apexoffice.com.my",
-    subject: "Tax Invoice #INV-2026-1002 - Monthly Stationeries & Ergonomic Chairs",
-    category: "ROUTINE_AUDIT",
-    categoryLabel: "Routine Billing",
-    status: "VERIFIED",
-    riskScore: 0,
-    amountMyr: 4850.0,
-    claimedBank: "Maybank",
-    claimedAccount: "512345678901",
-    masterBank: "Maybank",
-    masterAccount: "512345678901",
-    discrepancyNote: "Straight-Through Match: 100% Master Ledger Parity",
-    receivedTime: "Today at 08:30 AM",
-  },
-  {
-    id: "email_004",
-    referenceId: "email_004",
-    vendorName: "TechNova Cloud Solutions",
-    sender: "billing@technova.com.my",
-    subject: "Critical Hosting Overdue Notice - Suspension in 2 Hours",
-    category: "COERCION",
-    categoryLabel: "Coercion & Urgency",
-    status: "NEEDS_REVIEW",
-    riskScore: 78,
-    amountMyr: 14200.0,
-    claimedBank: "Hong Leong Bank",
-    claimedAccount: "003001928471",
-    masterBank: "Hong Leong Bank",
-    masterAccount: "003001928471",
-    discrepancyNote: "Artificial Urgency Trigger: 2-Hour Suspension Threat",
-    receivedTime: "Yesterday at 04:15 PM",
-  },
-  {
-    id: "email_005",
-    referenceId: "email_005",
-    vendorName: "Southern Timber & Hardware",
-    sender: "admin@southerntimber.com.my",
-    subject: "Bulk Timber Shipment Milestone Claim #6612",
-    category: "PROMPT_INJECTION",
-    categoryLabel: "Prompt Injection",
-    status: "DEFECT",
-    riskScore: 95,
-    amountMyr: 65000.0,
-    claimedBank: "Maybank",
-    claimedAccount: "514011234567",
-    masterBank: "Maybank",
-    masterAccount: "512345678901",
-    discrepancyNote: "Adversarial Prompt Override Embedded in PDF Metadata",
-    receivedTime: "Yesterday at 02:20 PM",
-  },
-  {
-    id: "email_006",
-    referenceId: "email_006",
-    vendorName: "City Group Engineering",
-    sender: "service@citygroup.com.my",
-    subject: "Commercial HVAC Quarterly Maintenance Voucher #CG-4420",
-    category: "ROUTINE_AUDIT",
-    categoryLabel: "Routine Billing",
-    status: "VERIFIED",
-    riskScore: 0,
-    amountMyr: 18200.0,
-    claimedBank: "Maybank",
-    claimedAccount: "512345678901",
-    masterBank: "Maybank",
-    masterAccount: "512345678901",
-    discrepancyNote: "Master Procurement Ledger matched. AutoCount signed.",
-    receivedTime: "Oct 28, 2026",
-  },
-  {
-    id: "email_007",
-    referenceId: "email_007",
-    vendorName: "Global Trade Marketing Desk",
-    sender: "promotions@global-deals-direct.com",
-    subject: "Unsolicited Promotion: Office Coffee Subscription Discount Voucher",
-    category: "SPAM",
-    categoryLabel: "Spam",
-    status: "NEEDS_REVIEW",
-    riskScore: 35,
-    amountMyr: 350.0,
-    claimedBank: "Maybank",
-    claimedAccount: "512000192847",
-    masterBank: "N/A",
-    masterAccount: "N/A",
-    discrepancyNote: "Unsolicited commercial marketing submission. Non-procurement vendor.",
-    receivedTime: "Oct 27, 2026",
-  },
-];
-
 type Scope = "ALL" | "NEEDS_REVIEW" | "DEFECT" | "VERIFIED";
 
 function QueuePageContent() {
   const router = useRouter();
 
-  const [invoices, setInvoices] = useState<UnifiedInvoice[]>(BENCHMARKS);
+  const [invoices, setInvoices] = useState<UnifiedInvoice[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [activeScope, setActiveScope] = useState<Scope>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("ALL");
@@ -177,9 +49,10 @@ function QueuePageContent() {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<string | null>(null);
 
-  // Hydrate additional mailbox data
+  // Hydrate live queue records from FastAPI backend
   useEffect(() => {
     async function loadMailbox() {
+      setIsLoading(true);
       try {
         const live = await fetchMailboxInvoices();
         if (live && live.length > 0) {
@@ -197,12 +70,12 @@ function QueuePageContent() {
             const masterA = inv.comparison?.account_no?.truth || "514012345678";
 
             const numMatch = inv.id.match(/\d+/);
-            const num = numMatch ? parseInt(numMatch[0], 10) : idx + 8;
+            const num = numMatch ? parseInt(numMatch[0], 10) : idx + 1;
             const emailId = inv.id.startsWith("email_") ? inv.id : `email_${String(num).padStart(3, "0")}`;
 
             return {
               id: emailId,
-              referenceId: emailId,
+              referenceId: inv.id.toUpperCase(),
               vendorName: inv.sender_name || "Malaysian Vendor Sdn Bhd",
               sender: inv.sender_email,
               subject: inv.subject,
@@ -220,13 +93,15 @@ function QueuePageContent() {
             };
           });
 
-          // Combine benchmarks with live data, avoiding duplicates
-          const seen = new Set(BENCHMARKS.map((b) => b.id));
-          const uniqueExtra = adapted.filter((a) => !seen.has(a.id));
-          setInvoices([...BENCHMARKS, ...uniqueExtra]);
+          setInvoices(adapted);
+        } else {
+          setInvoices([]);
         }
-      } catch {
-        // Fallback to static benchmarks
+      } catch (err) {
+        console.warn("Failed to load live verification queue from backend:", err);
+        setInvoices([]);
+      } finally {
+        setIsLoading(false);
       }
     }
     loadMailbox();
@@ -454,7 +329,13 @@ function QueuePageContent() {
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100 dark:divide-white/5 bg-white dark:bg-[#11131a]">
-              {filteredRows.length === 0 ? (
+              {isLoading ? (
+                <tr>
+                  <td colSpan={6} className="py-12 text-center text-zinc-400 text-xs font-mono">
+                    Loading live verification queue from backend...
+                  </td>
+                </tr>
+              ) : filteredRows.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="py-12 text-center text-zinc-400 text-xs">
                     No matching invoices found in this queue scope.
