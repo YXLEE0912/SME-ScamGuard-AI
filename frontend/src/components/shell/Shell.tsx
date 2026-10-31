@@ -145,7 +145,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const currentNav = NAV.find((n) => isActive(path, n.href));
   let pageTitle = currentNav?.title || "Verification queue";
   if (path.startsWith("/case/") || path.startsWith("/queue/")) {
-    pageTitle = "Forensic invoice inspection";
+    pageTitle = "Invoice inspection";
   }
 
   const isAuthPage = path === "/login";
