@@ -22,7 +22,7 @@ import {
 } from "@/services/api";
 import staticMailbox from "@/data/demo_mailbox.json";
 import { ThreatSeverityBadge } from "@/components/ThreatSeverityBadge";
-import { formatMYR } from "@/lib/diff";
+import { MultiAgentPipeline } from "@/components/MultiAgentPipeline";
 
 interface ComparisonFieldData {
   truth?: string;
@@ -203,71 +203,6 @@ export default function CaseDetailPage() {
     }
   };
 
-  const evidenceRows = useMemo(() => {
-    if (!invoice) return [];
-    const comp = invoice.comparison || {};
-    const isDefect = invoice.status === "DEFECT";
-
-    return [
-      {
-        fieldKey: "vendor_name",
-        fieldLabel: "Vendor Name",
-        truthValue: comp.vendor_name?.truth || invoice.vendorName,
-        claimedValue: comp.vendor_name?.draft || invoice.vendorName,
-        isMatch: comp.vendor_name ? comp.vendor_name.status === "match" : true,
-      },
-      {
-        fieldKey: "bank_name",
-        fieldLabel: "Beneficiary Bank",
-        truthValue: comp.bank_name?.truth || "Maybank",
-        claimedValue: comp.bank_name?.draft || (isDefect ? "CIMB Bank" : "Maybank"),
-        isMatch: comp.bank_name ? comp.bank_name.status === "match" : !isDefect,
-      },
-      {
-        fieldKey: "account_no",
-        fieldLabel: "Account Number",
-        truthValue: comp.account_no?.truth || "514012998877",
-        claimedValue: comp.account_no?.draft || (isDefect ? "8009-4411-2299" : "514012998877"),
-        isMatch: comp.account_no ? comp.account_no.status === "match" : !isDefect,
-      },
-      {
-        fieldKey: "landline",
-        fieldLabel: "Landline Telephone",
-        truthValue: comp.landline?.truth || "+60 3-7722 8888",
-        claimedValue: comp.landline?.draft || (isDefect ? "+60 11-2345 6789" : "+60 3-7722 8888"),
-        isMatch: comp.landline ? comp.landline.status === "match" : !isDefect,
-      },
-      {
-        fieldKey: "amount",
-        fieldLabel: "Total Amount (MYR)",
-        truthValue: comp.amount?.truth || "Baseline Verified",
-        claimedValue: comp.amount?.draft || formatMYR(invoice.amountMyr),
-        isMatch: comp.amount ? comp.amount.status === "match" : true,
-      },
-      {
-        fieldKey: "po_number",
-        fieldLabel: "Purchase Order (PO)",
-        truthValue: comp.po_number?.truth || "PO-2026-8812",
-        claimedValue: comp.po_number?.draft || (isDefect ? "PO-OVERRIDE-UNAUTHORIZED" : "PO-2026-8812"),
-        isMatch: comp.po_number ? comp.po_number.status === "match" : !isDefect,
-      },
-      {
-        fieldKey: "pdf_producer",
-        fieldLabel: "PDF Metadata Producer",
-        truthValue: "AutoCount ERP / Acrobat Pro",
-        claimedValue: invoice.producerTool,
-        isMatch: !invoice.producerTool.includes("Spliced") && !invoice.producerTool.includes("Desync"),
-      },
-      {
-        fieldKey: "model_certainty",
-        fieldLabel: "Model Threat Certainty",
-        truthValue: "> 90% Target Baseline",
-        claimedValue: `${invoice.riskScore}% Risk · ${invoice.certaintyConfidence}% Confidence`,
-        isMatch: !isDefect,
-      },
-    ];
-  }, [invoice]);
-
   const evidencePayload = useMemo(() => {
     if (!invoice) return {};
     return {
@@ -296,13 +231,13 @@ export default function CaseDetailPage() {
 
   return (
     <div className="w-full space-y-4">
-          {/* Navigation Strip & Pagination */}
-              <div className="w-full flex items-center justify-between mb-3 select-none">
-          <button
-            type="button"
-            onClick={() => router.push("/queue")}
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors py-1 cursor-pointer select-none"
-          >
+      {/* Navigation Strip & Pagination */}
+      <div className="w-full flex items-center justify-between mb-3 select-none">
+        <button
+          type="button"
+          onClick={() => router.push("/queue")}
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors py-1 cursor-pointer select-none"
+        >
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Queue</span>
         </button>
@@ -440,62 +375,13 @@ export default function CaseDetailPage() {
             </div>
           )}
 
-          {/* Task 4: 3-Way Forensic Reconciliation Table */}
-          <div className="card overflow-hidden">
-            <div className="p-4 border-b border-[var(--line)] bg-[var(--surface-2)] flex items-center justify-between">
-              <span className="label">3-Way Forensic Reconciliation</span>
-              <span className="text-[11px] font-mono text-[var(--ink-3)]">
-                Email vs Document vs Vendor Master Ledger
-              </span>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse">
-                <thead>
-                  <tr className="border-b border-[var(--line)] bg-[var(--surface-2)] select-none">
-                    <th className="py-2.5 px-4 label">Verification Field</th>
-                    <th className="py-2.5 px-4 label">Master Ledger · Source of Truth</th>
-                    <th className="py-2.5 px-4 label">Inbound Claim · Submitted</th>
-                    <th className="py-2.5 px-4 label text-right pr-4">Status & Match</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--line)] bg-[var(--surface)]">
-                  {evidenceRows.map((row) => (
-                    <tr
-                      key={row.fieldKey}
-                      className={`transition-colors ${!row.isMatch
-                        ? "bg-[var(--defect)]/[0.04] border-l-[3px] border-l-[var(--defect)]"
-                        : "border-l-[3px] border-l-transparent hover:bg-[var(--surface-2)]"
-                        }`}
-                    >
-                      <td className="py-3 px-4 font-medium text-[var(--ink)]">
-                        {row.fieldLabel}
-                      </td>
-                      <td className="py-3 px-4 font-mono text-[11px] text-[var(--ink-2)]">
-                        {row.truthValue}
-                      </td>
-                      <td className={`py-3 px-4 font-mono text-[11px] ${!row.isMatch ? "text-[var(--defect)] font-semibold" : "text-[var(--ink)]"
-                        }`}>
-                        {row.claimedValue}
-                      </td>
-                      <td className="py-3 px-4 text-right pr-4 whitespace-nowrap">
-                        {row.isMatch ? (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[var(--ok)]">
-                            <CheckCircle2 size={13} />
-                            <span>MATCH</span>
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--defect)]">
-                            <AlertTriangle size={13} />
-                            <span>MISMATCH</span>
-                          </span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          {/* 7-Agent Defense Pipeline */}
+          <MultiAgentPipeline
+            invoice={invoice}
+            clerkSigned={clerkSigned}
+            managerSigned={managerSigned}
+            voucherReleased={voucherReleased}
+          />
         </div>
 
         {/* Right Column (~28% width, sticky) */}
