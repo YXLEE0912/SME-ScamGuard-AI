@@ -447,10 +447,9 @@ def run_benchmark():
     print(f"[*] Mean Core Latency:               {avg_latency_ms:.4f} ms (Target: < 0.05 ms)")
     print("=" * 90)
 
-    # Save to JSON
+    # Save to JSON in backend/data/
     out_paths = [
         PROJECT_ROOT / "backend" / "data" / "benchmark_results.json",
-        PROJECT_ROOT / "benchmark_results.json",
     ]
     for p in out_paths:
         try:
