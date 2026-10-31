@@ -58,8 +58,12 @@ export default function CaseDetailPage() {
   useEffect(() => {
     async function loadRecord() {
       setIsLoading(true);
+      const normalized = caseId.startsWith("email_") ? caseId.replace("email_", "inv_") : caseId;
       try {
-        const live = await fetchInvoiceById(caseId);
+        let live = await fetchInvoiceById(caseId);
+        if (!live && normalized !== caseId) {
+          live = await fetchInvoiceById(normalized);
+        }
         if (live) {
           adaptDemoInvoice(live);
         } else {
@@ -125,14 +129,17 @@ export default function CaseDetailPage() {
     }
 
     function fallbackStatic(id: string) {
-      const match = (staticMailbox as DemoInvoice[]).find((x) => x.id === id);
+      const normalized = id.startsWith("email_") ? id.replace("email_", "inv_") : id;
+      const match = (staticMailbox as DemoInvoice[]).find(
+        (x) => x.id === id || x.id === normalized || id === x.id.replace("inv_", "email_")
+      );
       if (match) {
         adaptDemoInvoice(match);
       } else {
         // High-priority BEC benchmark case
         setInvoice({
-          id: id || "QAT-02",
-          referenceId: "INV-2026-8841",
+          id: id || "email_001",
+          referenceId: id || "email_001",
           vendorName: "Mega Logistics Sdn Bhd",
           sender: "billing@mega-bu1ld.com.my",
           subject: "REQUEST REVISED BANKING REMITTANCE DETAILS - INV-2026-8841",
@@ -236,18 +243,18 @@ export default function CaseDetailPage() {
   return (
     <div className="grid gap-5">
       <HeaderActions>
-          <Link href="/queue" className="btn btn-sm btn-ghost">
-            <ArrowLeft size={14} />
-            <span>Queue</span>
-          </Link>
-          <button
-            type="button"
-            onClick={() => window.print()}
-            className="icon-btn"
-            title="Print Forensic Dossier"
-          >
-            <Printer size={15} />
-          </button>
+        <Link href="/queue" className="btn btn-sm btn-ghost">
+          <ArrowLeft size={14} />
+          <span>Queue</span>
+        </Link>
+        <button
+          type="button"
+          onClick={() => window.print()}
+          className="icon-btn"
+          title="Print Forensic Dossier"
+        >
+          <Printer size={15} />
+        </button>
       </HeaderActions>
 
       {/* Case Header Strip */}

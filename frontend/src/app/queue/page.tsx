@@ -1,17 +1,14 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, Suspense } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Search,
   RefreshCw,
   Upload,
   X,
-  ChevronRight,
 } from "lucide-react";
 import { ThreatSeverityBadge } from "@/components/ThreatSeverityBadge";
-import { formatMYR } from "@/lib/diff";
 import { uploadNewVerification, fetchMailboxInvoices, DemoInvoice } from "@/services/api";
 
 interface UnifiedInvoice {
@@ -20,7 +17,7 @@ interface UnifiedInvoice {
   vendorName: string;
   sender: string;
   subject: string;
-  category: "BEC_WIRE_FRAUD" | "SEMAKMULE_HIT" | "LEGIT_CLAIM" | "FAIL_CLOSED" | "COERCION" | "PROMPT_INJECTION" | "ROUTINE_AUDIT";
+  category: "BEC_WIRE_FRAUD" | "SEMAKMULE_HIT" | "LEGIT_CLAIM" | "FAIL_CLOSED" | "COERCION" | "PROMPT_INJECTION" | "ROUTINE_AUDIT" | "SPAM";
   categoryLabel: string;
   status: "NEEDS_REVIEW" | "DEFECT" | "VERIFIED" | "RESOLVED";
   riskScore: number;
@@ -35,8 +32,8 @@ interface UnifiedInvoice {
 
 const BENCHMARKS: UnifiedInvoice[] = [
   {
-    id: "QAT-02",
-    referenceId: "INV-2026-8841",
+    id: "email_001",
+    referenceId: "email_001",
     vendorName: "Mega Logistics Sdn Bhd",
     sender: "billing@mega-bu1ld.com.my",
     subject: "REQUEST REVISED BANKING REMITTANCE DETAILS - INV-2026-8841",
@@ -53,8 +50,8 @@ const BENCHMARKS: UnifiedInvoice[] = [
     receivedTime: "Today at 09:42 AM",
   },
   {
-    id: "QAT-03",
-    referenceId: "INV-2026-0391",
+    id: "email_002",
+    referenceId: "email_002",
     vendorName: "Mega Logistics Sdn Bhd",
     sender: "remit@megalogistics-corp.com",
     subject: "Statutory Trustee Account Allocation Claim #0391",
@@ -71,8 +68,8 @@ const BENCHMARKS: UnifiedInvoice[] = [
     receivedTime: "Today at 10:15 AM",
   },
   {
-    id: "QAT-01",
-    referenceId: "INV-2026-1002",
+    id: "email_003",
+    referenceId: "email_003",
     vendorName: "Apex Office Supplies Sdn Bhd",
     sender: "invoicing@apexoffice.com.my",
     subject: "Tax Invoice #INV-2026-1002 - Monthly Stationeries & Ergonomic Chairs",
@@ -89,8 +86,8 @@ const BENCHMARKS: UnifiedInvoice[] = [
     receivedTime: "Today at 08:30 AM",
   },
   {
-    id: "QAT-06",
-    referenceId: "INV-2026-7711",
+    id: "email_004",
+    referenceId: "email_004",
     vendorName: "TechNova Cloud Solutions",
     sender: "billing@technova.com.my",
     subject: "Critical Hosting Overdue Notice - Suspension in 2 Hours",
@@ -107,8 +104,8 @@ const BENCHMARKS: UnifiedInvoice[] = [
     receivedTime: "Yesterday at 04:15 PM",
   },
   {
-    id: "QAT-07",
-    referenceId: "INV-2026-6612",
+    id: "email_005",
+    referenceId: "email_005",
     vendorName: "Southern Timber & Hardware",
     sender: "admin@southerntimber.com.my",
     subject: "Bulk Timber Shipment Milestone Claim #6612",
@@ -125,8 +122,8 @@ const BENCHMARKS: UnifiedInvoice[] = [
     receivedTime: "Yesterday at 02:20 PM",
   },
   {
-    id: "QAT-04",
-    referenceId: "INV-2026-4420",
+    id: "email_006",
+    referenceId: "email_006",
     vendorName: "City Group Engineering",
     sender: "service@citygroup.com.my",
     subject: "Commercial HVAC Quarterly Maintenance Voucher #CG-4420",
@@ -141,6 +138,24 @@ const BENCHMARKS: UnifiedInvoice[] = [
     masterAccount: "512345678901",
     discrepancyNote: "Master Procurement Ledger matched. AutoCount signed.",
     receivedTime: "Oct 28, 2026",
+  },
+  {
+    id: "email_007",
+    referenceId: "email_007",
+    vendorName: "Global Trade Marketing Desk",
+    sender: "promotions@global-deals-direct.com",
+    subject: "Unsolicited Promotion: Office Coffee Subscription Discount Voucher",
+    category: "SPAM",
+    categoryLabel: "Spam",
+    status: "NEEDS_REVIEW",
+    riskScore: 35,
+    amountMyr: 350.0,
+    claimedBank: "Maybank",
+    claimedAccount: "512000192847",
+    masterBank: "N/A",
+    masterAccount: "N/A",
+    discrepancyNote: "Unsolicited commercial marketing submission. Non-procurement vendor.",
+    receivedTime: "Oct 27, 2026",
   },
 ];
 
@@ -166,55 +181,60 @@ function QueuePageContent() {
       try {
         const live = await fetchMailboxInvoices();
         if (live && live.length > 0) {
-          const adapted: UnifiedInvoice[] = live.map((inv: DemoInvoice) => {
-            const isDefect = inv.status === "DEFECT" || inv.status === "LOCKED_CRITICAL" || inv.risk_score >= 80;
-            const isReview = inv.status === "NEEDS_REVIEW" || (inv.risk_score > 20 && inv.risk_score < 80);
+            const adapted: UnifiedInvoice[] = live.map((inv: DemoInvoice, idx: number) => {
+              const isSpam = inv.category?.toLowerCase() === "spam" || inv.subject?.toLowerCase().includes("spam");
+              const isDefect = !isSpam && (inv.status === "DEFECT" || inv.status === "LOCKED_CRITICAL" || inv.risk_score >= 80);
+              const isReview = !isSpam && (inv.status === "NEEDS_REVIEW" || (inv.risk_score > 20 && inv.risk_score < 80));
 
-            const rawAmt = inv.comparison?.amount?.draft || "18500";
-            const parsedAmt = parseFloat(rawAmt.replace(/[^0-9.]/g, "")) || 18500;
+              const rawAmt = inv.comparison?.amount?.draft || "18500";
+              const parsedAmt = parseFloat(rawAmt.replace(/[^0-9.]/g, "")) || 18500;
 
-            const claimedB = inv.comparison?.bank_name?.draft || "Maybank";
-            const masterB = inv.comparison?.bank_name?.truth || "Maybank";
-            const claimedA = inv.comparison?.account_no?.draft || "514012345678";
-            const masterA = inv.comparison?.account_no?.truth || "514012345678";
+              const claimedB = inv.comparison?.bank_name?.draft || "Maybank";
+              const masterB = inv.comparison?.bank_name?.truth || "Maybank";
+              const claimedA = inv.comparison?.account_no?.draft || "514012345678";
+              const masterA = inv.comparison?.account_no?.truth || "514012345678";
 
-            return {
-              id: inv.id,
-              referenceId: inv.id.toUpperCase(),
-              vendorName: inv.sender_name || "Malaysian Vendor Sdn Bhd",
-              sender: inv.sender_email,
-              subject: inv.subject,
-              category: isDefect ? "BEC_WIRE_FRAUD" : isReview ? "COERCION" : "ROUTINE_AUDIT",
-              categoryLabel: inv.category || (isDefect ? "BEC Wire Scam" : "Routine Billing"),
-              status: isDefect ? "DEFECT" : isReview ? "NEEDS_REVIEW" : "VERIFIED",
-              riskScore: inv.risk_score,
-              amountMyr: parsedAmt,
-              claimedBank: claimedB,
-              claimedAccount: claimedA,
-              masterBank: masterB,
-              masterAccount: masterA,
-              discrepancyNote: inv.banner_message || "Master Procurement Ledger cross-reference evaluated.",
-              receivedTime: inv.received_date,
-            };
-          });
+              const numMatch = inv.id.match(/\d+/);
+              const num = numMatch ? parseInt(numMatch[0], 10) : idx + 8;
+              const emailId = inv.id.startsWith("email_") ? inv.id : `email_${String(num).padStart(3, "0")}`;
 
-          // Combine benchmarks with live data, avoiding duplicates
-          const seen = new Set(BENCHMARKS.map((b) => b.id));
-          const uniqueExtra = adapted.filter((a) => !seen.has(a.id));
-          setInvoices([...BENCHMARKS, ...uniqueExtra]);
-        }
+              return {
+                id: emailId,
+                referenceId: emailId,
+                vendorName: inv.sender_name || "Malaysian Vendor Sdn Bhd",
+                sender: inv.sender_email,
+                subject: inv.subject,
+                category: isSpam ? "SPAM" : isDefect ? "BEC_WIRE_FRAUD" : isReview ? "COERCION" : "ROUTINE_AUDIT",
+                categoryLabel: isSpam ? "Spam" : inv.category || (isDefect ? "BEC Wire Scam" : "Routine Billing"),
+                status: isDefect ? "DEFECT" : isReview ? "NEEDS_REVIEW" : "VERIFIED",
+                riskScore: inv.risk_score,
+                amountMyr: parsedAmt,
+                claimedBank: claimedB,
+                claimedAccount: claimedA,
+                masterBank: masterB,
+                masterAccount: masterA,
+                discrepancyNote: inv.banner_message || "Master Procurement Ledger cross-reference evaluated.",
+                receivedTime: inv.received_date,
+              };
+            });
+
+            // Combine benchmarks with live data, avoiding duplicates
+            const seen = new Set(BENCHMARKS.map((b) => b.id));
+            const uniqueExtra = adapted.filter((a) => !seen.has(a.id));
+            setInvoices([...BENCHMARKS, ...uniqueExtra]);
+          }
       } catch {
-        // Fallback to static benchmarks
+          // Fallback to static benchmarks
+        }
       }
-    }
     loadMailbox();
 
-    const handleCreated = () => {
-      loadMailbox();
-    };
-    window.addEventListener("scamguard:verification-created", handleCreated);
-    return () => window.removeEventListener("scamguard:verification-created", handleCreated);
-  }, []);
+      const handleCreated = () => {
+        loadMailbox();
+      };
+      window.addEventListener("scamguard:verification-created", handleCreated);
+      return () => window.removeEventListener("scamguard:verification-created", handleCreated);
+    }, []);
 
   // Filtered rows
   const filteredRows = useMemo(() => {
@@ -396,6 +416,7 @@ function QueuePageContent() {
           <option value="COERCION">Coercion / Urgency</option>
           <option value="PROMPT_INJECTION">Prompt Injection</option>
           <option value="ROUTINE_AUDIT">Routine Billing</option>
+          <option value="SPAM">Spam</option>
         </select>
       </div>
 
@@ -405,21 +426,20 @@ function QueuePageContent() {
           <table className="w-full text-left text-xs border-collapse">
             <thead>
               <tr className="border-b border-[var(--line)] bg-[var(--surface-2)] select-none">
-                <th className="py-3 px-4 label">Ref / Case ID</th>
-                <th className="py-3 px-4 label">Vendor & Sender</th>
+                <th className="py-3 px-4 label">Email ID</th>
+                <th className="py-3 px-4 label">Sender</th>
+                <th className="py-3 px-4 label">Subject</th>
                 <th className="py-3 px-4 label">Threat Category</th>
-                <th className="py-3 px-4 label">Discrepancy / Forensic Trap</th>
-                <th className="py-3 px-4 label text-right">Amount (MYR)</th>
                 <th className="py-3 px-4 label text-center">Status</th>
-                <th className="py-3 px-4 label text-right">Action</th>
+                <th className="py-3 px-4 label text-left">Risk Score</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--line)] bg-[var(--surface)]">
               {filteredRows.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-[var(--ink-3)]">
-                    No matching invoices found in this queue scope.
-                  </td>
+                    <td colSpan={6} className="py-12 text-center text-[var(--ink-3)]">
+                      No matching invoices found in this queue scope.
+                    </td>
                 </tr>
               ) : (
                 filteredRows.map((item, idx) => {
@@ -427,198 +447,221 @@ function QueuePageContent() {
                   return (
                     <tr
                       key={item.id}
-                      onClick={() => setSelectedIndex(idx)}
-                      onDoubleClick={() => router.push(`/case/${encodeURIComponent(item.id)}`)}
-                      className={`group transition-colors cursor-pointer ${isSelected
-                        ? "bg-amber-500/10 dark:bg-amber-500/15"
-                        : "hover:bg-[var(--surface-2)]"
+                      tabIndex={0}
+                      role="row"
+                      onClick={() => router.push(`/case/${encodeURIComponent(item.id)}`)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          router.push(`/case/${encodeURIComponent(item.id)}`);
+                        }
+                      }}
+                      className={`group transition-colors cursor-pointer select-none focus:outline-none focus:bg-[var(--surface-2)] ${isSelected
+                          ? "bg-amber-500/10 dark:bg-amber-500/15"
+                          : "hover:bg-[var(--surface-2)]"
                         }`}
                     >
-                      {/* Ref ID */}
-                      <td className="py-3 px-4 font-mono font-semibold text-[var(--ink)]">
-                        <div className="flex items-center gap-2">
-                          <span className="num">{item.id}</span>
-                          <span className="num text-[11px] text-[var(--ink-3)] hidden sm:inline">
-                            ({item.referenceId})
+                        {/* Email ID */}
+                        <td className="py-3 px-4 whitespace-nowrap">
+                          <span className="font-mono text-xs text-[var(--ink-2)] font-medium tracking-tight">
+                            {item.id}
                           </span>
-                        </div>
-                      </td>
+                        </td>
 
-                      {/* Vendor & Sender */}
-                      <td className="py-3 px-4">
-                        <div className="font-semibold text-[var(--ink)] truncate max-w-[200px]">
-                          {item.vendorName}
-                        </div>
-                        <div className="text-[11px] text-[var(--ink-3)] truncate max-w-[220px]">
-                          {item.sender}
-                        </div>
-                      </td>
-
-                      {/* Threat Category */}
-                      <td className="py-3 px-4">
-                        <span
-                          className={`pill text-[11px] py-0.5 px-2 ${item.category === "BEC_WIRE_FRAUD"
-                            ? "pill-defect"
-                            : item.category === "SEMAKMULE_HIT"
-                              ? "pill-defect font-bold"
-                              : item.category === "ROUTINE_AUDIT"
-                                ? "pill-ok"
-                                : "pill-review"
-                            }`}
-                        >
-                          {item.categoryLabel}
-                        </span>
-                      </td>
-
-                      {/* Discrepancy Note */}
-                      <td className="py-3 px-4 max-w-xs">
-                        <div className="truncate text-[12px] text-[var(--ink-2)]" title={item.discrepancyNote}>
-                          {item.discrepancyNote}
-                        </div>
-                        {item.claimedAccount !== item.masterAccount && (
-                          <div className="text-[10px] text-[var(--defect)] font-mono mt-0.5">
-                            Bank Desync: {item.claimedBank} {item.claimedAccount}
+                        {/* Sender */}
+                        <td className="py-3 px-4">
+                          <div className="font-medium text-[var(--ink)] truncate max-w-[200px]">
+                            {item.vendorName}
                           </div>
-                        )}
-                      </td>
+                          <div className="text-xs text-[var(--ink-3)] font-mono truncate max-w-[220px]">
+                            {item.sender}
+                          </div>
+                        </td>
 
-                      {/* Amount */}
-                      <td className="py-3 px-4 text-right font-mono font-bold num text-[13px] text-[var(--ink)]">
-                        {formatMYR(item.amountMyr)}
-                      </td>
+                        {/* Subject */}
+                        <td className="py-3 px-4">
+                          <div
+                            className="text-xs font-medium text-[var(--ink)] max-w-[280px] truncate"
+                            title={item.subject}
+                          >
+                            {item.subject}
+                          </div>
+                        </td>
 
-                      {/* Status Badge */}
-                      <td className="py-3 px-4 text-center">
-                        <ThreatSeverityBadge status={item.status} />
-                      </td>
+                        {/* Threat Category */}
+                        <td className="py-3 px-4 whitespace-nowrap">
+                          {item.category === "SPAM" ? (
+                            <span className="pill text-[11px] py-0.5 px-2 bg-[var(--surface-2)] text-[var(--ink-3)] border border-[var(--line-strong)] inline-flex items-center gap-1.5">
+                              <span className="text-[10px] leading-none opacity-80" aria-hidden="true">○</span>
+                              <span>Spam</span>
+                            </span>
+                          ) : (
+                            <span
+                              className={`pill text-[11px] py-0.5 px-2 ${item.category === "BEC_WIRE_FRAUD"
+                                  ? "pill-defect"
+                                  : item.category === "SEMAKMULE_HIT"
+                                    ? "pill-defect font-bold"
+                                    : item.category === "ROUTINE_AUDIT"
+                                      ? "pill-ok"
+                                      : "pill-review"
+                                }`}
+                            >
+                              {item.categoryLabel}
+                            </span>
+                          )}
+                        </td>
 
-                      {/* Action */}
-                      <td className="py-3 px-4 text-right">
-                        <Link
-                          href={`/case/${encodeURIComponent(item.id)}`}
-                          className="btn btn-sm hover:bg-[var(--ink)] hover:text-[var(--paper)] transition-colors"
-                        >
-                          <span>Inspect</span>
-                          <ChevronRight size={13} />
-                        </Link>
-                      </td>
-                    </tr>
-                  );
+                        {/* Status Badge */}
+                          <td className="py-3 px-4 text-center whitespace-nowrap">
+                            <ThreatSeverityBadge status={item.status} />
+                          </td>
+
+                          {/* Risk Score Column with Gauge Indicator */}
+                          <td className="py-3 px-4 text-left whitespace-nowrap">
+                            {(() => {
+                              const isClean = item.status === "VERIFIED";
+                              const isDefect = item.status === "DEFECT" || item.riskScore >= 80;
+                              const scoreVal = isClean ? 100 : item.riskScore || (isDefect ? 95 : 70);
+                              const colorClass = isClean
+                                ? "bg-emerald-500 dark:bg-emerald-400"
+                                : isDefect
+                                  ? "bg-rose-500 dark:bg-rose-400"
+                                  : "bg-amber-500 dark:bg-amber-400";
+
+                              return (
+                                <div className="flex items-center">
+                                  <span className="font-mono font-semibold text-xs text-[var(--ink)] num w-7 text-right">
+                                    {scoreVal}
+                                  </span>
+                                  <div className="w-14 h-1.5 rounded-full bg-[var(--surface-2)] overflow-hidden relative inline-block align-middle ml-2 border border-[var(--line-strong)]/30">
+                                    <div
+                                      className={`h-full rounded-full transition-all duration-300 ${colorClass}`}
+                                      style={{ width: `${Math.min(100, Math.max(0, scoreVal))}%` }}
+                                    />
+                                    {/* Subtle threshold marker at 80% */}
+                                    <span className="absolute top-0 bottom-0 left-[80%] w-[1px] bg-[var(--line-strong)] opacity-60 pointer-events-none" />
+                                  </div>
+                                </div>
+                              );
+                            })()}
+                          </td>
+                        </tr>
+                        );
                 })
               )}
-            </tbody>
-          </table>
+                      </tbody>
+                    </table>
         </div>
 
-        {/* Footer info bar */}
-        <div className="py-2.5 px-4 bg-[var(--surface-2)] border-t border-[var(--line)] flex items-center justify-between text-[11px] text-[var(--ink-3)] select-none">
-          <div className="flex items-center gap-3">
-            <span>Showing {filteredRows.length} of {invoices.length} invoices</span>
-            <span className="hidden sm:inline">•</span>
-            <span className="hidden sm:inline font-mono">Shortcuts: J/K navigate · Enter inspect · / search</span>
-          </div>
-          <div className="font-mono">
-            Direct CCID Blacklist Parity Active
-          </div>
-        </div>
-      </div>
-
-      {/* New Verification Modal */}
-      {uploadOpen && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs"
-          onClick={() => setUploadOpen(false)}
-        >
-          <div
-            className="w-full max-w-lg rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center">
-                  <Upload size={16} />
-                </div>
-                <div>
-                  <h3 className="text-base font-bold text-[var(--ink)]">Ingest New Verification</h3>
-                  <p className="text-xs text-[var(--ink-3)]">
-                    Upload inbound invoice and optional email body for 3-way forensic verification
-                  </p>
-                </div>
+            {/* Footer info bar */}
+            <div className="py-2.5 px-4 bg-[var(--surface-2)] border-t border-[var(--line)] flex items-center justify-between text-[11px] text-[var(--ink-3)] select-none">
+              <div className="flex items-center gap-3">
+                <span>Showing {filteredRows.length} of {invoices.length} invoices</span>
+                <span className="hidden sm:inline">•</span>
+                <span className="hidden sm:inline font-mono">Shortcuts: J/K navigate · Enter inspect · / search</span>
               </div>
-              <button
-                type="button"
-                onClick={() => setUploadOpen(false)}
-                className="icon-btn"
-              >
-                <X size={18} />
-              </button>
+              <div className="font-mono">
+                Direct CCID Blacklist Parity Active
+              </div>
             </div>
+        </div>
 
-            <form onSubmit={handleUploadSubmit} className="mt-4 space-y-4">
-              <div>
-                <label className="label block mb-1.5">Primary Invoice File (PDF, PNG, JPG)</label>
-                <input
-                  type="file"
-                  accept=".pdf,.png,.jpg,.jpeg"
-                  required
-                  onChange={(e) => setPrimaryFile(e.target.files?.[0] || null)}
-                  className="field w-full pt-1.5 text-xs file:mr-3 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-900 file:text-white"
-                />
-              </div>
-
-              <div>
-                <label className="label block mb-1.5">Supporting Remittance Email / Instructions (Optional)</label>
-                <input
-                  type="file"
-                  accept=".txt,.eml,.pdf"
-                  onChange={(e) => setSupportingFile(e.target.files?.[0] || null)}
-                  className="field w-full pt-1.5 text-xs file:mr-3 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-900 file:text-white"
-                />
-              </div>
-
-              {uploadStatus && (
-                <div className="p-3 rounded-lg bg-[var(--surface-2)] text-xs text-[var(--ink-2)] border border-[var(--line)]">
-                  {uploadStatus}
+        {/* New Verification Modal */}
+        {uploadOpen && (
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs"
+            onClick={() => setUploadOpen(false)}
+          >
+            <div
+              className="w-full max-w-lg rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center">
+                    <Upload size={16} />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-[var(--ink)]">Ingest New Verification</h3>
+                    <p className="text-xs text-[var(--ink-3)]">
+                      Upload inbound invoice and optional email body for 3-way forensic verification
+                    </p>
+                  </div>
                 </div>
-              )}
-
-              <div className="pt-2 flex items-center justify-end gap-2.5 border-t border-[var(--line)]">
                 <button
                   type="button"
                   onClick={() => setUploadOpen(false)}
-                  className="btn btn-ghost"
+                  className="icon-btn"
                 >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isUploading || !primaryFile}
-                  className="btn btn-primary"
-                >
-                  {isUploading ? (
-                    <>
-                      <RefreshCw size={14} className="animate-spin" />
-                      <span>Ingesting & Cross-referencing...</span>
-                    </>
-                  ) : (
-                    <span>Start Forensic Verification</span>
-                  )}
+                  <X size={18} />
                 </button>
               </div>
-            </form>
+
+              <form onSubmit={handleUploadSubmit} className="mt-4 space-y-4">
+                <div>
+                  <label className="label block mb-1.5">Primary Invoice File (PDF, PNG, JPG)</label>
+                  <input
+                    type="file"
+                    accept=".pdf,.png,.jpg,.jpeg"
+                    required
+                    onChange={(e) => setPrimaryFile(e.target.files?.[0] || null)}
+                    className="field w-full pt-1.5 text-xs file:mr-3 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-900 file:text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="label block mb-1.5">Supporting Remittance Email / Instructions (Optional)</label>
+                  <input
+                    type="file"
+                    accept=".txt,.eml,.pdf"
+                    onChange={(e) => setSupportingFile(e.target.files?.[0] || null)}
+                    className="field w-full pt-1.5 text-xs file:mr-3 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-slate-900 file:text-white"
+                  />
+                </div>
+
+                {uploadStatus && (
+                  <div className="p-3 rounded-lg bg-[var(--surface-2)] text-xs text-[var(--ink-2)] border border-[var(--line)]">
+                    {uploadStatus}
+                  </div>
+                )}
+
+                <div className="pt-2 flex items-center justify-end gap-2.5 border-t border-[var(--line)]">
+                  <button
+                    type="button"
+                    onClick={() => setUploadOpen(false)}
+                    className="btn btn-ghost"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isUploading || !primaryFile}
+                    className="btn btn-primary"
+                  >
+                    {isUploading ? (
+                      <>
+                        <RefreshCw size={14} className="animate-spin" />
+                        <span>Ingesting & Cross-referencing...</span>
+                      </>
+                    ) : (
+                      <span>Start Forensic Verification</span>
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
-        </div>
-      )}
-    </div>
-  );
+        )}
+      </div>
+      );
 }
 
-export default function QueuePage() {
+      export default function QueuePage() {
   return (
-    <Suspense fallback={<div className="p-8 text-center text-xs text-[var(--ink-3)]">Loading queue...</div>}>
-      <QueuePageContent />
-    </Suspense>
-  );
+      <Suspense fallback={<div className="p-8 text-center text-xs text-[var(--ink-3)]">Loading queue...</div>}>
+        <QueuePageContent />
+      </Suspense>
+      );
 }
