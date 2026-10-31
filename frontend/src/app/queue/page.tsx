@@ -159,11 +159,13 @@ const BENCHMARKS: UnifiedInvoice[] = [
   },
 ];
 
+type Scope = "ALL" | "NEEDS_REVIEW" | "DEFECT" | "VERIFIED";
+
 function QueuePageContent() {
   const router = useRouter();
 
   const [invoices, setInvoices] = useState<UnifiedInvoice[]>(BENCHMARKS);
-  const [activeScope, setActiveScope] = useState<"ALL" | "NEEDS_REVIEW" | "DEFECT" | "VERIFIED">("ALL");
+  const [activeScope, setActiveScope] = useState<Scope>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("ALL");
   const [selectedId, setSelectedId] = useState<string | null>(null);
