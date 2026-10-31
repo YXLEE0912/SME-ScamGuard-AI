@@ -2,160 +2,176 @@
 
 import React from "react";
 import Link from "next/link";
-import {
-  ArrowRight,
-  Building2,
-} from "lucide-react";
+import { ArrowRight, Building2 } from "lucide-react";
 
 export default function InsightsPage() {
   return (
-    <div className="grid gap-5">
-      {/* Top Hero: BEC Protection Banner (Full Width) */}
-      <section className="card p-6 flex flex-col justify-between gap-6 w-full" aria-label="BEC Protection Summary">
-        <div className="grid gap-2">
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[var(--ink-3)]">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>AP Interdiction Active</span>
+    <div className="space-y-4">
+      {/* Task 3: Hero Metric Card (Match Image 4) */}
+      <section
+        className="rounded-xl border border-zinc-200/80 dark:border-white/10 bg-white dark:bg-[#11131a] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.03)] flex flex-col justify-between gap-6 w-full"
+        aria-label="BEC Protection Summary"
+      >
+        <div className="space-y-1">
+          <div className="text-[11px] font-semibold tracking-wider text-zinc-400 dark:text-zinc-500 uppercase mb-2 flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span>AP Interdiction · Zero-Trust Disposition</span>
           </div>
-          <div className="text-[72px] sm:text-[84px] font-semibold leading-[84px] tracking-[-0.04em] text-[var(--defect)] num">
+
+          <div className="text-4xl font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
             13
           </div>
-          <p className="text-[22px] sm:text-[24px] font-semibold leading-7 tracking-[-0.01em] text-[var(--ink)]">
-            <span className="text-[var(--ink-2)]">of <span className="num">50</span></span> inbound invoices flagged with banking defects.
+
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1.5">
+            13 of 50 inbound invoices flagged with banking defects.
           </p>
-          <p className="text-[13px] text-[var(--ink-2)]">
-            RM 486,200.00 in unauthorized wire transfers intercepted before disbursement.
+          <p className="text-xs text-zinc-400 dark:text-zinc-500">
+            RM 486,200.00 intercepted before disbursement.
           </p>
         </div>
+
         <div className="flex flex-wrap items-center gap-3">
-          <Link href="/queue" className="btn btn-primary self-start">
-            Open the queue
-            <ArrowRight size={14} />
+          <Link
+            href="/queue"
+            className="h-9 px-3.5 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 text-xs rounded-lg font-medium transition-colors inline-flex items-center gap-1.5 cursor-pointer shadow-xs"
+          >
+            <span>Open the queue</span>
+            <ArrowRight size={13} />
           </Link>
-          <Link href="/audit" className="btn btn-ghost text-xs">
+          <Link
+            href="/audit"
+            className="text-xs font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition-colors px-2 py-1.5"
+          >
             View Master Ledger
           </Link>
         </div>
       </section>
 
-      {/* Middle Grid: Field Defect Breakdown & Category Mix */}
-      <div className="grid gap-5 lg:grid-cols-2">
-        {/* Left: Defect Breakdown Horizontal Bars */}
-        <section className="card p-6 space-y-4">
+      {/* Task 3: Defect Breakdown & Category Mix Cards */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Left: Defect Breakdown Card */}
+        <section className="rounded-xl border border-zinc-200/80 dark:border-white/10 bg-white dark:bg-[#11131a] p-5 space-y-4 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-[var(--ink)]">
+            <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
               Field Defect Breakdown
             </h3>
-            <span className="label">13 Trap Detections</span>
+            <span className="text-[11px] font-semibold tracking-wider text-zinc-400 dark:text-zinc-500 uppercase">
+              13 Trap Detections
+            </span>
           </div>
 
           <div className="space-y-3.5 text-xs">
             <div>
               <div className="flex justify-between mb-1">
-                <span className="font-medium text-[var(--ink-2)]">Beneficiary Bank Override</span>
-                <span className="font-bold num text-[var(--defect)]">41%</span>
+                <span className="text-xs font-normal text-zinc-700 dark:text-zinc-300">Beneficiary Bank Override</span>
+                <span className="text-xs font-mono font-medium text-rose-600 dark:text-rose-400">41%</span>
               </div>
-              <div className="w-full h-2 rounded-full bg-[var(--surface-2)] overflow-hidden">
-                <div className="h-full bg-[var(--defect)] rounded-full" style={{ width: "41%" }} />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex justify-between mb-1">
-                <span className="font-medium text-[var(--ink-2)]">Account Number Desync</span>
-                <span className="font-bold num text-[var(--defect)]">23%</span>
-              </div>
-              <div className="w-full h-2 rounded-full bg-[var(--surface-2)] overflow-hidden">
-                <div className="h-full bg-[var(--defect)] rounded-full" style={{ width: "23%" }} />
+              <div className="w-full h-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
+                <div className="h-full bg-rose-500 rounded-full" style={{ width: "41%" }} />
               </div>
             </div>
 
             <div>
               <div className="flex justify-between mb-1">
-                <span className="font-medium text-[var(--ink-2)]">Spliced PDF Metadata (iLovePDF/Sejda)</span>
-                <span className="font-bold num text-[var(--review-ink)]">18%</span>
+                <span className="text-xs font-normal text-zinc-700 dark:text-zinc-300">Account Number Desync</span>
+                <span className="text-xs font-mono font-medium text-rose-600 dark:text-rose-400">23%</span>
               </div>
-              <div className="w-full h-2 rounded-full bg-[var(--surface-2)] overflow-hidden">
-                <div className="h-full bg-[var(--review)] rounded-full" style={{ width: "18%" }} />
-              </div>
-            </div>
-
-            <div>
-              <div className="flex justify-between mb-1">
-                <span className="font-medium text-[var(--ink-2)]">Domain Impersonation (Homoglyphs)</span>
-                <span className="font-bold num text-[var(--review-ink)]">12%</span>
-              </div>
-              <div className="w-full h-2 rounded-full bg-[var(--surface-2)] overflow-hidden">
-                <div className="h-full bg-[var(--review)] rounded-full" style={{ width: "12%" }} />
+              <div className="w-full h-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
+                <div className="h-full bg-rose-500 rounded-full" style={{ width: "23%" }} />
               </div>
             </div>
 
             <div>
               <div className="flex justify-between mb-1">
-                <span className="font-medium text-[var(--ink-2)]">Coercion / Artificial Urgency</span>
-                <span className="font-bold num text-[var(--ink-3)]">6%</span>
+                <span className="text-xs font-normal text-zinc-700 dark:text-zinc-300">Spliced PDF Metadata (iLovePDF/Sejda)</span>
+                <span className="text-xs font-mono font-medium text-amber-600 dark:text-amber-400">18%</span>
               </div>
-              <div className="w-full h-2 rounded-full bg-[var(--surface-2)] overflow-hidden">
-                <div className="h-full bg-[var(--color-muted)] rounded-full" style={{ width: "6%" }} />
+              <div className="w-full h-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
+                <div className="h-full bg-amber-500 rounded-full" style={{ width: "18%" }} />
+              </div>
+            </div>
+
+            <div>
+              <div className="flex justify-between mb-1">
+                <span className="text-xs font-normal text-zinc-700 dark:text-zinc-300">Domain Impersonation (Homoglyphs)</span>
+                <span className="text-xs font-mono font-medium text-amber-600 dark:text-amber-400">12%</span>
+              </div>
+              <div className="w-full h-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
+                <div className="h-full bg-amber-500 rounded-full" style={{ width: "12%" }} />
+              </div>
+            </div>
+
+            <div>
+              <div className="flex justify-between mb-1">
+                <span className="text-xs font-normal text-zinc-700 dark:text-zinc-300">Coercion / Artificial Urgency</span>
+                <span className="text-xs font-mono font-medium text-zinc-500 dark:text-zinc-400">6%</span>
+              </div>
+              <div className="w-full h-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
+                <div className="h-full bg-zinc-400 dark:bg-zinc-600 rounded-full" style={{ width: "6%" }} />
               </div>
             </div>
           </div>
         </section>
 
-        {/* Right: Threat Category Distribution */}
-        <section className="card p-6 space-y-4">
+        {/* Right: Category Distribution Card */}
+        <section className="rounded-xl border border-zinc-200/80 dark:border-white/10 bg-white dark:bg-[#11131a] p-5 space-y-4 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-[var(--ink)]">
+            <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
               Category Distribution
             </h3>
-            <span className="label">50 Inbound Claims</span>
+            <span className="text-[11px] font-semibold tracking-wider text-zinc-400 dark:text-zinc-500 uppercase">
+              50 Inbound Claims
+            </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 pt-1">
-            <div className="p-3.5 rounded-xl bg-[var(--surface-2)] border border-[var(--line)]">
-              <div className="label text-[10px]">Total Invoices</div>
-              <div className="text-2xl font-bold num text-[var(--ink)] mt-1">50</div>
-              <div className="text-[11px] text-[var(--ink-3)] mt-0.5">Automated queue</div>
+          <div className="grid grid-cols-2 gap-3 pt-0.5">
+            <div className="p-4 rounded-xl border border-zinc-200/80 dark:border-white/10 bg-zinc-50/50 dark:bg-[#0c0e14]">
+              <div className="text-[11px] font-semibold tracking-wider text-zinc-400 dark:text-zinc-500 uppercase">Total Invoices</div>
+              <div className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 mt-1">50</div>
+              <div className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">Automated queue</div>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-[var(--defect-tint)] border border-[var(--defect)]/20">
-              <div className="label text-[10px] text-[var(--defect)]">Locked Wire BEC</div>
-              <div className="text-2xl font-bold num text-[var(--defect)] mt-1">13</div>
-              <div className="text-[11px] text-[var(--defect)] mt-0.5">Payment frozen</div>
+            <div className="p-4 rounded-xl border border-rose-200/60 dark:border-rose-900/40 bg-rose-50/30 dark:bg-rose-950/20">
+              <div className="text-[11px] font-semibold tracking-wider text-rose-600 dark:text-rose-400 uppercase">Locked Wire BEC</div>
+              <div className="text-2xl font-semibold tracking-tight text-rose-600 dark:text-rose-400 mt-1">13</div>
+              <div className="text-xs text-rose-600/80 dark:text-rose-400/80 mt-0.5">Payment frozen</div>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-[var(--review-tint)] border border-[var(--review)]/20">
-              <div className="label text-[10px] text-[var(--review-ink)]">Needs Review</div>
-              <div className="text-2xl font-bold num text-[var(--review-ink)] mt-1">7</div>
-              <div className="text-[11px] text-[var(--review-ink)] mt-0.5">4-Eyes signoff</div>
+            <div className="p-4 rounded-xl border border-amber-200/60 dark:border-amber-900/40 bg-amber-50/30 dark:bg-amber-950/20">
+              <div className="text-[11px] font-semibold tracking-wider text-amber-600 dark:text-amber-400 uppercase">Needs Review</div>
+              <div className="text-2xl font-semibold tracking-tight text-amber-600 dark:text-amber-400 mt-1">7</div>
+              <div className="text-xs text-amber-600/80 dark:text-amber-400/80 mt-0.5">4-Eyes signoff</div>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-[var(--ok-tint)] border border-[var(--ok)]/20">
-              <div className="label text-[10px] text-[var(--ok)]">Verified Clean</div>
-              <div className="text-2xl font-bold num text-[var(--ok)] mt-1">30</div>
-              <div className="text-[11px] text-[var(--ok)] mt-0.5">Ledger parity matched</div>
+            <div className="p-4 rounded-xl border border-emerald-200/60 dark:border-emerald-900/40 bg-emerald-50/30 dark:bg-emerald-950/20">
+              <div className="text-[11px] font-semibold tracking-wider text-emerald-600 dark:text-emerald-400 uppercase">Verified Clean</div>
+              <div className="text-2xl font-semibold tracking-tight text-emerald-600 dark:text-emerald-400 mt-1">30</div>
+              <div className="text-xs text-emerald-600/80 dark:text-emerald-400/80 mt-0.5">Ledger parity matched</div>
             </div>
           </div>
         </section>
       </div>
 
-      {/* Bottom Card: SemakMule Integration Status */}
-      <div className="card p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Task 3: Bottom CCID SemakMule Card */}
+      <div className="rounded-xl border border-zinc-200/80 dark:border-white/10 bg-white dark:bg-[#11131a] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-[var(--ink)] text-[var(--paper)] flex items-center justify-center font-bold">
-            <Building2 size={18} />
+          <div className="w-9 h-9 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 flex items-center justify-center font-bold shrink-0">
+            <Building2 size={17} />
           </div>
           <div>
-            <div className="font-semibold text-xs text-[var(--ink)]">
+            <div className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">
               Royal Malaysia Police (PDRM) CCID SemakMule Blacklist
             </div>
-            <p className="text-[11px] text-[var(--ink-3)]">
+            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">
               Continuous bidirectional synchronisation with commercial mule account registry. Last sync 42 seconds ago.
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="pill pill-ok text-[11px]">Direct API Active</span>
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="rounded-full text-xs font-medium px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 inline-flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span>Direct API Active</span>
+          </span>
         </div>
       </div>
     </div>

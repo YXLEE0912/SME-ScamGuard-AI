@@ -74,9 +74,9 @@
   --rail-hover: rgba(31, 75, 142, 0.12);
   --rail-focus: #1f4b8e;
 
-  --radius-card: 14px;
-  --radius-control: 10px;
-  --radius-modal: 18px;
+  --radius-card: 12px;
+  --radius-control: 8px;
+  --radius-modal: 16px;
   --shadow-pop: 0 12px 32px rgba(15, 18, 37, 0.12);
 }
 
@@ -85,20 +85,28 @@
   color-scheme: dark;
 
   /* Deep true dark base surfaces */
-  --color-canvas: #090a0f;           /* True black canvas */
-  --color-surface: #11131a;          /* Charcoal dark card surface */
-  --color-surface-hover: #161a24;    /* Subtle hover elevation */
-  --color-surface-sunken: #0c0e14;   /* Recessed input / code block base */
+  --color-canvas: #090a0f;
+  /* True black canvas */
+  --color-surface: #11131a;
+  /* Charcoal dark card surface */
+  --color-surface-hover: #161a24;
+  /* Subtle hover elevation */
+  --color-surface-sunken: #0c0e14;
+  /* Recessed input / code block base */
 
   /* Hairline slate dividers */
   --color-line: rgba(173, 188, 205, 0.12);
   --color-line-strong: rgba(173, 188, 205, 0.22);
 
   /* High-contrast typography & accents */
-  --color-ink: #f8fafc;              /* Primary headers & metrics */
-  --color-ink-2: #cbd5e1;            /* Secondary body & descriptions */
-  --color-ink-3: #94a3b8;            /* Ice blue / slate labels & metadata */
-  --color-brand-accent: #3b82f6;     /* Active tabs, links & focus rings */
+  --color-ink: #f8fafc;
+  /* Primary headers & metrics */
+  --color-ink-2: #cbd5e1;
+  /* Secondary body & descriptions */
+  --color-ink-3: #94a3b8;
+  /* Ice blue / slate labels & metadata */
+  --color-brand-accent: #3b82f6;
+  /* Active tabs, links & focus rings */
   --color-accent: #3b82f6;
   --color-accent-hover: #60a5fa;
   --color-muted: #94a3b8;
@@ -175,9 +183,8 @@ table {
   border-collapse: collapse;
 }
 
-/* Monospace Tabular Numerals & High-Precision Technical IDs */
+/* Tabular Numerals (preserves clean unified grotesque sans-serif) */
 .num {
-  font-family: var(--font-mono), "JetBrains Mono", ui-monospace, monospace;
   font-variant-numeric: tabular-nums;
 }
 
@@ -186,17 +193,23 @@ table {
   font-size: 11px;
   line-height: 14px;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--ink-3);
 }
 
-/* Cards & Surfaces */
+/* Cards & Surfaces - Benchmark Hairline Architecture */
 .card {
   background: var(--surface);
-  border: 1px solid var(--line-strong);
+  border: 1px solid rgba(228, 228, 231, 0.8);
   border-radius: var(--radius-card);
-  box-shadow: 0 1px 3px rgba(15, 18, 37, 0.04);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.dark .card,
+[data-theme="dark"] .card {
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: none;
 }
 
 .card-head {

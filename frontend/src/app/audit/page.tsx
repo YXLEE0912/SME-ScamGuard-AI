@@ -15,6 +15,8 @@ export default function AuditTrailPage() {
   const [events, setEvents] = useState<AuditEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchFilter, setSearchFilter] = useState("");
+  const [actionFilter, setActionFilter] = useState("ALL");
+  const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
 
   // Ledger Upload State
   const [ledgerFile, setLedgerFile] = useState<File | null>(null);
@@ -31,7 +33,7 @@ export default function AuditTrailPage() {
         setEvents([
           {
             id: "evt_init01",
-            timestamp: new Date().toISOString().replace("T", " ").slice(0, 19) + " UTC",
+            timestamp: "Oct 31, 2026, 20:24:03 UTC",
             action: "System note",
             badge_color: "neutral",
             description: "Initialized enterprise verification cockpit session with 50 operational Malaysian invoices.",
@@ -44,7 +46,7 @@ export default function AuditTrailPage() {
       setEvents([
         {
           id: "evt_init01",
-          timestamp: new Date().toISOString().replace("T", " ").slice(0, 19) + " UTC",
+          timestamp: "Oct 31, 2026, 20:24:03 UTC",
           action: "System note",
           badge_color: "neutral",
           description: "Initialized enterprise verification cockpit session with 50 operational Malaysian invoices.",
@@ -82,16 +84,26 @@ export default function AuditTrailPage() {
     }
   };
 
-  const filteredEvents = events.filter((e) => {
-    if (!searchFilter.trim()) return true;
-    const q = searchFilter.toLowerCase();
-    return (
-      e.action.toLowerCase().includes(q) ||
-      e.description.toLowerCase().includes(q) ||
-      e.justification.toLowerCase().includes(q) ||
-      e.operator_id.toLowerCase().includes(q)
-    );
-  });
+  const filteredEvents = events
+    .filter((e) => {
+      if (actionFilter !== "ALL") {
+        if (!e.action.toLowerCase().includes(actionFilter.toLowerCase())) return false;
+      }
+      if (!searchFilter.trim()) return true;
+      const q = searchFilter.toLowerCase();
+      return (
+        e.action.toLowerCase().includes(q) ||
+        e.description.toLowerCase().includes(q) ||
+        e.justification.toLowerCase().includes(q) ||
+        e.operator_id.toLowerCase().includes(q)
+      );
+    })
+    .sort((a, b) => {
+      if (sortOrder === "oldest") {
+        return a.id.localeCompare(b.id);
+      }
+      return b.id.localeCompare(a.id);
+    });
 
   const handleExportCsv = () => {
     const headers = ["ID", "Timestamp", "Action", "Description", "Justification", "Operator ID"];
@@ -127,55 +139,92 @@ export default function AuditTrailPage() {
   };
 
   return (
-    <div className="grid gap-5">
-      {/* Subtitle */}
-      <div>
-        <p className="max-w-3xl text-[14px] text-[var(--ink-2)]">
-          Cryptographically chained, immutable audit trail of all operator actions, dual-authorization
-          approvals, wire freezes, and Master Procurement Ledger modifications.
-        </p>
+    <div className="space-y-4">
+      {/* Task 5: Page Header & Action Alignment (Match Image 6) */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
+              Audit trail
+            </h1>
+            <span className="font-mono text-xs text-zinc-500 dark:text-zinc-400 font-medium px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-white/10">
+              {events.length}
+            </span>
+          </div>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
+            Every correction, approval and escalation from this session, in order. Held in memory: export to keep a copy.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={handleExportCsv}
+            className="h-9 px-3.5 rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-[#11131a] text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-[#161a24] flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer"
+          >
+            <FileSpreadsheet size={13} className="text-emerald-600 dark:text-emerald-400" />
+            <span>Export CSV</span>
+          </button>
+          <button
+            type="button"
+            onClick={handleExportJson}
+            className="h-9 px-3.5 rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-[#11131a] text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-[#161a24] flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer"
+          >
+            <FileCode size={13} className="text-zinc-500 dark:text-zinc-400" />
+            <span>Export JSON</span>
+          </button>
+        </div>
       </div>
 
-      {/* Top Ledger Sync & Parity Cards */}
-      <div className="grid gap-5 lg:grid-cols-3">
+      {/* Task 5: Top Ledger Sync & Parity Cards */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Card 1: Ledger Status */}
-        <div className="card p-5 space-y-3">
+        <div className="rounded-xl border border-zinc-200/80 dark:border-white/10 p-5 bg-white dark:bg-[#11131a] shadow-[0_1px_2px_rgba(0,0,0,0.03)] space-y-3">
           <div className="flex items-center justify-between">
-            <span className="label">Master Ledger Health</span>
-            <span className="pill pill-ok text-[11px]">99.4% Parity</span>
+            <span className="text-[11px] font-semibold tracking-wider text-zinc-400 dark:text-zinc-500 uppercase">
+              Master Ledger Health
+            </span>
+            <span className="rounded-full text-[11px] font-medium px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+              99.4% Parity
+            </span>
           </div>
           <div>
-            <div className="text-2xl font-bold num text-[var(--ink)]">
+            <div className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
               40 Verified Vendors
             </div>
-            <p className="text-xs text-[var(--ink-3)] mt-1">
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
               Synchronized with AutoCount & SAP ERP banking directories.
             </p>
           </div>
         </div>
 
         {/* Card 2: Chain Integrity */}
-        <div className="card p-5 space-y-3">
+        <div className="rounded-xl border border-zinc-200/80 dark:border-white/10 p-5 bg-white dark:bg-[#11131a] shadow-[0_1px_2px_rgba(0,0,0,0.03)] space-y-3">
           <div className="flex items-center justify-between">
-            <span className="label">Forensic Chain Hash</span>
-            <span className="pill pill-ok text-[11px]">Verified</span>
+            <span className="text-[11px] font-semibold tracking-wider text-zinc-400 dark:text-zinc-500 uppercase">
+              Forensic Chain Hash
+            </span>
+            <span className="rounded-full text-[11px] font-medium px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+              Verified
+            </span>
           </div>
           <div>
-            <div className="text-xs font-mono text-[var(--ink-2)] truncate">
+            <div className="text-xs font-mono font-medium text-zinc-700 dark:text-zinc-300 truncate">
               SHA-256: 7f8a91b...4c2d89e1
             </div>
-            <p className="text-xs text-[var(--ink-3)] mt-1">
+            <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
               Tamper-evident HMAC signature verified across {events.length} logged events.
             </p>
           </div>
         </div>
 
-        {/* Card 3: Refactored Upload Sync */}
-        <div className="card p-5 flex flex-col justify-between">
+        {/* Card 3: Upload Sync */}
+        <div className="rounded-xl border border-zinc-200/80 dark:border-white/10 p-5 bg-white dark:bg-[#11131a] shadow-[0_1px_2px_rgba(0,0,0,0.03)] flex flex-col justify-between">
           <div>
-            <span className="label block mb-2.5">Sync Master Ledger CSV</span>
-            <form onSubmit={handleLedgerUpload} className="space-y-3">
-              {/* Visually hidden file input */}
+            <span className="text-[11px] font-semibold tracking-wider text-zinc-400 dark:text-zinc-500 uppercase block mb-2.5">
+              Sync Master Ledger CSV
+            </span>
+            <form onSubmit={handleLedgerUpload} className="space-y-2.5">
               <input
                 type="file"
                 id="csv-ledger-upload"
@@ -187,41 +236,42 @@ export default function AuditTrailPage() {
               {!ledgerFile ? (
                 <label
                   htmlFor="csv-ledger-upload"
-                  className="flex flex-col items-center justify-center gap-1.5 p-3.5 rounded-xl border border-dashed border-[var(--line-strong)] hover:border-slate-400 bg-[var(--surface-2)]/50 hover:bg-[var(--surface-2)] cursor-pointer transition-colors text-center select-none"
+                  className="flex flex-col items-center justify-center gap-1 p-3 rounded-lg border border-dashed border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-[#0c0e14] hover:bg-zinc-100/50 dark:hover:bg-[#161a24] cursor-pointer transition-colors text-center select-none"
                 >
-                  <UploadCloud size={20} className="text-[var(--ink-3)]" />
-                  <span className="text-xs font-medium text-[var(--ink)]">
-                    Click to select CSV or drag file here
+                  <UploadCloud size={18} className="text-zinc-400 dark:text-zinc-500" />
+                  <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+                    Select CSV or drag file
                   </span>
-                  <span className="text-[10px] text-[var(--ink-3)]">
+                  <span className="text-[10px] text-zinc-400 dark:text-zinc-500">
                     AutoCount / SAP Vendor Master export (.csv)
                   </span>
                 </label>
               ) : (
-                <div className="flex items-center justify-between p-2.5 rounded-xl border border-[var(--line-strong)] bg-[var(--surface-2)]">
+                <div className="flex items-center justify-between p-2 rounded-lg border border-zinc-200 dark:border-zinc-700 bg-zinc-50/50 dark:bg-[#0c0e14]">
                   <div className="flex items-center gap-2 min-w-0">
-                    <FileSpreadsheet size={16} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
-                    <span className="text-xs font-mono font-medium text-[var(--ink)] truncate">
+                    <FileSpreadsheet size={15} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+                    <span className="text-xs font-mono font-medium text-zinc-800 dark:text-zinc-200 truncate">
                       {ledgerFile.name}
                     </span>
                   </div>
                   <button
                     type="button"
                     onClick={() => setLedgerFile(null)}
-                    className="text-[var(--ink-3)] hover:text-[var(--ink)] p-1 rounded-md transition-colors"
+                    className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 p-0.5 rounded transition-colors"
                     title="Remove selected file"
                   >
-                    <X size={14} />
+                    <X size={13} />
                   </button>
                 </div>
               )}
 
               {ledgerStatus && (
                 <div
-                  className={`text-[11px] font-medium ${ledgerStatus.startsWith("Error")
-                      ? "text-[var(--defect)]"
+                  className={`text-[11px] font-medium ${
+                    ledgerStatus.startsWith("Error")
+                      ? "text-rose-600 dark:text-rose-400"
                       : "text-emerald-600 dark:text-emerald-400"
-                    }`}
+                  }`}
                 >
                   {ledgerStatus}
                 </div>
@@ -230,7 +280,7 @@ export default function AuditTrailPage() {
               <button
                 type="submit"
                 disabled={isUploadingLedger || !ledgerFile}
-                className="btn btn-primary w-full text-xs py-2.5 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-semibold rounded-lg shadow-xs"
+                className="w-full h-8 bg-zinc-900 hover:bg-zinc-800 text-white dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 text-xs rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shadow-xs"
               >
                 {isUploadingLedger ? "Synchronizing..." : "Upload & Sync Ledger"}
               </button>
@@ -239,104 +289,119 @@ export default function AuditTrailPage() {
         </div>
       </div>
 
-        {/* Search Bar & Filter Row: Optical alignment with flexible width, clean export buttons, and right-pinned event counter */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 w-full mt-6 mb-4">
-          {/* Search input (flexible left) */}
-          <div className="relative flex-1">
-            <Search
-              size={15}
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--ink-3)] pointer-events-none"
-            />
-            <input
-              type="text"
-              value={searchFilter}
-              onChange={(e) => setSearchFilter(e.target.value)}
-              placeholder="Search action, operator ID, or justification..."
-              className="h-10 w-full pl-10 pr-3.5 rounded-lg border border-[var(--line-strong)] bg-[var(--surface)] text-xs text-[var(--ink)] placeholder:text-[var(--ink-3)] focus:outline-none focus:border-[var(--focus)] transition-colors shadow-2xs"
-            />
-          </div>
-
-          {/* Action Controls & Event Counter */}
-          <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+      {/* Task 5: Audit Filter Bar (Match Image 6) */}
+      <div className="bg-white dark:bg-[#11131a] border border-zinc-200/80 dark:border-white/10 rounded-xl p-2 flex flex-wrap items-center gap-2 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+        <div className="relative flex-1 min-w-[220px]">
+          <Search
+            size={14}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500 pointer-events-none"
+          />
+          <input
+            type="text"
+            value={searchFilter}
+            onChange={(e) => setSearchFilter(e.target.value)}
+            placeholder="Search action, operator ID, description, justification..."
+            className="w-full h-9 bg-transparent border-0 pl-9 pr-8 text-xs text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 focus:outline-none"
+          />
+          {searchFilter && (
             <button
               type="button"
-              onClick={loadAuditData}
-              className="h-10 px-2.5 rounded-lg border border-[var(--line-strong)] bg-[var(--surface)] hover:bg-[var(--surface-2)] text-[var(--ink)] transition-colors flex items-center justify-center shadow-2xs cursor-pointer"
-              title="Refresh audit events"
+              onClick={() => setSearchFilter("")}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
+              aria-label="Clear search"
             >
-              <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} />
+              <X size={14} />
             </button>
-
-            <button
-              type="button"
-              onClick={handleExportCsv}
-              className="h-10 border border-[var(--line-strong)] bg-[var(--surface)] hover:bg-[var(--surface-2)] text-xs font-medium text-[var(--ink)] flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors shadow-2xs cursor-pointer"
-            >
-              <FileSpreadsheet size={14} className="text-emerald-600 dark:text-emerald-400" />
-              <span>Export CSV</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={handleExportJson}
-              className="h-10 border border-[var(--line-strong)] bg-[var(--surface)] hover:bg-[var(--surface-2)] text-xs font-medium text-[var(--ink)] flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors shadow-2xs cursor-pointer"
-            >
-              <FileCode size={14} className="text-[var(--ink-2)]" />
-              <span>Export JSON</span>
-            </button>
-
-            <span className="label text-xs font-semibold uppercase tracking-wider text-[var(--ink-3)] whitespace-nowrap ml-1">
-              {filteredEvents.length} Events Logged
-            </span>
-          </div>
+          )}
         </div>
 
-        {/* Audit Events Table */}
-        <div className="card overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="border-b border-[var(--line)] bg-[var(--surface-2)]">
-                  <th className="py-3 px-4 label">Timestamp (UTC)</th>
-                  <th className="py-3 px-4 label">Action Type</th>
-                  <th className="py-3 px-4 label">Event Description</th>
-                  <th className="py-3 px-4 label">Operator Justification</th>
-                  <th className="py-3 px-4 label text-right">Operator ID</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--line)] bg-[var(--surface)]">
-                {filteredEvents.map((evt) => (
-                  <tr key={evt.id} className="hover:bg-[var(--surface-2)] transition-colors">
-                    <td className="py-3 px-4 font-mono text-[11px] text-[var(--ink-3)] whitespace-nowrap">
-                      {evt.timestamp}
-                    </td>
-                    <td className="py-3 px-4 whitespace-nowrap">
-                      <span
-                        className={`pill text-[11px] ${evt.action.includes("Hold") || evt.action.includes("Threat")
-                            ? "pill-defect"
-                            : evt.action.includes("Release") || evt.action.includes("Approve")
-                              ? "pill-ok"
-                              : "pill-neutral"
-                          }`}
-                      >
+        <select
+          value={actionFilter}
+          onChange={(e) => setActionFilter(e.target.value)}
+          className="h-9 px-3 rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-[#11131a] text-xs font-medium text-zinc-700 dark:text-zinc-300 focus:outline-none cursor-pointer"
+        >
+          <option value="ALL">All Actions</option>
+          <option value="System note">System note</option>
+          <option value="Hold">Hold / Freeze Wire</option>
+          <option value="Release">Release Payment</option>
+          <option value="Ledger">Ledger Sync</option>
+          <option value="Override">Manual Override</option>
+        </select>
+
+        <button
+          type="button"
+          onClick={() => setSortOrder((prev) => (prev === "newest" ? "oldest" : "newest"))}
+          className="h-9 px-3 rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-[#11131a] text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-[#161a24] flex items-center gap-1.5 transition-colors cursor-pointer"
+        >
+          <span>{sortOrder === "newest" ? "⇅ Newest first" : "⇅ Oldest first"}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={loadAuditData}
+          className="h-9 w-9 rounded-lg border border-zinc-200 dark:border-white/10 bg-white dark:bg-[#11131a] hover:bg-zinc-50 dark:hover:bg-[#161a24] flex items-center justify-center text-zinc-600 dark:text-zinc-300 transition-colors cursor-pointer shadow-2xs"
+          title="Refresh audit events"
+        >
+          <RefreshCw size={13} className={isLoading ? "animate-spin" : ""} />
+        </button>
+      </div>
+
+      {/* Task 5: Audit Event Rows (Match Image 6) */}
+      <div className="rounded-xl border border-zinc-200/80 dark:border-white/10 bg-white dark:bg-[#11131a] overflow-hidden shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+        {filteredEvents.length === 0 ? (
+          <div className="py-12 text-center text-zinc-400 text-xs">
+            No audit events matching criteria.
+          </div>
+        ) : (
+          <div className="divide-y divide-zinc-100 dark:divide-white/5">
+            {filteredEvents.map((evt, idx) => {
+              const seqNum = sortOrder === "newest" ? filteredEvents.length - idx : idx + 1;
+              return (
+                <div
+                  key={evt.id}
+                  className="p-4 hover:bg-zinc-50/60 dark:hover:bg-[#161a24] transition-colors flex items-start gap-3.5"
+                >
+                  {/* Sequence Number */}
+                  <span className="font-mono text-xs text-zinc-400 dark:text-zinc-500 pt-0.5 select-none w-7 shrink-0">
+                    #{seqNum}
+                  </span>
+
+                  <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">
                         {evt.action}
                       </span>
-                    </td>
-                    <td className="py-3 px-4 text-[var(--ink)] font-medium max-w-md">
+                      <span className="font-mono text-xs text-zinc-400 dark:text-zinc-500">
+                        {evt.timestamp}
+                      </span>
+                      <span className="ml-auto font-mono text-[11px] text-zinc-400 dark:text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded border border-zinc-200/60 dark:border-white/5">
+                        {evt.operator_id}
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-zinc-700 dark:text-zinc-300 mt-1 leading-normal">
                       {evt.description}
-                    </td>
-                    <td className="py-3 px-4 text-[var(--ink-2)] max-w-xs truncate" title={evt.justification}>
-                      {evt.justification}
-                    </td>
-                    <td className="py-3 px-4 text-right font-mono text-[11px] text-[var(--ink-3)]">
-                      {evt.operator_id}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    </p>
+
+                    {evt.justification && (
+                      <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1 leading-normal">
+                        <span className="font-medium text-zinc-600 dark:text-zinc-400">Justification: </span>
+                        {evt.justification}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
+        )}
+
+        {/* Footer */}
+        <div className="py-2.5 px-4 bg-zinc-50/50 dark:bg-[#0c0e14] border-t border-zinc-200/80 dark:border-white/10 flex items-center justify-between text-[11px] text-zinc-500 dark:text-zinc-400 select-none">
+          <span>Showing {filteredEvents.length} of {events.length} audit events</span>
+          <span className="font-mono text-[10px]">Cryptographically chained ledger session</span>
         </div>
       </div>
-      );
+    </div>
+  );
 }

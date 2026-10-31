@@ -24,9 +24,9 @@ import UserAccountMenu from "./UserAccountMenu";
 import NewVerificationModal from "./NewVerificationModal";
 
 const NAV = [
-  { href: "/insights", label: "Insights", title: "AP Insights & Cockpit", icon: LayoutDashboard },
+  { href: "/insights", label: "Insights", title: "AP Insights", icon: LayoutDashboard },
   { href: "/queue", label: "Queue", title: "Verification queue", icon: Inbox },
-  { href: "/audit", label: "Audit", title: "Master Ledger & Audit Trail", icon: History },
+  { href: "/audit", label: "Audit", title: "Audit trail", icon: History },
 ];
 
 const RAIL = (compact: boolean) => (compact ? 68 : 240);
@@ -240,11 +240,10 @@ export function Shell({ children }: { children: React.ReactNode }) {
                   <Link
                     key={href}
                     href={href}
-                    className={`px-3.5 py-2 mx-2.5 rounded-lg text-xs font-medium flex items-center gap-2.5 transition-colors cursor-pointer ${
-                      on
+                    className={`px-3.5 py-2 mx-2.5 rounded-lg text-xs font-medium flex items-center gap-2.5 transition-colors cursor-pointer ${on
                         ? "bg-[#1f4b8e]/10 text-[#1f4b8e] dark:bg-[#1f4b8e]/20 dark:text-[#60a5fa] font-semibold"
                         : "text-slate-600 dark:text-slate-400 hover:text-[#0f1225] dark:hover:text-white hover:bg-slate-100/80 dark:hover:bg-white/5"
-                    } ${compact ? "justify-center !mx-2 !px-2" : ""}`}
+                      } ${compact ? "justify-center !mx-2 !px-2" : ""}`}
                     title={label}
                   >
                     <Icon size={16} className={`shrink-0 ${on ? "text-[#1f4b8e] dark:text-[#60a5fa]" : "text-slate-400"}`} />
@@ -308,7 +307,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             )}
 
             <div className="flex items-center gap-2">
-              <h1 className="text-[22px] sm:text-[24px] font-semibold leading-[30px] tracking-[-0.01em] text-[var(--ink)]">
+              <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
                 {pageTitle}
               </h1>
             </div>
@@ -498,8 +497,8 @@ export function Shell({ children }: { children: React.ReactNode }) {
                       href={href}
                       onClick={() => setDrawerOpen(false)}
                       className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${on
-                          ? "bg-[#1f4b8e]/10 text-[#1f4b8e] dark:bg-[#1f4b8e]/20 dark:text-[#60a5fa] font-semibold"
-                          : "text-slate-600 dark:text-slate-400 hover:text-[#0f1225] dark:hover:text-white hover:bg-slate-100/80 dark:hover:bg-white/5"
+                        ? "bg-[#1f4b8e]/10 text-[#1f4b8e] dark:bg-[#1f4b8e]/20 dark:text-[#60a5fa] font-semibold"
+                        : "text-slate-600 dark:text-slate-400 hover:text-[#0f1225] dark:hover:text-white hover:bg-slate-100/80 dark:hover:bg-white/5"
                         }`}
                     >
                       <Icon size={16} className={on ? "text-[#1f4b8e] dark:text-[#60a5fa]" : "text-slate-400"} />
