@@ -236,18 +236,18 @@ export default function CaseDetailPage() {
   return (
     <div className="grid gap-5">
       <HeaderActions>
-        <Link href="/" className="btn btn-sm btn-ghost">
-          <ArrowLeft size={14} />
-          <span>Queue</span>
-        </Link>
-        <button
-          type="button"
-          onClick={() => window.print()}
-          className="icon-btn"
-          title="Print Forensic Dossier"
-        >
-          <Printer size={15} />
-        </button>
+          <Link href="/queue" className="btn btn-sm btn-ghost">
+            <ArrowLeft size={14} />
+            <span>Queue</span>
+          </Link>
+          <button
+            type="button"
+            onClick={() => window.print()}
+            className="icon-btn"
+            title="Print Forensic Dossier"
+          >
+            <Printer size={15} />
+          </button>
       </HeaderActions>
 
       {/* Case Header Strip */}
@@ -347,8 +347,8 @@ export default function CaseDetailPage() {
             <div className="grid grid-cols-2 gap-3 text-xs">
               <div
                 className={`p-3 rounded-lg border ${clerkSigned
-                    ? "bg-[var(--ok-tint)] border-[var(--ok)]/30 text-[var(--ok)]"
-                    : "bg-[var(--surface-2)] border-[var(--line)] text-[var(--ink-3)]"
+                  ? "bg-[var(--ok-tint)] border-[var(--ok)]/30 text-[var(--ok)]"
+                  : "bg-[var(--surface-2)] border-[var(--line)] text-[var(--ink-3)]"
                   }`}
               >
                 <div className="font-bold flex items-center gap-1.5">
@@ -362,8 +362,8 @@ export default function CaseDetailPage() {
 
               <div
                 className={`p-3 rounded-lg border ${managerSigned
-                    ? "bg-[var(--ok-tint)] border-[var(--ok)]/30 text-[var(--ok)]"
-                    : "bg-[var(--surface-2)] border-[var(--line)] text-[var(--ink-3)]"
+                  ? "bg-[var(--ok-tint)] border-[var(--ok)]/30 text-[var(--ok)]"
+                  : "bg-[var(--surface-2)] border-[var(--line)] text-[var(--ink-3)]"
                   }`}
               >
                 <div className="font-bold flex items-center gap-1.5">

@@ -15,7 +15,6 @@ import {
   X,
 } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
-import KeyboardShortcutsHelp from "./KeyboardShortcutsHelp";
 import { uploadNewVerification, uploadMasterLedgerCsv } from "@/services/api";
 
 interface AppNavigationProps {
@@ -161,11 +160,10 @@ export function AppNavigation({
             <nav className="space-y-1">
               <Link
                 href="/queue"
-                className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-colors ${
-                  pathname === "/queue"
+                className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-colors ${pathname === "/queue"
                     ? "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold"
                     : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-slate-200"
-                }`}
+                  }`}
               >
                 <div className="flex items-center gap-2.5">
                   <Inbox size={14} />
@@ -178,11 +176,10 @@ export function AppNavigation({
 
               <Link
                 href="/"
-                className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-colors ${
-                  pathname === "/"
+                className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-colors ${pathname === "/"
                     ? "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold"
                     : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-slate-200"
-                }`}
+                  }`}
               >
                 <div className="flex items-center gap-2.5">
                   <ShieldCheck size={14} />
@@ -192,11 +189,10 @@ export function AppNavigation({
 
               <Link
                 href="/audit"
-                className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-colors ${
-                  pathname === "/audit"
+                className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-colors ${pathname === "/audit"
                     ? "bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold"
                     : "text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-slate-200"
-                }`}
+                  }`}
               >
                 <div className="flex items-center gap-2.5">
                   <History size={14} />
@@ -266,10 +262,10 @@ export function AppNavigation({
               {pathname === "/queue"
                 ? "Accounts Payable Verification Queue"
                 : pathname === "/audit"
-                ? "Cryptographic AP Audit Trail"
-                : pathname.startsWith("/queue/")
-                ? "Forensic Discrepancy & Parity Dossier"
-                : "Accounts Payable Financial Cockpit"}
+                  ? "Cryptographic AP Audit Trail"
+                  : pathname.startsWith("/queue/")
+                    ? "Forensic Discrepancy & Parity Dossier"
+                    : "Accounts Payable Financial Cockpit"}
             </h1>
             <span className="hidden sm:inline-block text-[11px] text-slate-400">
               Continuous 3-way matching vs Master Procurement Ledger
@@ -277,7 +273,6 @@ export function AppNavigation({
           </div>
 
           <div className="flex items-center gap-2">
-            <KeyboardShortcutsHelp />
             <ThemeToggle />
 
             <button

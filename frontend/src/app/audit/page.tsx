@@ -6,6 +6,8 @@ import {
   FileCode,
   RefreshCw,
   Search,
+  UploadCloud,
+  X,
 } from "lucide-react";
 import { AuditEvent, fetchAuditTrail, uploadMasterLedgerCsv } from "@/services/api";
 import { HeaderActions } from "@/components/shell/Shell";
@@ -198,72 +200,123 @@ export default function AuditTrailPage() {
           </div>
         </div>
 
-        {/* Card 3: Upload Sync */}
-        <div className="card p-5">
-          <span className="label block mb-2">Sync Master Ledger CSV</span>
-          <form onSubmit={handleLedgerUpload} className="space-y-2">
-            <input
-              type="file"
-              accept=".csv"
-              onChange={(e) => setLedgerFile(e.target.files?.[0] || null)}
-              className="field w-full pt-1 text-xs file:mr-2 file:py-0.5 file:px-2 file:rounded file:border-0 file:text-[11px] file:bg-slate-900 file:text-white"
-            />
-            {ledgerStatus && (
-              <div className="text-[11px] text-[var(--ink-2)]">{ledgerStatus}</div>
-            )}
-            <button
-              type="submit"
-              disabled={isUploadingLedger || !ledgerFile}
-              className="btn btn-sm btn-primary w-full text-xs"
-            >
-              {isUploadingLedger ? "Synchronizing..." : "Upload & Sync Ledger"}
-            </button>
-          </form>
-        </div>
-      </div>
+          {/* Card 3: Refactored Upload Sync */}
+          <div className="card p-5 flex flex-col justify-between">
+            <div>
+              <span className="label block mb-2.5">Sync Master Ledger CSV</span>
+              <form onSubmit={handleLedgerUpload} className="space-y-3">
+                {/* Visually hidden file input */}
+                <input
+                  type="file"
+                  id="csv-ledger-upload"
+                  accept=".csv"
+                  onChange={(e) => setLedgerFile(e.target.files?.[0] || null)}
+                  className="sr-only"
+                />
 
-      {/* Filter and Event Count */}
-      <div className="flex items-center justify-between gap-3">
-        <div className="relative flex-1 max-w-md">
-          <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--ink-3)]" />
-          <input
-            type="text"
-            value={searchFilter}
-            onChange={(e) => setSearchFilter(e.target.value)}
-            placeholder="Search action, operator ID, or justification..."
-            className="field w-full pl-9 text-xs"
-          />
-        </div>
-        <span className="label">{filteredEvents.length} Events Logged</span>
-      </div>
+                {!ledgerFile ? (
+                  <label
+                    htmlFor="csv-ledger-upload"
+                    className="flex flex-col items-center justify-center gap-1.5 p-3.5 rounded-xl border border-dashed border-[var(--line-strong)] hover:border-slate-400 bg-[var(--surface-2)]/50 hover:bg-[var(--surface-2)] cursor-pointer transition-colors text-center select-none"
+                  >
+                    <UploadCloud size={20} className="text-[var(--ink-3)]" />
+                    <span className="text-xs font-medium text-[var(--ink)]">
+                      Click to select CSV or drag file here
+                    </span>
+                    <span className="text-[10px] text-[var(--ink-3)]">
+                      AutoCount / SAP Vendor Master export (.csv)
+                    </span>
+                  </label>
+                ) : (
+                  <div className="flex items-center justify-between p-2.5 rounded-xl border border-[var(--line-strong)] bg-[var(--surface-2)]">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <FileSpreadsheet size={16} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+                      <span className="text-xs font-mono font-medium text-[var(--ink)] truncate">
+                        {ledgerFile.name}
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setLedgerFile(null)}
+                      className="text-[var(--ink-3)] hover:text-[var(--ink)] p-1 rounded-md transition-colors"
+                      title="Remove selected file"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                )}
 
-      {/* Audit Events Table */}
-      <div className="card overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="border-b border-[var(--line)] bg-[var(--surface-2)]">
-                <th className="py-3 px-4 label">Timestamp (UTC)</th>
-                <th className="py-3 px-4 label">Action Type</th>
-                <th className="py-3 px-4 label">Event Description</th>
-                <th className="py-3 px-4 label">Operator Justification</th>
-                <th className="py-3 px-4 label text-right">Operator ID</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[var(--line)] bg-[var(--surface)]">
-              {filteredEvents.map((evt) => (
+                {ledgerStatus && (
+                  <div
+                    className={`text-[11px] font-medium ${ledgerStatus.startsWith("Error")
+                        ? "text-[var(--defect)]"
+                        : "text-emerald-600 dark:text-emerald-400"
+                      }`}
+                  >
+                    {ledgerStatus}
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={isUploadingLedger || !ledgerFile}
+                  className="btn btn-primary w-full text-xs py-2.5 bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-semibold rounded-lg shadow-xs"
+                >
+                  {isUploadingLedger ? "Synchronizing..." : "Upload & Sync Ledger"}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+          {/* Search Bar & Filter Row: Optical alignment with consistent h-10, px-3.5, rounded-lg and mt-6 mb-4 spacing */}
+          <div className="flex items-center justify-between gap-4 mt-6 mb-4">
+            <div className="relative flex-1 max-w-md">
+              <Search
+                size={15}
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--ink-3)] pointer-events-none"
+              />
+              <input
+                type="text"
+                value={searchFilter}
+                onChange={(e) => setSearchFilter(e.target.value)}
+                placeholder="Search action, operator ID, or justification..."
+                className="h-10 w-full pl-10 pr-3.5 rounded-lg border border-[var(--line-strong)] bg-[var(--surface)] text-xs text-[var(--ink)] placeholder:text-[var(--ink-3)] focus:outline-none focus:border-[var(--focus)] transition-colors shadow-2xs"
+              />
+            </div>
+            <span className="label text-xs font-semibold uppercase tracking-wider text-[var(--ink-3)] whitespace-nowrap">
+              {filteredEvents.length} Events Logged
+            </span>
+          </div>
+
+          {/* Audit Events Table */}
+          <div className="card overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-[var(--line)] bg-[var(--surface-2)]">
+                    <th className="py-3 px-4 label">Timestamp (UTC)</th>
+                    <th className="py-3 px-4 label">Action Type</th>
+                    <th className="py-3 px-4 label">Event Description</th>
+                    <th className="py-3 px-4 label">Operator Justification</th>
+                    <th className="py-3 px-4 label text-right">Operator ID</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--line)] bg-[var(--surface)]">
+                  {filteredEvents.map((evt) => (
                 <tr key={evt.id} className="hover:bg-[var(--surface-2)] transition-colors">
                   <td className="py-3 px-4 font-mono text-[11px] text-[var(--ink-3)] whitespace-nowrap">
                     {evt.timestamp}
                   </td>
                   <td className="py-3 px-4 whitespace-nowrap">
                     <span
-                      className={`pill text-[11px] ${evt.action.includes("Hold") || evt.action.includes("Threat")
+                      className={`pill text-[11px] ${
+                        evt.action.includes("Hold") || evt.action.includes("Threat")
                           ? "pill-defect"
                           : evt.action.includes("Release") || evt.action.includes("Approve")
-                            ? "pill-ok"
-                            : "pill-neutral"
-                        }`}
+                          ? "pill-ok"
+                          : "pill-neutral"
+                      }`}
                     >
                       {evt.action}
                     </span>
@@ -279,10 +332,10 @@ export default function AuditTrailPage() {
                   </td>
                 </tr>
               ))}
-            </tbody>
-          </table>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
-  );
+      );
 }
