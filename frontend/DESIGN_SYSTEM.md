@@ -203,8 +203,6 @@ The horizontal risk score gauge renders an inline track (`w-14 h-1.5 rounded-ful
 6. **NO Monospace Font on General UI**: Monospace (`font-mono`) must never be applied to general headings, metrics, button text, or vendor titles. It is strictly for technical IDs, hashes, and timestamps.
 7. **NO Tampering with Fraud Triage Colors**: Never modify or theme the semantic Emerald, Amber, and Rose tokens used for security verification states.
 
-
-
 ---
 
 <p align="center">

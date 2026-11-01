@@ -340,5 +340,3 @@ The Right-Hand Decision Panel (`/case/[id]`) implements an explicit finite state
   <b>🛡️ SME-ScamGuard-AI</b><br>
   <i>AI-Assisted · Deterministic by Design · Human-Controlled</i>
 </p>
-
-

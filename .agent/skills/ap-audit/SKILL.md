@@ -143,7 +143,6 @@ Every invoice evaluation emits a structured schema conforming to:
 }
 ```
 
-
 ---
 
 <p align="center">

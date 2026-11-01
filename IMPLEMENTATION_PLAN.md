@@ -276,8 +276,6 @@ This blueprint specifies the end-to-end engineering tasks required to build, ver
 - **Failure Mode & Isolation**:
   - All network listener failures, expired tokens, or API rate limits must fail gracefully without disrupting the offline file ingestion and manual verification workflows.
 
-
-
 ---
 
 <p align="center">
