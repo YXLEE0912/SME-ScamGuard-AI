@@ -9,12 +9,13 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL("/login?error=" + encodeURIComponent(error), request.url));
   }
 
-  // In production, exchange code with https://oauth2.googleapis.com/token
+  // In production, exchange authorization code with https://oauth2.googleapis.com/token
   // If code is present, establish authorized live session and redirect
+  const mode = code ? "google_connected" : "demo";
   const response = NextResponse.redirect(
-    new URL("/?mode=google_connected&auth=success", request.url)
+    new URL(`/?mode=${mode}&auth=success`, request.url)
   );
-  
+
   response.cookies.set("scamguard_oauth_active", "true", {
     path: "/",
     httpOnly: false,

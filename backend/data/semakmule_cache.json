@@ -1,7 +1,7 @@
 {
   "source": "Royal Malaysia Police (PDRM) CCID SemakMule Financial Fraud Registry",
-  "last_updated": "2026-10-07T00:00:00Z",
-  "records_count": 7,
+  "last_updated": "2026-10-31T15:12:21.111807+00:00",
+  "records_count": 8,
   "blacklisted_accounts": [
     {
       "account_no": "111222333444",
@@ -51,6 +51,25 @@
       "report_count": 12,
       "category": "Procurement Tamper Node",
       "status": "FROZEN_POLICE_ORDER"
+    },
+    {
+      "account_no": "514012999999",
+      "bank_name": "MAYBANK",
+      "report_count": 1,
+      "category": "INVOICE_REDIRECT_SCAM",
+      "status": "CONFIRMED_FRAUD_MULE"
     }
-  ]
+  ],
+  "records": [
+    {
+      "account_no": "514012999999",
+      "bank_name": "MAYBANK",
+      "police_reports_count": 1,
+      "status": "CONFIRMED_FRAUD_MULE",
+      "category": "INVOICE_REDIRECT_SCAM",
+      "source": "https://www.bharian.com.my/berita/kes/2026/10/pdrm-mule-alert",
+      "ingested_at": "2026-10-31T15:12:21.075987+00:00"
+    }
+  ],
+  "updated_at": "2026-10-31T15:12:21.111807+00:00"
 }
