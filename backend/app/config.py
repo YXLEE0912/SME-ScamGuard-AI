@@ -15,6 +15,9 @@ SUSPICIOUS_PRODUCERS = [
 
 # PDRM CCID SemakMule known commercial mule accounts (In-memory threat cache)
 KNOWN_SEMAKMULE_ACCOUNTS: Set[str] = {
+    "111222333444",
+    "888800001111",
+    "999888777666",
     "1410029000123456",
     "800944112299",
     "214488990011",

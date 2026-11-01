@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { ArrowRight, Building2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { fetchQueueMetrics, QueueMetrics } from "@/services/api";
 
 export default function InsightsPage() {
@@ -196,29 +196,6 @@ export default function InsightsPage() {
             </div>
           </div>
         </section>
-      </div>
-
-      {/* Task 3: Bottom CCID SemakMule Card */}
-      <div className="rounded-xl border border-zinc-200/80 dark:border-white/10 bg-white dark:bg-[#11131a] p-5 shadow-[0_1px_2px_rgba(0,0,0,0.03)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 flex items-center justify-center font-bold shrink-0">
-            <Building2 size={17} />
-          </div>
-          <div>
-            <div className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">
-              Royal Malaysia Police (PDRM) CCID SemakMule Blacklist
-            </div>
-            <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-0.5">
-              Continuous bidirectional synchronisation with commercial mule account registry. Last sync 42 seconds ago.
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="rounded-full text-xs font-medium px-2.5 py-1 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 inline-flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span>Direct API Active</span>
-          </span>
-        </div>
       </div>
     </div>
   );

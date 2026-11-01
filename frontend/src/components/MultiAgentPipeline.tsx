@@ -974,7 +974,7 @@ export function MultiAgentPipeline({
                   OSINT Police Threat Intelligence Ingestion
                 </span>
                 <span className="bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-[11px] font-mono px-2 py-0.5 rounded">
-                  PDRM CCID SemakMule
+                  OSINT Threat Ingestion Synced
                 </span>
                 {agent7Status === "DEFECT" ? (
                   <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950/40 dark:text-rose-400 dark:border-rose-800">
@@ -986,7 +986,7 @@ export function MultiAgentPipeline({
                   </span>
                 ) : (
                   <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800">
-                    ✓ Clean Police Database Query
+                    ✓ No matching syndicate or mule accounts identified in current verified intelligence snapshot.
                   </span>
                 )}
               </div>
@@ -1015,7 +1015,7 @@ export function MultiAgentPipeline({
                         : "514012998877 (Maybank) · 0 Commercial Police Reports"}
                     </p>
                     <span className="text-[11px] text-slate-500">
-                      Direct CCID commercial blacklist API query validated at runtime.
+                      Account evaluated against local threat cache hydrated by Agent 7 (Gemini 2.5 Flash unstructured PDRM advisory extraction via POST /api/v1/intel/ingest-police-alert).
                     </span>
                   </div>
 
@@ -1042,7 +1042,7 @@ export function MultiAgentPipeline({
                       ? "Below 85: PDRM CCID SemakMule hit flagged"
                       : agent7Status === "NEEDS_REVIEW"
                         ? "Below 85: vendor telephone unverified in police registry"
-                        : "100: zero commercial fraud reports in police registry",
+                        : "No matching syndicate or mule accounts identified in current verified intelligence snapshot.",
                   onCorrect: () =>
                     handleOpenOverride({
                       agentNumber: 7,
