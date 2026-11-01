@@ -44,7 +44,7 @@ interface UnifiedCase {
   certaintyConfidence: number;
   category: string;
   threatCategory?: string;
-  status: "VERIFIED" | "NEEDS_REVIEW" | "DEFECT" | "RESOLVED";
+  status: "VERIFIED" | "NEEDS_REVIEW" | "DEFECT" | "LOCKED_CRITICAL" | "RESOLVED";
   reasoning: string;
   files: string[];
   comparison: Record<string, ComparisonFieldData>;
@@ -78,15 +78,15 @@ export default function CaseDetailPage() {
   };
 
   const adaptDemoInvoice = useCallback((raw: DemoInvoice) => {
-    const isDefect = raw.status === "DEFECT" || raw.status === "LOCKED_CRITICAL" || raw.risk_score >= 80;
-    const isReview = raw.status === "NEEDS_REVIEW" || (raw.risk_score > 20 && raw.risk_score < 80);
-    const isApproved = raw.is_approved === true || raw.status === "VERIFIED";
+    const isApproved = raw.is_approved === true || raw.status === "VERIFIED" || (raw as unknown as Record<string, unknown>).decision === "PAYMENT_RELEASED";
+    const isDefect = !isApproved && (raw.status === "DEFECT" || raw.status === "LOCKED_CRITICAL" || raw.risk_score >= 80);
+    const isReview = !isApproved && !isDefect && (raw.status === "NEEDS_REVIEW" || (raw.risk_score > 20 && raw.risk_score < 80));
 
     if (isApproved) {
       setVoucherReleased(true);
       setClerkSigned(true);
       setManagerSigned(true);
-    } else if (raw.status === "LOCKED_CRITICAL" || raw.is_escalated) {
+    } else if (raw.status === "LOCKED_CRITICAL" || raw.is_escalated || (raw as unknown as Record<string, unknown>).decision === "PAYMENT_LOCKED") {
       setClerkSigned(true);
     }
 
@@ -115,15 +115,17 @@ export default function CaseDetailPage() {
       amountMyr: parsedAmt,
       receivedDate: raw.received_date,
       emailBody,
-      producerTool: rawWithBody.producer_tool || (isDefect ? "iLovePDF Spliced (Binary Desync)" : "AutoCount ERP / Acrobat Pro"),
-      riskScore: raw.risk_score,
+      producerTool: rawWithBody.producer_tool || (isApproved ? "AutoCount ERP / Acrobat Pro" : isDefect ? "iLovePDF Spliced (Binary Desync)" : "AutoCount ERP / Acrobat Pro"),
+      riskScore: isApproved ? 0 : raw.risk_score,
       certaintyConfidence: rawWithBody.certainty_confidence || (isDefect ? 98 : 96),
       category: raw.category || "General Procurement",
-      threatCategory: raw.category || (isDefect ? "BEC Wire Scam" : "Routine Billing"),
-      status: isDefect ? "DEFECT" : isReview ? "NEEDS_REVIEW" : "VERIFIED",
-      reasoning: raw.banner_message || (isDefect
-        ? "Discrepancy Trap: Inbound payment remittance details contradict Master Procurement Ledger baseline."
-        : "All verified fields match the Master Procurement Ledger with 100% confidence."),
+      threatCategory: raw.category || (isApproved ? "Routine Billing" : isDefect ? "BEC Wire Scam" : "Routine Billing"),
+      status: isApproved ? "VERIFIED" : (raw.status === "LOCKED_CRITICAL" ? "LOCKED_CRITICAL" : (isDefect ? "DEFECT" : isReview ? "NEEDS_REVIEW" : "VERIFIED")),
+      reasoning: isApproved
+        ? "Dual 4-Eyes authorization committed. Payment voucher released."
+        : (raw.banner_message || (isDefect
+          ? "Discrepancy Trap: Inbound payment remittance details contradict Master Procurement Ledger baseline."
+          : "All verified fields match the Master Procurement Ledger with 100% confidence.")),
       files,
       comparison: comp,
     });
@@ -147,7 +149,10 @@ export default function CaseDetailPage() {
   }, [caseId, adaptDemoInvoice]);
 
   useEffect(() => {
-    loadRecord();
+    const timer = setTimeout(() => {
+      loadRecord();
+    }, 0);
+    return () => clearTimeout(timer);
   }, [loadRecord]);
 
   const handleHoldWire = async (reason: string) => {
@@ -202,6 +207,7 @@ export default function CaseDetailPage() {
       producer_tool: invoice.producerTool,
       audit_source: "Master Procurement Ledger Parity Engine",
       sha256_fingerprint: "8f4a13b9c7028e1d5e6a9928f01b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b",
+      comparison_fields: invoice.comparison,
     };
   }, [invoice]);
 
@@ -402,37 +408,50 @@ export default function CaseDetailPage() {
             </div>
 
             <div className="space-y-2 pt-1">
-              <button
-                type="button"
-                onClick={handleReleasePayment}
-                disabled={voucherReleased}
-                className="w-full bg-[#0f1225] text-white hover:bg-[#1f4b8e] transition-colors font-medium py-2.5 rounded-lg text-xs disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
-              >
-                <CheckCircle2 size={14} />
-                <span>{voucherReleased ? "Payment Authorized" : "Approve & Authorize Payment"}</span>
-              </button>
+              {(voucherReleased || invoice.status === "VERIFIED") ? (
+                <div className="w-full py-2.5 px-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 font-semibold text-xs flex items-center justify-center gap-2 shadow-2xs select-none">
+                  <CheckCircle2 size={15} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+                  <span>✓ Payment Authorized & Released</span>
+                </div>
+              ) : (invoice.status === "LOCKED_CRITICAL" || (clerkSigned && invoice.status === "DEFECT")) ? (
+                <div className="w-full py-2.5 px-3 rounded-lg bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 font-semibold text-xs flex items-center justify-center gap-2 shadow-2xs select-none">
+                  <span className="text-sm">🔒</span>
+                  <span>Wire Frozen & Dossier Synthesized</span>
+                </div>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={handleReleasePayment}
+                    className="w-full bg-[#0f1225] text-white hover:bg-[#1f4b8e] transition-colors font-medium py-2.5 rounded-lg text-xs flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
+                  >
+                    <CheckCircle2 size={14} />
+                    <span>Approve & Authorize Payment</span>
+                  </button>
 
-              <button
-                type="button"
-                onClick={() => handleHoldWire("Unauthorized bank account desync flagged.")}
-                className="w-full border border-amber-300 dark:border-amber-800 text-amber-700 dark:text-amber-400 bg-amber-50/60 hover:bg-amber-100/60 dark:bg-amber-950/30 dark:hover:bg-amber-900/40 py-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-              >
-                <Flag size={14} />
-                <span>Escalate / Freeze Wire</span>
-              </button>
+                  <button
+                    type="button"
+                    onClick={() => handleHoldWire("Unauthorized bank account desync flagged.")}
+                    className="w-full border border-amber-300 dark:border-amber-800 text-amber-700 dark:text-amber-400 bg-amber-50/60 hover:bg-amber-100/60 dark:bg-amber-950/30 dark:hover:bg-amber-900/40 py-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  >
+                    <Flag size={14} />
+                    <span>Escalate / Freeze Wire</span>
+                  </button>
+                </>
+              )}
             </div>
 
             <div className="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-1.5 text-[11px]">
               <div className="flex items-center justify-between text-slate-600 dark:text-slate-300">
                 <span>Clerk Sign-off:</span>
-                <span className={`font-mono font-medium ${clerkSigned ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400"}`}>
-                  {clerkSigned ? "Signed (Alex Tan)" : "Pending"}
+                <span className={`font-mono font-medium ${clerkSigned || invoice.status === "VERIFIED" ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400"}`}>
+                  {clerkSigned || invoice.status === "VERIFIED" ? "Signed (AP-CLERK-MY01)" : "Pending"}
                 </span>
               </div>
               <div className="flex items-center justify-between text-slate-600 dark:text-slate-300">
                 <span>Manager Approval:</span>
-                <span className={`font-mono font-medium ${managerSigned ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400"}`}>
-                  {managerSigned ? "Signed (Controller)" : "Pending"}
+                <span className={`font-mono font-medium ${managerSigned || invoice.status === "VERIFIED" ? "text-emerald-600 dark:text-emerald-400" : (invoice.status === "LOCKED_CRITICAL" ? "text-rose-600 dark:text-rose-400" : "text-slate-400")}`}>
+                  {managerSigned || invoice.status === "VERIFIED" ? "Approved (Controller)" : (invoice.status === "LOCKED_CRITICAL" ? "Frozen (Controller)" : "Pending")}
                 </span>
               </div>
             </div>

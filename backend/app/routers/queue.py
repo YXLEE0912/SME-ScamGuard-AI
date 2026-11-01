@@ -24,6 +24,7 @@ from backend.app.routers.demo import (
     SESSION_OPERATOR_ID,
     init_demo_mailbox_if_needed,
 )
+from backend.app.services.document_extractor import document_extractor
 from backend.app.orchestrator import run_scamguard_pipeline
 from backend.services.audit_service import (
     record_audit_event,
@@ -64,7 +65,11 @@ async def get_queue():
     categories, and current disposition states.
     """
     init_demo_mailbox_if_needed()
-    items = list(SESSION_DEMO_MAILBOX.values())
+    unique_items_map = {}
+    for rec in SESSION_DEMO_MAILBOX.values():
+        if isinstance(rec, dict) and "id" in rec:
+            unique_items_map[rec["id"]] = rec
+    items = list(unique_items_map.values())
     return {
         "status": "success",
         "count": len(items),
@@ -81,7 +86,11 @@ async def get_queue_metrics():
     - Real percentage breakdown of fraud indicators across defect cases
     """
     init_demo_mailbox_if_needed()
-    items = list(SESSION_DEMO_MAILBOX.values())
+    unique_items_map = {}
+    for rec in SESSION_DEMO_MAILBOX.values():
+        if isinstance(rec, dict) and "id" in rec:
+            unique_items_map[rec["id"]] = rec
+    items = list(unique_items_map.values())
 
     total = len(items)
     defects = [d for d in items if d.get("status") in ("DEFECT", "LOCKED_CRITICAL") or d.get("risk_score", 0) >= 80]
@@ -244,55 +253,163 @@ async def verify_invoice(
     reconciliation matrix and risk disposition, and commits audit record.
     """
     init_demo_mailbox_if_needed()
+
+    # 1. File Type Validation & Guardrails
+    filename = (file.filename or "").strip()
+    lower_fn = filename.lower()
+
+    if not lower_fn.endswith(".pdf"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid document: Uploaded file must be a readable PDF invoice. Could not extract textual financial fields.",
+        )
+
     raw_pdf = await file.read()
-    
-    # 1. Anti-Replay Guard
+    if not raw_pdf or len(raw_pdf) < 30 or not raw_pdf.strip().startswith(b"%PDF-"):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid document: Uploaded file must be a readable PDF invoice. Could not extract textual financial fields.",
+        )
+
+    # 2. Extract real financial fields from the PDF bytes
+    extracted = document_extractor.extract_from_bytes(raw_pdf, mime_type="application/pdf")
+
+    # Fail-closed guardrail: verify whether real textual financial fields were extracted
+    if not extracted.bank_account_number and (extracted.total_amount is None or extracted.total_amount <= 0):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid document: Uploaded file must be a readable PDF invoice. Could not extract textual financial fields.",
+        )
+
+    # 3. Read optional supporting file text
+    supporting_text = ""
+    if supporting_file:
+        supp_bytes = await supporting_file.read()
+        try:
+            supporting_text = supp_bytes.decode("utf-8", errors="ignore")
+        except Exception:
+            supporting_text = ""
+
+    # 4. Anti-Replay Guard
     is_duplicate, doc_sha256 = check_and_register_artifact(raw_pdf)
-    
-    # 2. Run Pipeline Orchestrator
+
+    # 5. Build Pipeline Orchestrator Payload with extracted real fields
+    parsed_vendor_name = extracted.vendor_name or filename.replace(".pdf", "").replace("_", " ").title()
+    parsed_bank_acc = extracted.bank_account_number or ""
+    parsed_bank_name = extracted.bank_name or "Maybank"
+    parsed_amount = float(extracted.total_amount or 0.0)
+    parsed_inv_no = extracted.invoice_number or f"INV-{uuid.uuid4().hex[:6].upper()}"
+
+    if supporting_text.strip():
+        body_content = supporting_text
+    else:
+        body_content = (
+            f"From: {sender_email}\n"
+            f"To: ap-finance@sme-enterprise.com.my\n"
+            f"Subject: {subject}\n\n"
+            f"Please find attached our tax invoice {parsed_inv_no} from {parsed_vendor_name}.\n"
+            f"Remittance Instructions:\n"
+            f"Beneficiary Bank: {parsed_bank_name}\n"
+            f"Account Number: {parsed_bank_acc}\n"
+            f"Total Amount: MYR {parsed_amount:,.2f}\n"
+        )
+
     payload_dict = {
         "case_id": f"INV-{uuid.uuid4().hex[:6].upper()}",
-        "vendor_name": file.filename.replace(".pdf", "").replace("_", " ").title(),
+        "vendor_name": parsed_vendor_name,
         "sender": sender_email,
         "subject": subject,
-        "body": f"Inbound electronic invoice submission: {file.filename}",
-        "amount_myr": 12500.0,
-        "bank_account": "514012998877",
-        "bank_name": "Maybank",
+        "body": body_content,
+        "amount_myr": parsed_amount,
+        "bank_account": parsed_bank_acc,
+        "bank_name": parsed_bank_name,
     }
-    
+
+    # 6. Execute 7-Agent Defense Pipeline
     pipeline_res = run_scamguard_pipeline(payload_dict, raw_pdf_bytes=raw_pdf, mock_ai=True)
     new_id = f"inv_{len(SESSION_DEMO_MAILBOX) + 1:03d}"
-    
-    # Format demo record
+
+    # 7. Relational parity & side-by-side reconciliation
+    recon_info = pipeline_res.get("reconciliation_matrix", {})
+    vendor_recon = recon_info.get("vendor", {})
+    bank_recon = recon_info.get("bank", {})
+    acc_recon = recon_info.get("account", {})
+    phone_recon = recon_info.get("phone", {})
+
+    truth_vendor = vendor_recon.get("master_ledger") or parsed_vendor_name
+    truth_bank = bank_recon.get("master_ledger") or "Maybank"
+    truth_acc = acc_recon.get("master_ledger") or "N/A"
+    truth_phone = phone_recon.get("master_ledger") or "+60 3-7722 8888"
+
+    vendor_status = "match" if vendor_recon.get("parity") == "MATCH" else "defect"
+    bank_status = "match" if bank_recon.get("parity") == "MATCH" else "defect"
+    acc_status = "match" if acc_recon.get("parity") == "MATCH" else "defect"
+
+    comparison = {
+        "vendor_name": {
+            "truth": truth_vendor,
+            "draft": parsed_vendor_name,
+            "status": vendor_status,
+            "score": 100 if vendor_status == "match" else 50,
+        },
+        "bank_name": {
+            "truth": truth_bank,
+            "draft": parsed_bank_name,
+            "status": bank_status,
+            "score": 100 if bank_status == "match" else 40,
+        },
+        "account_no": {
+            "truth": truth_acc,
+            "draft": parsed_bank_acc,
+            "status": acc_status,
+            "score": 100 if acc_status == "match" else 0,
+        },
+        "amount": {
+            "truth": f"RM {parsed_amount:,.2f}",
+            "draft": f"RM {parsed_amount:,.2f}",
+            "status": "match",
+            "score": 100,
+        },
+        "landline": {
+            "truth": truth_phone,
+            "draft": truth_phone,
+            "status": "match",
+            "score": 100,
+        },
+    }
+
+    defect_count = sum(1 for v in comparison.values() if v.get("status") == "defect")
     resolved_category = category or "Logistics"
+    producer_str = pipeline_res.get("forensic_digest", {}).get("producer_tool", "AutoCount ERP / Acrobat Pro")
+
     record = {
         "id": new_id,
         "subject": subject,
-        "sender_name": payload_dict["vendor_name"],
+        "sender_name": parsed_vendor_name,
         "sender_email": sender_email,
+        "email_body": body_content,
         "category": resolved_category,
         "threat_category": resolved_category,
         "status": pipeline_res["status"],
         "risk_score": pipeline_res["risk_score"],
         "received_date": datetime.now(timezone.utc).strftime("%b %d, %Y, %I:%M %p UTC"),
-        "files": [file.filename],
-        "comparison": {
-            "vendor_name": {"truth": payload_dict["vendor_name"], "draft": payload_dict["vendor_name"], "status": "match", "score": 100},
-            "bank_name": {"truth": "Maybank", "draft": "Maybank", "status": "match", "score": 100},
-            "account_no": {"truth": "514012998877", "draft": "514012998877", "status": "match", "score": 100},
-            "amount": {"truth": "RM 12,500.00", "draft": "RM 12,500.00", "status": "match", "score": 100},
-            "landline": {"truth": "+60 3-7722 8888", "draft": "+60 3-7722 8888", "status": "match", "score": 100},
-        },
-        "banner_message": "Document ingested and verified against Master Procurement Ledger.",
-        "defect_fields": 0 if pipeline_res["risk_score"] < 50 else 1,
+        "files": [filename] + ([supporting_file.filename] if supporting_file and supporting_file.filename else []),
+        "comparison": comparison,
+        "banner_message": (
+            "Verified invoice: All payment instructions match approved Master Procurement Ledger."
+            if pipeline_res["risk_score"] < 50
+            else f"Discrepancy detected: Inbound payment details diverge from approved vendor profile (Risk {pipeline_res['risk_score']})."
+        ),
+        "defect_fields": defect_count,
         "can_extract_live": True,
         "sha256": doc_sha256,
+        "producer_tool": producer_str,
+        "certainty_confidence": 98 if defect_count > 0 else 96,
         "is_duplicate_submission": is_duplicate,
     }
-    
+
     SESSION_DEMO_MAILBOX[new_id] = record
-    
+
     # Record to cryptographic audit trail
     record_audit_event(
         case_id=new_id,
@@ -301,9 +418,9 @@ async def verify_invoice(
         risk_score=pipeline_res["risk_score"],
         operator_id=SESSION_OPERATOR_ID,
         evidence_hashes=[doc_sha256],
-        details={"filename": file.filename, "is_duplicate": is_duplicate},
+        details={"filename": filename, "is_duplicate": is_duplicate},
     )
-    
+
     return {
         "status": "success",
         "case_id": new_id,

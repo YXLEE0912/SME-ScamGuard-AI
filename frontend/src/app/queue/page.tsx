@@ -508,7 +508,13 @@ function QueuePageContent() {
               </div>
 
               {uploadStatus && (
-                <div className="p-3 rounded-lg bg-[var(--surface-2)] text-xs text-[var(--ink-2)] border border-[var(--line)]">
+                <div
+                  className={`p-3 rounded-lg text-xs border font-medium ${
+                    uploadStatus.startsWith("Error:")
+                      ? "bg-red-500/10 border-red-500/20 text-[var(--defect)]"
+                      : "bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-300"
+                  }`}
+                >
                   {uploadStatus}
                 </div>
               )}

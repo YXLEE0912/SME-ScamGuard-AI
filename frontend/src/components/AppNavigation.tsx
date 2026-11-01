@@ -321,7 +321,13 @@ export function AppNavigation({
             </div>
 
             {verificationNotice && (
-              <div className="mt-3 p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-xs font-semibold text-emerald-800 dark:bg-emerald-950 dark:border-emerald-800 dark:text-emerald-200">
+              <div
+                className={`mt-3 p-2.5 rounded-xl border text-xs font-semibold ${
+                  verificationNotice.startsWith("Error:")
+                    ? "bg-red-500/10 border-red-500/20 text-[var(--defect)]"
+                    : "bg-emerald-50 border border-emerald-200 text-emerald-800 dark:bg-emerald-950 dark:border-emerald-800 dark:text-emerald-200"
+                }`}
+              >
                 {verificationNotice}
               </div>
             )}
