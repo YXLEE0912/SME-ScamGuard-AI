@@ -22,6 +22,7 @@ import {
 } from "@/services/api";
 import { ThreatSeverityBadge } from "@/components/ThreatSeverityBadge";
 import { MultiAgentPipeline } from "@/components/MultiAgentPipeline";
+import { formatReceivedMYT } from "@/lib/date";
 
 interface ComparisonFieldData {
   truth?: string;
@@ -110,7 +111,7 @@ export default function CaseDetailPage() {
     const rawWithBody = raw as DemoInvoice & { email_body?: string; producer_tool?: string; certainty_confidence?: number };
     const emailBody = rawWithBody.email_body || (isDefect
       ? `Dear Finance,\n\nOur standard Maybank account is under annual audit and temporarily frozen.\nPlease remit the outstanding milestone claim of RM ${parsedAmt.toLocaleString()}.00 today to our backup account:\nBank: CIMB Bank\nAccount: 8009-4411-2299\n\nPayment must be made before 5:00 PM today to prevent work stoppage on site.\nDirect inquiries to mobile 012-3456789.\n\nRegards,\nAlex Tan\n${raw.sender_name || "Mega Logistics"} AP Team`
-      : `From: ${raw.sender_email}\nTo: finance-ap@sme-enterprise.com.my\nDate: ${raw.received_date}\nSubject: ${raw.subject}\n\nDear Accounts Payable Team,\n\nPlease find attached our official tax invoice and milestone claim for verified procurement deliverables.\nAll banking details remain consistent with our verified Master Procurement Ledger.\nPayment terms: Net 30 Days.\n\nThank you,\n${raw.sender_name || "Commercial Billing Desk"}`);
+      : `From: ${raw.sender_email}\nTo: finance-ap@sme-enterprise.com.my\nDate: ${formatReceivedMYT(raw.received_date)}\nSubject: ${raw.subject}\n\nDear Accounts Payable Team,\n\nPlease find attached our official tax invoice and milestone claim for verified procurement deliverables.\nAll banking details remain consistent with our verified Master Procurement Ledger.\nPayment terms: Net 30 Days.\n\nThank you,\n${raw.sender_name || "Commercial Billing Desk"}`);
 
     setInvoice({
       id: emailId,
@@ -119,7 +120,7 @@ export default function CaseDetailPage() {
       sender: raw.sender_email,
       subject: raw.subject,
       amountMyr: parsedAmt,
-      receivedDate: raw.received_date,
+      receivedDate: formatReceivedMYT(raw.received_date),
       emailBody,
       producerTool: rawWithBody.producer_tool || (isApproved ? "AutoCount ERP / Acrobat Pro" : isDefect ? "iLovePDF Spliced (Binary Desync)" : "AutoCount ERP / Acrobat Pro"),
       riskScore: isApproved ? 0 : raw.risk_score,
@@ -304,7 +305,7 @@ export default function CaseDetailPage() {
                     <span>{invoice.sender}</span>
                   </span>
                   <span className="text-slate-300 dark:text-slate-600">•</span>
-                  <span className="text-slate-500 dark:text-slate-400">Received {invoice.receivedDate}</span>
+                  <span className="text-slate-500 dark:text-slate-400">Received {formatReceivedMYT(invoice.receivedDate)}</span>
                 </div>
               </div>
 

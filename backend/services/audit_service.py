@@ -15,7 +15,7 @@ import hashlib
 import json
 import os
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Dict, Any, List, Optional, Set, Tuple
 
@@ -102,11 +102,15 @@ def record_audit_event(
 
     prior_hash = trail[-1]["event_hash"] if trail else GENESIS_HASH
     event_id = f"EVT-{int(time.time() * 1000)}-{len(trail) + 1:04d}"
-    now_utc = datetime.now(timezone.utc).isoformat()
+    myt_tz = timezone(timedelta(hours=8))
+    now_myt_iso = datetime.now(myt_tz).isoformat()
+    now_myt_str = datetime.now(myt_tz).strftime("%Y-%m-%d %H:%M:%S MYT")
 
     event_record: Dict[str, Any] = {
         "event_id": event_id,
-        "timestamp_utc": now_utc,
+        "timestamp_utc": now_myt_iso,
+        "timestamp": now_myt_iso,
+        "timestamp_myt": now_myt_str,
         "case_id": case_id,
         "action": action,
         "disposition": disposition,

@@ -1,5 +1,7 @@
 "use client";
 
+import { formatMYT } from '@/lib/date';
+
 import React, { useState, useMemo } from "react";
 import {
   ShieldCheck,
@@ -91,7 +93,7 @@ export function MultiAgentPipeline({
             fieldName: cf.field,
             canonicalField: cf.canonical_field || cf.field,
             newValue: cf.value,
-            timestamp: cf.timestamp || "Today",
+            timestamp: cf.timestamp ? formatMYT(cf.timestamp) : "Today",
           });
         }
       }
@@ -113,7 +115,7 @@ export function MultiAgentPipeline({
             className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-300 text-xs font-semibold w-fit"
           >
             <span>✎ Operator Corrected: <span className="underline">{c.fieldName}</span> &rarr; <span className="font-mono font-bold">{c.newValue}</span></span>
-            <span className="text-[10px] text-amber-600/80 dark:text-amber-400/80 font-normal">({c.timestamp})</span>
+            <span className="text-[10px] text-amber-600/80 dark:text-amber-400/80 font-normal">({formatMYT(c.timestamp)})</span>
           </div>
         ))}
       </div>
@@ -178,7 +180,7 @@ export function MultiAgentPipeline({
       },
     }));
 
-    const nowStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const nowStr = formatMYT(new Date().toISOString());
     setLocalCorrections((prev) => [
       ...prev,
       {

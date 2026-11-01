@@ -836,5 +836,207 @@
     },
     "prior_hash": "c403e44ceb0846aec180efb6b3a0af71c48f1ecae13566f8888eed37cc805b74",
     "event_hash": "c78cb64dc796251faafb5215a1942276cdae0fb90a19e9681cef9cf81e980a5c"
+  },
+  {
+    "event_id": "EVT-1793509762117-0046",
+    "timestamp_utc": "2026-11-01T05:09:22.117031+00:00",
+    "case_id": "inv_001",
+    "action": "OPERATOR_CORRECTION",
+    "disposition": "VERIFIED",
+    "risk_score": 0,
+    "operator_id": "AP-CLERK-MY01",
+    "evidence_hashes": [],
+    "details": {
+      "field": "account_no",
+      "canonical_field": "account_no",
+      "corrected_to": "514012998877",
+      "justification": "Verified via official landline callback to +60 3-7722 8888",
+      "switchboard_dialed": "+60 3-7722 8888"
+    },
+    "prior_hash": "c78cb64dc796251faafb5215a1942276cdae0fb90a19e9681cef9cf81e980a5c",
+    "event_hash": "2bdd4941ca2fc255886cf70d93f00af4624a093daa2baf8395a9562ff15c4c89"
+  },
+  {
+    "event_id": "EVT-1793509762162-0047",
+    "timestamp_utc": "2026-11-01T05:09:22.162387+00:00",
+    "case_id": "inv_002",
+    "action": "Escalated",
+    "disposition": "LOCKED_CRITICAL",
+    "risk_score": 0,
+    "operator_id": "AP-CLERK-MY01",
+    "evidence_hashes": [],
+    "details": {
+      "instruction_type": "ERP_PAYMENT_VOUCHER_FREEZE",
+      "voucher_hold_id": "VCH-HOLD-2026-nv_002",
+      "case_id": "inv_002",
+      "status": "PAYMENT_LOCKED",
+      "held_amount_myr": 0.0,
+      "freeze_reason": "Mule account hit detected; immediate freeze requested.",
+      "erp_system_target": "AutoCount / SAP / SQL Account Financial Gateway",
+      "effective_timestamp_utc": "2026-11-01T05:09:22.162387+00:00"
+    },
+    "prior_hash": "2bdd4941ca2fc255886cf70d93f00af4624a093daa2baf8395a9562ff15c4c89",
+    "event_hash": "a52b15b2314c6f8da4b4c3f8cb457f43febcd59f9cae5aa4241a6ad7f5fb72f1"
+  },
+  {
+    "event_id": "EVT-1793509766449-0048",
+    "timestamp_utc": "2026-11-01T05:09:26.449412+00:00",
+    "case_id": "inv_003",
+    "action": "Payment Approved",
+    "disposition": "VERIFIED",
+    "risk_score": 0,
+    "operator_id": "AP-CLERK-MY01",
+    "evidence_hashes": [],
+    "details": {
+      "manager_id": "FM-CONTROLLER-MY01",
+      "decision": "approved",
+      "notes": "Master Procurement Ledger matched. AutoCount signed."
+    },
+    "prior_hash": "a52b15b2314c6f8da4b4c3f8cb457f43febcd59f9cae5aa4241a6ad7f5fb72f1",
+    "event_hash": "68bef76b569cd8251983f09b1f5fad32631079f2026c95c1613bde9cfaeb220f"
+  },
+  {
+    "event_id": "EVT-1793510024474-0049",
+    "timestamp_utc": "2026-11-01T13:13:44.474778+08:00",
+    "timestamp": "2026-11-01T13:13:44.474778+08:00",
+    "timestamp_myt": "2026-11-01 13:13:44 MYT",
+    "case_id": "inv_001",
+    "action": "OPERATOR_CORRECTION",
+    "disposition": "VERIFIED",
+    "risk_score": 0,
+    "operator_id": "AP-CLERK-MY01",
+    "evidence_hashes": [],
+    "details": {
+      "field": "account_no",
+      "canonical_field": "account_no",
+      "corrected_to": "514012998877",
+      "justification": "Verified via official landline callback to +60 3-7722 8888",
+      "switchboard_dialed": "+60 3-7722 8888"
+    },
+    "prior_hash": "68bef76b569cd8251983f09b1f5fad32631079f2026c95c1613bde9cfaeb220f",
+    "event_hash": "14991c97412b31cd6a47b1c1a203abddaf576b31bb0d856f3585360fdd67663d"
+  },
+  {
+    "event_id": "EVT-1793510024516-0050",
+    "timestamp_utc": "2026-11-01T13:13:44.516304+08:00",
+    "timestamp": "2026-11-01T13:13:44.516304+08:00",
+    "timestamp_myt": "2026-11-01 13:13:44 MYT",
+    "case_id": "inv_002",
+    "action": "Escalated",
+    "disposition": "LOCKED_CRITICAL",
+    "risk_score": 0,
+    "operator_id": "AP-CLERK-MY01",
+    "evidence_hashes": [],
+    "details": {
+      "instruction_type": "ERP_PAYMENT_VOUCHER_FREEZE",
+      "voucher_hold_id": "VCH-HOLD-2026-nv_002",
+      "case_id": "inv_002",
+      "status": "PAYMENT_LOCKED",
+      "held_amount_myr": 0.0,
+      "freeze_reason": "Mule account hit detected; immediate freeze requested.",
+      "erp_system_target": "AutoCount / SAP / SQL Account Financial Gateway",
+      "effective_timestamp_utc": "2026-11-01T05:13:44.516304+00:00"
+    },
+    "prior_hash": "14991c97412b31cd6a47b1c1a203abddaf576b31bb0d856f3585360fdd67663d",
+    "event_hash": "0d08b6c90e85216ebc552a281bdc9fa8410a3b2d3016dd6eea3b4ec4bf21c93e"
+  },
+  {
+    "event_id": "EVT-1793510024556-0051",
+    "timestamp_utc": "2026-11-01T13:13:44.556945+08:00",
+    "timestamp": "2026-11-01T13:13:44.556945+08:00",
+    "timestamp_myt": "2026-11-01 13:13:44 MYT",
+    "case_id": "inv_003",
+    "action": "Payment Approved",
+    "disposition": "VERIFIED",
+    "risk_score": 0,
+    "operator_id": "AP-CLERK-MY01",
+    "evidence_hashes": [],
+    "details": {
+      "manager_id": "FM-CONTROLLER-MY01",
+      "decision": "approved",
+      "notes": "Master Procurement Ledger matched. AutoCount signed."
+    },
+    "prior_hash": "0d08b6c90e85216ebc552a281bdc9fa8410a3b2d3016dd6eea3b4ec4bf21c93e",
+    "event_hash": "3dc6e285db584215dbdf89950c0db0f0b63be5d6a3c2e681efb03bb97443aff9"
+  },
+  {
+    "event_id": "EVT-1793510024646-0052",
+    "timestamp_utc": "2026-11-01T13:13:44.646407+08:00",
+    "timestamp": "2026-11-01T13:13:44.646407+08:00",
+    "timestamp_myt": "2026-11-01 13:13:44 MYT",
+    "case_id": "inv_054",
+    "action": "New Ingestion",
+    "disposition": "LOCKED_CRITICAL",
+    "risk_score": 80,
+    "operator_id": "OP-MY-4F67848F",
+    "evidence_hashes": [
+      "b01fe9412bb8ff64d170d57b07a68e24d8effdde07e2c81b7f1afcb7a421aae8"
+    ],
+    "details": {
+      "filename": "vendor_invoice_claim.pdf",
+      "is_duplicate": false
+    },
+    "prior_hash": "3dc6e285db584215dbdf89950c0db0f0b63be5d6a3c2e681efb03bb97443aff9",
+    "event_hash": "b3061261fb5e9fe8976cf3996daa37ba852459299e68f663091ce4e7560f300c"
+  },
+  {
+    "event_id": "EVT-1793510692500-0053",
+    "timestamp_utc": "2026-11-01T13:24:52.500680+08:00",
+    "timestamp": "2026-11-01T13:24:52.500680+08:00",
+    "timestamp_myt": "2026-11-01 13:24:52 MYT",
+    "case_id": "inv_051",
+    "action": "New Ingestion",
+    "disposition": "LOCKED_CRITICAL",
+    "risk_score": 95,
+    "operator_id": "OP-MY-841E10B8",
+    "evidence_hashes": [
+      "351aade7cd58a03d77901be6aede8a09a20c3497759a5518582687dc568580fd"
+    ],
+    "details": {
+      "filename": "case1_defect_invoice.pdf",
+      "is_duplicate": false
+    },
+    "prior_hash": "b3061261fb5e9fe8976cf3996daa37ba852459299e68f663091ce4e7560f300c",
+    "event_hash": "23597a2d076ab49d54ae47f4f1753de729315122f3d43ff46fd27f990b446694"
+  },
+  {
+    "event_id": "EVT-1793510704453-0054",
+    "timestamp_utc": "2026-11-01T13:25:04.454304+08:00",
+    "timestamp": "2026-11-01T13:25:04.454304+08:00",
+    "timestamp_myt": "2026-11-01 13:25:04 MYT",
+    "case_id": "inv_052",
+    "action": "New Ingestion",
+    "disposition": "LOCKED_CRITICAL",
+    "risk_score": 80,
+    "operator_id": "OP-MY-841E10B8",
+    "evidence_hashes": [
+      "46b943491dbb2794e2e2728b46e3f5958e9ba2d08de0c76a866740d523cc8ccb"
+    ],
+    "details": {
+      "filename": "case2_clean_invoice.pdf",
+      "is_duplicate": false
+    },
+    "prior_hash": "23597a2d076ab49d54ae47f4f1753de729315122f3d43ff46fd27f990b446694",
+    "event_hash": "1bd7f552d0991ed62b13d19977ecde5071fd8c6b4cbef8721bf7a7bf7bfc8f6a"
+  },
+  {
+    "event_id": "EVT-1793516247308-0055",
+    "timestamp_utc": "2026-11-01T14:57:27.308918+08:00",
+    "timestamp": "2026-11-01T14:57:27.308918+08:00",
+    "timestamp_myt": "2026-11-01 14:57:27 MYT",
+    "case_id": "inv_051",
+    "action": "New Ingestion",
+    "disposition": "SAFE_VERIFIED",
+    "risk_score": 0,
+    "operator_id": "OP-MY-4C4061E6",
+    "evidence_hashes": [
+      "46b943491dbb2794e2e2728b46e3f5958e9ba2d08de0c76a866740d523cc8ccb"
+    ],
+    "details": {
+      "filename": "case2_clean_invoice.pdf",
+      "is_duplicate": false
+    },
+    "prior_hash": "1bd7f552d0991ed62b13d19977ecde5071fd8c6b4cbef8721bf7a7bf7bfc8f6a",
+    "event_hash": "a61909ae779f8e3025a89dadd0eb32c55e8256724d42a941828fa9ef29c384ae"
   }
 ]
