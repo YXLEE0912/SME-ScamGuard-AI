@@ -127,8 +127,8 @@ This blueprint specifies the end-to-end engineering tasks required to build, ver
   1. Maintain 7-day rolling transaction history per vendor ID.
   2. If rolling cumulative spend + incoming claim amount exceeds `typical_max_amount * 1.5`, flag `VELOCITY_THRESHOLD_BREACH`.
   3. Calculate vendor dormancy:
-     $$\text{dormancy\_days} = \text{current\_date} - \text{last\_active\_date}$$
-     If $\text{dormancy\_days} > 180\text{ days}$, flag `DORMANT_VENDOR_ACTIVITY_DETECTED`.
+     `dormancy_days = current_date - last_active_date`
+     If `dormancy_days > 180 days`, flag `DORMANT_VENDOR_ACTIVITY_DETECTED`.
 
 ---
 
@@ -190,7 +190,7 @@ This blueprint specifies the end-to-end engineering tasks required to build, ver
   1. Read the most recent event hash from `data/audits.json` (or initialize genesis block if empty).
   2. Construct the canonical event payload $E_n$.
   3. Calculate recursive SHA-256 event hash:
-     $$\text{event\_hash}_n = \text{SHA256}\left(\text{canonical\_event}_n \mathbin{\Vert} \text{event\_hash}_{n-1}\right)$$
+     `event_hash_n = SHA-256(canonical_event_n || event_hash_{n-1})`
   4. Atomically append the record to `data/audits.json`.
 
 ### 4.3 Incident Response & Statutory Artifact Synthesis
@@ -215,12 +215,12 @@ This blueprint specifies the end-to-end engineering tasks required to build, ver
   | **Cohort 2** | 50 | Legitimate Canva/iLovePDF | `VERIFIED` | 0.00% False Positive Rate |
   | **Cohort 3** | 50 | BEC In-Transit Email Diversions | `LOCKED_CRITICAL` | Blocked via `BEC_IN_TRANSIT_DIVERSION` |
   | **Cohort 4** | 50 | Tampered PDF / Bank Mismatch | `LOCKED_CRITICAL` | Blocked via `UNAUTHORIZED_BANK_CHANGE` |
-  | **Cohort 5** | 50 | SemakMule Threat-Cache Hits | `LOCKED_CRITICAL` | Blocked via $S_{\text{SemakMule}} = 99$ Override |
+| **Cohort 5** | 50 | SemakMule Threat-Cache Hits | `LOCKED_CRITICAL` | Blocked via `S = 99` Override |
   | **Cohort 6** | 35 | Dormant Vendor Hijacks (>180d) | `NEEDS_REVIEW` | Escalated for Reauthorization |
   | **Cohort 7** | 35 | Velocity Smurfing / Split Invoices | `NEEDS_REVIEW` | Escalated for 7-Day Cap Breach |
   | **Cohort 8** | 30 | Ghost Invoices / Missing PO | `NEEDS_REVIEW` | Held for Missing PO/GRN Evidence |
   | **Total** | **400** | **150 Benign / 250 Attack** | — | **Accuracy: 100%, Recall: 100%, FPR: 0%** |
-- **Latency Benchmark**: Assert mean core engine decision latency $< 0.05\text{ ms}$ (baseline achieved: $0.021\text{ ms}$).
+- **Latency Benchmark**: Assert mean core engine decision latency < 0.05 ms (baseline achieved: 0.021 ms).
 
 ### 5.2 Full Pytest Suite Execution
 - **Command**: `python -m pytest -c pyproject.toml tests/`

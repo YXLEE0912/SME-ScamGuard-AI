@@ -84,11 +84,11 @@ The multi-agent pipeline maps across ten discrete layers of defense to eliminate
 | **Layer 0** | **Ledger Ingestion & Snapshot Fingerprinting** | Ingest canonical AutoCount/SAP CSV export; compute SHA-256 integrity fingerprint | Refuse startup if snapshot hash mismatch; prevent unapproved mutations |
 | **Layer 1** | **Transport Context Capture** | Parse RFC 5322 MIME headers; capture SPF/DKIM/DMARC and domain homoglyphs | Record context; treat valid transport as context, not financial authorization |
 | **Layer 2** | **Volatile RAM-Scoped Sanitization** | In-memory heap buffers (`io.BytesIO`); strip Malaysian MyKad and mobile PII | Reject persistent disk writes; prevent data spillage under PDPA 2010 |
-| **Layer 3** | **Deterministic Binary Inspection** | Byte-level PDF inspection (`pypdf`); parse metadata, trailer/xref, `%%EOF` markers | Flag modification delta $\Delta t > 3600\text{s}$ and multi-trailer splicing |
+| **Layer 3** | **Deterministic Binary Inspection** | Byte-level PDF inspection (`pypdf`); parse metadata, trailer/xref, `%%EOF` markers | Flag modification delta Δt > 3600s and multi-trailer splicing |
 | **Layer 4** | **Three-Way Relational Reconciliation** | Cross-verify Email Claims vs. PDF Document vs. Approved Master Ledger | Mismatch flags `BEC_IN_TRANSIT_DIVERSION` or `UNAUTHORIZED_BANK_CHANGE` |
 | **Layer 5** | **Temporal & Velocity Surveillance** | Track 7-day cumulative spend, burst velocity, >180-day dormancy, PO/GRN prefix | Escalate dormant vendor or split-invoice smurfing to supervisor review |
 | **Layer 6** | **Unprivileged Cognitive Sandboxing** | Demarcated Gemini 2.5 Flash prompt; strict JSON structured extraction schema | Wrap in `<UNTRUSTED_INBOUND_DOC>`; fail-closed if LLM unparseable |
-| **Layer 7** | **Deterministic Policy Arbitration** | Mathematical risk formula $R$; evaluate mandatory threshold invariants | Calculate risk score (0–100); route to `VERIFIED`, `NEEDS_REVIEW`, `LOCKED` |
+| **Layer 7** | **Deterministic Policy Arbitration** | Mathematical risk formula `R`; evaluate mandatory threshold invariants | Calculate risk score (0–100); route to `VERIFIED`, `NEEDS_REVIEW`, `LOCKED` |
 | **Layer 8** | **4-Eyes Governance & Out-of-Band Callback** | Independent registered switchboard verification; dual maker-checker sign-off | Suppress invoice phone number; block approval until callback is recorded |
 | **Layer 9** | **Containment & Incident Artifact Generation** | Request ERP payment hold; synthesize NSRC 997 referral packet & SHA-256 chain | Emit immutable event hash; assemble ready-to-file police referral packet |
 
@@ -163,10 +163,10 @@ The multi-agent pipeline maps across ten discrete layers of defense to eliminate
 - **Three-Way Forensic Reconciliation**:
   1. **Check A (Email Body vs. Attached PDF Invoice)**:
      Compares the beneficiary bank account stated in the email body against the account parsed from the PDF document. Disagreement indicates in-transit tampering:
-     $$\text{Result} = \text{BEC\_IN\_TRANSIT\_DIVERSION}$$
+     `Result = BEC_IN_TRANSIT_DIVERSION`
   2. **Check B (PDF Invoice vs. Master Procurement Ledger)**:
      Compares the PDF bank name and account number against the approved supplier profile stored in the ground-truth ledger. Disagreement indicates unauthorized destination redirect:
-     $$\text{Result} = \text{UNAUTHORIZED\_BANK\_CHANGE}$$
+     `Result = UNAUTHORIZED_BANK_CHANGE`
   3. **Check C (Local SemakMule Fraud Threat Cache Lookup)**:
      Queries the normalized destination bank account against the indexed in-memory cache of commercial mule accounts compiled by the Royal Malaysia Police (PDRM) CCID.
      - Target Lookup Latency: $< 0.003\text{ ms}$.
@@ -202,7 +202,7 @@ The multi-agent pipeline maps across ten discrete layers of defense to eliminate
     ```
 - **Fail-Closed Cognitive Invariant**:
   If the Gemini 2.5 Flash API encounters a network timeout, HTTP error, rate limit, token exhaustion, or emits invalid/malformed JSON that fails schema validation, the supervisor captures:
-  $$\text{Diagnostic State} = \text{AI\_COGNITIVE\_UNAVAILABLE} \implies \text{LOCKED\_CRITICAL}$$
+  `Diagnostic State = AI_COGNITIVE_UNAVAILABLE` &rarr; forces `LOCKED_CRITICAL`
   The pipeline never defaults to `VERIFIED` or drops checks when cognitive AI is offline.
 
 ---
@@ -274,7 +274,7 @@ The multi-agent pipeline maps across ten discrete layers of defense to eliminate
   3. **In-Thread Vendor Dispute Response Draft**: Prepares a formal, non-accusatory email draft for the AP clerk requesting formal verification of banking details via registered landline channels.
   4. **Cryptographic Chained Audit Trail**:
      Constructs an immutable event log using recursive SHA-256 hashing:
-     $$\text{event\_hash}_n = \text{SHA256}\left(\text{canonical\_event}_n \mathbin{\Vert} \text{event\_hash}_{n-1}\right)$$
+     `event_hash_n = SHA-256(canonical_event_n || event_hash_{n-1})`
      Each record includes: `event_id`, `timestamp_utc`, `case_id`, `evidence_hashes`, `risk_score`, `disposition`, `operator_id`, and `prior_hash`.
 
 ---
@@ -314,6 +314,7 @@ For any invoice flagged with $R \ge 50$, payment release cannot be executed by a
 1. **Maker (AP Clerk)**: Inspects discrepancy, records switchboard callback justification, and signs off.
 2. **Checker (Finance Manager / Controller)**: Must be a distinct, authenticated user identity. The approval action remains cryptographically disabled until the maker's callback log is committed to the audit trail.
 3. **Controlled Field Correction**: If a legitimate supplier bank change has occurred, the system records:
-   $$\text{Verified Value: [approved account]} \quad \text{Original Value: }\cancel{\text{[untrusted account]}} \quad \text{Status: Corrected}$$
+   > **Audit Field Correction Record**:  
+   > `Verified Value: [approved account]` | `Original Value: ~~[untrusted account]~~` | `Status: Corrected`  
    The modification requires documented maker-checker sign-off and is logged as an immutable audit event.
 

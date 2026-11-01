@@ -84,16 +84,13 @@ SME-ScamGuard-AI establishes an application-layer financial interdiction boundar
 
 | Agent | Name & Layer | Operational Mandate | SLA / Latency |
 |---|---|---|---|
-| **Agent 1** | **In-Memory Privacy Sanitizer** *(RAM Layer)* | Strips Malaysian MyKad (`\b\d{6}-\d{2}-\d{4}\b`) and mobile numbers (`\b01[0-9]-?[0-9]{7,8}\b`) in volatile heap buffers (`io.BytesIO`). Strictly zero persistence to physical disk storage, fully complying with Section 10 of Malaysia's Personal Data Protection Act 2010 (Act 709). | $< 5\text{ ms}$ |
-| **Agent 2** | **Deterministic Binary Forensics** *(Byte Layer)* | Conducts ISO 32000-1 static inspection of invoice PDF byte streams using `pypdf` and byte offsets. Detects modification timestamp desync ($\Delta t > 3600\text{s}$), multiple `%%EOF` incremental splicing, and applies the **Dual-Factor Benign Tooling Invariant** (`Canva`/`iLovePDF` penalty neutralized *only* if bank account matches Master Ledger). | $< 35\text{ ms}$ |
-| **Agent 3** | **Ground-Truth Registry & Threat Cache** *(Relational Layer)* | Executes 3-way relational reconciliation between Email Body Claims, PDF Remittance Instructions, and the Master Procurement Ledger snapshot. Queries destination accounts against the local PDRM CCID SemakMule commercial mule cache ($O(1)$ lookup, $S=99$ override). | $< 2\text{ ms}$ (Lookup: $<0.003\text{ ms}$) |
-| **Agent 4** | **Cognitive Behavioral Investigator** *(Perception Layer)* | Analyzes natural language in email bodies and invoice notes for contextual deception, social engineering, and artificial urgency. Sandboxed inside `<UNTRUSTED_INBOUND_DOC>` demarcated XML blocks to defeat OWASP LLM01 Prompt Injections. Output restricted to strict Pydantic JSON schema. | $\sim 800\text{ ms}$ (Offline fallback: $<1\text{ ms}$) |
-| **Agent 5** | **Declarative Policy Arbiter & Fail-Closed Safety Net** *(Governance Layer)* | Evaluates multi-factor risk formula $R \in [0, 100]$ across deterministic checks, cognitive scores, temporal markers, and velocity metrics. Enforces strict finite state machine boundaries:
-- `R < 50` ⟹ **VERIFIED**
-- `50 ≤ R < 80` ⟹ **NEEDS_REVIEW**
-- `R ≥ 80` ⟹ **LOCKED_CRITICAL** | $< 1\text{ ms}$ |
-| **Agent 6** | **Containment & Statutory Artifact Synthesis** *(Response Layer)* | Synthesizes immediate ERP disbursement hold requests, generates pre-filled Royal Malaysia Police (PDRM) NSRC 997 referral packages, drafts in-thread vendor dispute notices, and records tamper-evident SHA-256 HMAC cryptographic event chains (Evidence Act 1950 Section 90A). | $< 15\text{ ms}$ |
-| **Agent 7** | **OSINT Police Threat Intelligence Ingestion** *(Hydration Layer)* | Ingests real-time PDRM CCID scam news advisories via a 2-stage provenance gate (`POST /api/v1/intel/ingest-police-alert`), normalizes account digits, and atomically updates `semakmule_cache.json` without downtime. | $< 50\text{ ms}$ |
+| **Agent 1** | **In-Memory Privacy Sanitizer** *(RAM Layer)* | Strips Malaysian MyKad (`\b\d{6}-\d{2}-\d{4}\b`) and mobile numbers (`\b01[0-9]-?[0-9]{7,8}\b`) in volatile heap buffers (`io.BytesIO`). Strictly zero persistence to physical disk storage, fully complying with Section 10 of Malaysia's Personal Data Protection Act 2010 (Act 709). | < 5 ms |
+| **Agent 2** | **Deterministic Binary Forensics** *(Byte Layer)* | Conducts ISO 32000-1 static inspection of invoice PDF byte streams using `pypdf` and byte offsets. Detects modification timestamp desync (Δt > 3600s), multiple `%%EOF` incremental splicing, and applies the **Dual-Factor Benign Tooling Invariant** (`Canva`/`iLovePDF` penalty neutralized *only* if bank account matches Master Ledger). | < 35 ms |
+| **Agent 3** | **Ground-Truth Registry & Threat Cache** *(Relational Layer)* | Executes 3-way relational reconciliation between Email Body Claims, PDF Remittance Instructions, and the Master Procurement Ledger snapshot. Queries destination accounts against the local PDRM CCID SemakMule commercial mule cache (O(1) lookup, S=99 override). | < 2 ms (Lookup: < 0.003 ms) |
+| **Agent 4** | **Cognitive Behavioral Investigator** *(Perception Layer)* | Analyzes natural language in email bodies and invoice notes for contextual deception, social engineering, and artificial urgency. Sandboxed inside `<UNTRUSTED_INBOUND_DOC>` demarcated XML blocks to defeat OWASP LLM01 Prompt Injections. Output restricted to strict Pydantic JSON schema. | ~800 ms (Offline: < 1 ms) |
+| **Agent 5** | **Declarative Policy Arbiter & Fail-Closed Safety Net** *(Governance Layer)* | Evaluates multi-factor risk formula `R` (0–100) across deterministic checks, cognitive scores, temporal markers, and velocity metrics. Enforces strict state boundaries:<br>• `R < 50` &rarr; `VERIFIED`<br>• `50 <= R < 80` &rarr; `NEEDS_REVIEW`<br>• `R >= 80` &rarr; `LOCKED_CRITICAL` | < 1 ms |
+| **Agent 6** | **Containment & Statutory Artifact Synthesis** *(Response Layer)* | Synthesizes immediate ERP disbursement hold requests, generates pre-filled Royal Malaysia Police (PDRM) NSRC 997 referral packages, drafts in-thread vendor dispute notices, and records tamper-evident SHA-256 HMAC cryptographic event chains (Evidence Act 1950 Section 90A). | < 15 ms |
+| **Agent 7** | **OSINT Police Threat Intelligence Ingestion** *(Hydration Layer)* | Ingests real-time PDRM CCID scam news advisories via a 2-stage provenance gate (`POST /api/v1/intel/ingest-police-alert`), normalizes account digits, and atomically updates `semakmule_cache.json` without downtime. | < 50 ms |
 
 ---
 
@@ -107,12 +104,12 @@ $$R = \max\Big(S_{\text{SemakMule}}, \min\big(100, w_1 \cdot I_{\text{Ledger}} +
 
 | Parameter | Weight | Indicator Description | Evaluation Condition |
 |---|---:|---|---|
-| **$w_1$ ($I_{\text{Ledger}}$)** | **75** | Master Procurement Ledger Parity Breach | $1$ if inbound PDF bank account does not match Master Ledger; $0$ if exact match. |
-| **$w_2$ ($I_{\text{Tool}}$)** | **20** | PDF Tooling Anomaly or Splicing Marker | $1$ if anomalous tool without ledger match or incremental trailer splicing detected; $0$ otherwise. |
-| **$w_3$ ($I_{\text{Urgency}}$)** | **15** | Cognitive Coercion & Urgency Threshold | $1$ if normalized urgency score $> 70$; $0$ otherwise. |
-| **$w_4$ ($I_{\text{Auth}}$)** | **25** | In-Transit Transport / Channel Divergence | $1$ if Email Claim contradicts PDF Document (`BEC_IN_TRANSIT_DIVERSION`); $0$ otherwise. |
-| **$w_5$ ($I_{\text{Context}}$)** | **20** | Temporal & Velocity Spend Breach | $1$ if vendor dormant $> 180\text{d}$, 7-day spend cap breached, or PO missing/invalid; $0$ otherwise. |
-| **$S_{\text{SemakMule}}$** | **99** | PDRM CCID Commercial Mule Account Hit | Confirmed match in local threat cache forces immediate voucher freeze ($R=99$). |
+| **w₁ (`I_Ledger`)** | **75** | Master Procurement Ledger Parity Breach | `1` if inbound PDF bank account does not match Master Ledger; `0` if exact match. |
+| **w₂ (`I_Tool`)** | **20** | PDF Tooling Anomaly or Splicing Marker | `1` if anomalous tool without ledger match or incremental trailer splicing detected; `0` otherwise. |
+| **w₃ (`I_Urgency`)** | **15** | Cognitive Coercion & Urgency Threshold | `1` if normalized urgency score > 70; `0` otherwise. |
+| **w₄ (`I_Auth`)** | **25** | In-Transit Transport / Channel Divergence | `1` if Email Claim contradicts PDF Document (`BEC_IN_TRANSIT_DIVERSION`); `0` otherwise. |
+| **w₅ (`I_Context`)** | **20** | Temporal & Velocity Spend Breach | `1` if vendor dormant > 180 days, 7-day spend cap breached, or PO missing/invalid; `0` otherwise. |
+| **`S_SemakMule`** | **99** | PDRM CCID Commercial Mule Account Hit | Confirmed match in local threat cache forces immediate voucher freeze (`R = 99`). |
 
 ### State Transitions & Disposition Invariants
 
@@ -164,7 +161,7 @@ The frontend is crafted strictly according to [`frontend/DESIGN_SYSTEM.md`](fron
 
 ### 3. Master Ledger & Cryptographic Audit Trail (`/audit`)
 - **Master Ledger Health**: Real-time synchronization card tracking approved supplier records (40 canonical Malaysian vendors) with SHA-256 fingerprint verification.
-- **Tamper-Evident Hash Chain**: Every operator inspection, field override, and decision action is chained into an immutable SHA-256 HMAC event ledger ($E_n = \text{SHA256}(E_n \mathbin{\Vert} E_{n-1})$).
+- **Tamper-Evident Hash Chain**: Every operator inspection, field override, and decision action is chained into an immutable SHA-256 HMAC event ledger (`E_n = SHA-256(E_n || E_{n-1})`).
 - **Statutory Export**: One-click export to CSV and JSON for external regulatory audits.
 
 ### 4. AP Insights Dashboard (`/insights`)
@@ -181,15 +178,15 @@ The core deterministic engine was evaluated against a comprehensive 400-scenario
 |---|---:|---|---|:---:|---|
 | **Cohort 1** | 100 | Legitimate Routine Billing Invoices | `VERIFIED` | ✅ | 100% Straight-Through Pass Rate |
 | **Cohort 2** | 50 | Legitimate Canva / iLovePDF Micro-SME Invoices | `VERIFIED` | ✅ | 0.00% False Positive Rate (Dual-Factor Rule) |
-| **Cohort 3** | 50 | BEC In-Transit Email Diversions (Email $\neq$ PDF) | `LOCKED_CRITICAL` | 🚨 | 100% Intercepted (`BEC_IN_TRANSIT_DIVERSION`) |
+| **Cohort 3** | 50 | BEC In-Transit Email Diversions (Email ≠ PDF) | `LOCKED_CRITICAL` | 🚨 | 100% Intercepted (`BEC_IN_TRANSIT_DIVERSION`) |
 | **Cohort 4** | 50 | Tampered PDF Invoices (Unauthorized Bank Redirect) | `LOCKED_CRITICAL` | 🚨 | 100% Intercepted (`UNAUTHORIZED_BANK_CHANGE`) |
-| **Cohort 5** | 50 | PDRM CCID SemakMule Blacklisted Accounts | `LOCKED_CRITICAL` | 🚨 | 100% Intercepted ($S=99$ Override) |
+| **Cohort 5** | 50 | PDRM CCID SemakMule Blacklisted Accounts | `LOCKED_CRITICAL` | 🚨 | 100% Intercepted (`S = 99` Override) |
 | **Cohort 6** | 35 | Dormant Vendor Hijacks (>180 Days Inactivity) | `NEEDS_REVIEW` | ⚠️ | 100% Escalated for Dual Reauthorization |
 | **Cohort 7** | 35 | Velocity Smurfing / Split-Invoice Structuring | `NEEDS_REVIEW` | ⚠️ | 100% Escalated (7-Day Rolling Cap Breach) |
 | **Cohort 8** | 30 | Ghost Invoices / Missing PO / Invalid GRN Prefix | `NEEDS_REVIEW` | ⚠️ | 100% Held for Procurement Reconciliation |
 | **TOTAL** | **400** | **150 Benign / 250 Attack Scenarios** | — | **100%** | **Accuracy: 100%, Recall: 100%, FPR: 0.00%** |
 
-- **Deterministic Core Decision Latency**: Mean **0.021 ms** per invoice (Benchmark target SLA: $<0.05\text{ ms}$).
+- **Deterministic Core Decision Latency**: Mean **0.021 ms** per invoice (Benchmark target SLA: < 0.05 ms).
 - **Pytest Suite**: **75 / 75 Tests Passed (100%)** across all layers, services, schemas, and API routers.
 
 ---
