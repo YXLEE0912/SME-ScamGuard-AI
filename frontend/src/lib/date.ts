@@ -78,3 +78,31 @@ export function formatReceivedMYT(dateStr?: string | null): string {
     return dateStr;
   }
 }
+
+/**
+ * Parse any date string or event ID to millisecond epoch for robust sorting.
+ */
+export function parseDateToTime(dateStr?: string | null, eventId?: string | null): number {
+  if (dateStr) {
+    try {
+      let clean = dateStr.trim();
+      if (clean.endsWith("MYT")) {
+        clean = clean.replace(/\s+MYT$/, "+08:00");
+      } else if (clean.endsWith("UTC")) {
+        clean = clean.replace(/\s+UTC$/, "Z");
+      }
+      const t = new Date(clean).getTime();
+      if (!isNaN(t) && t > 0) return t;
+    } catch {
+      // ignore
+    }
+  }
+  if (eventId) {
+    const match = eventId.match(/EVT-(\d+)/);
+    if (match && match[1]) {
+      const num = parseInt(match[1], 10);
+      if (!isNaN(num) && num > 0) return num;
+    }
+  }
+  return 0;
+}

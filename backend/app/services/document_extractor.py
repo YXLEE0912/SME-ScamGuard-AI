@@ -85,9 +85,11 @@ class DocumentExtractorService:
         # Step 1: Run lightweight PDF forensic header check
         header_producer, forensic_reasons = inspect_pdf_forensic_headers(file_bytes)
 
-        # If client is not configured or in offline/mock environment, run deterministic heuristic fallback
+        # Always compute deterministic heuristic baseline
+        heuristic_res = self._heuristic_fallback(file_bytes, mime_type, forensic_reasons)
+
         if not self.client:
-            return self._heuristic_fallback(file_bytes, mime_type, forensic_reasons)
+            return heuristic_res
 
         system_prompt = (
             "You are a certified forensic Accounts Payable auditor. Analyze this invoice document "
@@ -118,6 +120,20 @@ class DocumentExtractorService:
             # Parse JSON response into Pydantic model
             if response.text:
                 data = json.loads(response.text)
+                # Fill in any missing or null fields from deterministic heuristic parser
+                if not data.get("vendor_name") and heuristic_res.vendor_name:
+                    data["vendor_name"] = heuristic_res.vendor_name
+                if not data.get("bank_name") and heuristic_res.bank_name:
+                    data["bank_name"] = heuristic_res.bank_name
+                if not data.get("bank_account_number") and heuristic_res.bank_account_number:
+                    data["bank_account_number"] = heuristic_res.bank_account_number
+                if (not data.get("total_amount") or data.get("total_amount") <= 0) and heuristic_res.total_amount:
+                    data["total_amount"] = heuristic_res.total_amount
+                if not data.get("invoice_number") and heuristic_res.invoice_number:
+                    data["invoice_number"] = heuristic_res.invoice_number
+                if not data.get("purchase_order_number") and heuristic_res.purchase_order_number:
+                    data["purchase_order_number"] = heuristic_res.purchase_order_number
+
                 # Combine Gemini review_reasons with PDF binary forensic findings
                 existing_reasons = data.get("review_reasons", [])
                 for fr in forensic_reasons:
@@ -272,14 +288,32 @@ class DocumentExtractorService:
 
         # 4. Bank name detection
         bank_name = None
-        for b in [
-            "Maybank", "Malayan Banking", "CIMB Bank", "CIMB", "Public Bank",
-            "RHB Bank", "RHB", "Hong Leong Bank", "AmBank", "Alliance Bank",
-            "Standard Chartered", "HSBC", "OCBC", "UOB"
-        ]:
-            if re.search(rf"\b{re.escape(b)}\b", text, re.IGNORECASE):
-                bank_name = "Maybank" if "maybank" in b.lower() or "malayan" in b.lower() else b
-                break
+        # Check explicit remittance label first to avoid matching preamble pretext
+        bank_label_match = re.search(
+            r"(?:Beneficiary\s*Bank|Bank\s*Name|Remit(?:tance)?\s*Bank|Disbursement\s*Bank|Target\s*Bank|Bank)\s*[:#-]?\s*([A-Za-z0-9\s&]+)",
+            text,
+            re.IGNORECASE,
+        )
+        if bank_label_match:
+            candidate_line = bank_label_match.group(1).split("\n")[0].strip()
+            for b in [
+                "CIMB Bank", "CIMB", "Public Bank", "RHB Bank", "RHB",
+                "Hong Leong Bank", "Hong Leong", "AmBank", "Alliance Bank",
+                "Maybank", "Malayan Banking", "Standard Chartered", "HSBC", "OCBC", "UOB"
+            ]:
+                if re.search(rf"\b{re.escape(b)}\b", candidate_line, re.IGNORECASE):
+                    bank_name = "Maybank" if "maybank" in b.lower() or "malayan" in b.lower() else b
+                    break
+
+        if not bank_name:
+            for b in [
+                "CIMB Bank", "CIMB", "Public Bank", "RHB Bank", "RHB",
+                "Hong Leong Bank", "Hong Leong", "AmBank", "Alliance Bank",
+                "Maybank", "Malayan Banking", "Standard Chartered", "HSBC", "OCBC", "UOB"
+            ]:
+                if re.search(rf"\b{re.escape(b)}\b", text, re.IGNORECASE):
+                    bank_name = "Maybank" if "maybank" in b.lower() or "malayan" in b.lower() else b
+                    break
 
         # 5. Amount regex
         amt_match = re.search(

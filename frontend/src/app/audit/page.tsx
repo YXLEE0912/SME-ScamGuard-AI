@@ -10,7 +10,7 @@ import {
   X,
 } from "lucide-react";
 import { AuditEvent, fetchAuditTrail, uploadMasterLedgerCsv } from "@/services/api";
-import { formatMYT } from "@/lib/date";
+import { formatMYT, parseDateToTime } from "@/lib/date";
 
 export default function AuditTrailPage() {
   const [events, setEvents] = useState<AuditEvent[]>([]);
@@ -77,8 +77,8 @@ export default function AuditTrailPage() {
       );
     })
     .sort((a, b) => {
-      const timeA = new Date(a.timestamp).getTime() || 0;
-      const timeB = new Date(b.timestamp).getTime() || 0;
+      const timeA = parseDateToTime(a.timestamp, a.id);
+      const timeB = parseDateToTime(b.timestamp, b.id);
       if (timeA !== timeB) {
         return sortOrder === "oldest" ? timeA - timeB : timeB - timeA;
       }

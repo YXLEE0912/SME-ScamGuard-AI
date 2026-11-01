@@ -106,7 +106,7 @@ export default function CaseDetailPage() {
       : [`${raw.id}_invoice.pdf`, "vendor_remittance.pdf"];
 
     const rawNum = raw.id.match(/\d+/)?.[0] || "001";
-    const emailId = raw.id.startsWith("email_") ? raw.id : `email_${rawNum.padStart(3, "0")}`;
+    const emailId = raw.id;
 
     const rawWithBody = raw as DemoInvoice & { email_body?: string; producer_tool?: string; certainty_confidence?: number };
     const emailBody = rawWithBody.email_body || (isDefect
