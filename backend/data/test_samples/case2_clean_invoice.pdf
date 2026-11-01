@@ -1,0 +1,38 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 611 >>
+stream
+BT /F1 11 Tf 50 750 Td
+(TAX INVOICE: INV-SS-2026-4401) Tj T*
+(Vendor: Southern Steel Supplies Sdn Bhd) Tj T*
+(SSM Registration: 201501023456) Tj T*
+(Date: 2026-10-28) Tj T*
+(Purchase Order: PO-SS-2026-0925) Tj T*
+() Tj T*
+(Description                                    Amount [MYR]) Tj T*
+(Grade 500 High-Tensile Deformed Rebars            22,450.00) Tj T*
+(Mild Steel Hollow Sections                        10,000.00) Tj T*
+(Total Amount: RM 32,450.00) Tj T*
+() Tj T*
+(REMITTANCE INSTRUCTIONS:) Tj T*
+(Beneficiary Bank: CIMB Bank) Tj T*
+(Account Number: 8001234567) Tj T*
+(Payment Terms: Net 30 Days) Tj T*
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+trailer
+<< /Root 1 0 R >>
+%%EOF

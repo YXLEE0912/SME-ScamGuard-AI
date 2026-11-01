@@ -10,6 +10,7 @@ import {
   X,
 } from "lucide-react";
 import { AuditEvent, fetchAuditTrail, uploadMasterLedgerCsv } from "@/services/api";
+import { formatMYT, parseDateToTime } from "@/lib/date";
 
 export default function AuditTrailPage() {
   const [events, setEvents] = useState<AuditEvent[]>([]);
@@ -76,17 +77,19 @@ export default function AuditTrailPage() {
       );
     })
     .sort((a, b) => {
-      if (sortOrder === "oldest") {
-        return a.id.localeCompare(b.id);
+      const timeA = parseDateToTime(a.timestamp, a.id);
+      const timeB = parseDateToTime(b.timestamp, b.id);
+      if (timeA !== timeB) {
+        return sortOrder === "oldest" ? timeA - timeB : timeB - timeA;
       }
-      return b.id.localeCompare(a.id);
+      return sortOrder === "oldest" ? a.id.localeCompare(b.id) : b.id.localeCompare(a.id);
     });
 
   const handleExportCsv = () => {
-    const headers = ["ID", "Timestamp", "Action", "Description", "Justification", "Operator ID"];
+    const headers = ["ID", "Timestamp (MYT)", "Action", "Description", "Justification", "Operator ID"];
     const rows = events.map((e) => [
       `"${e.id}"`,
-      `"${e.timestamp}"`,
+      `"${formatMYT(e.timestamp)}"`,
       `"${e.action}"`,
       `"${e.description.replace(/"/g, '""')}"`,
       `"${e.justification.replace(/"/g, '""')}"`,
@@ -342,7 +345,7 @@ export default function AuditTrailPage() {
                         {evt.action}
                       </span>
                       <span className="font-mono text-xs text-zinc-400 dark:text-zinc-500">
-                        {evt.timestamp}
+                        {formatMYT(evt.timestamp)}
                       </span>
                       <span className="ml-auto font-mono text-[11px] text-zinc-400 dark:text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded border border-zinc-200/60 dark:border-white/5">
                         {evt.operator_id}

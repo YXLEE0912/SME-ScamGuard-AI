@@ -34,13 +34,15 @@ def verify_vendor_remittance(
         active_ledger = {}
 
     ledger_entry = APPROVED_VENDOR_LEDGER.get(vendor_name)
-    if not ledger_entry and active_ledger and vendor_name in active_ledger:
-        v = active_ledger[vendor_name]
-        ledger_entry = {
-            "account": v.get("account_no", ""),
-            "bank": v.get("bank_name", "Maybank"),
-            "phone": v.get("official_landline", "+60 3-7722 8888"),
-        }
+    if not ledger_entry and active_ledger:
+        v_key = vendor_name.strip().lower()
+        if v_key in active_ledger:
+            v = active_ledger[v_key]
+            ledger_entry = {
+                "account": v.get("account_no", ""),
+                "bank": v.get("bank_name", "Maybank"),
+                "phone": v.get("official_landline", "+60 3-7722 8888"),
+            }
     vendor_found = ledger_entry is not None
     
     if vendor_found:

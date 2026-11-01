@@ -137,7 +137,7 @@ The multi-agent pipeline maps across ten discrete layers of defense to eliminate
   1. **Metadata Dictionary Extraction**: Parses `/Producer`, `/Creator`, `/CreationDate`, `/ModDate`, `/Title`, and document ID hashes.
   2. **Timestamp Delta Anomaly**: Computes elapsed time between creation and modification:
      $$\Delta t = |T_{\text{Modification}} - T_{\text{Creation}}|$$
-     If $\Delta t > 3600\text{ seconds}$ (1 hour), an anomaly indicator is recorded to detect post-export tampering.
+     If $\Delta t > 3600$ seconds (1 hour), an anomaly indicator is recorded to detect post-export tampering.
   3. **Trailer & Splicing Markers**: Scans the raw byte stream for incremental revision trailers (`%%EOF`). The presence of multiple `%%EOF` markers indicates incremental updates or post-generation page splicing.
   4. **Font Subset & Object Stream Consistency**: Detects synthetic form overlay streams placed on top of rendered base text.
 - **Dual-Factor Benign Tooling Rule**:
@@ -169,9 +169,10 @@ The multi-agent pipeline maps across ten discrete layers of defense to eliminate
      `Result = UNAUTHORIZED_BANK_CHANGE`
   3. **Check C (Local SemakMule Fraud Threat Cache Lookup)**:
      Queries the normalized destination bank account against the indexed in-memory cache of commercial mule accounts compiled by the Royal Malaysia Police (PDRM) CCID.
-     - Target Lookup Latency: $< 0.003\text{ ms}$.
-     - Confirmed Hit: Assigns threat score $S_{\text{SemakMule}} = 99$, overriding all other indicators and forcing immediate voucher freezing.
-     - Cache Miss Semantics: A miss designates `NOT_FOUND_IN_SNAPSHOT`, **never `CLEAN`**.
+     - **No Public PDRM Realtime API**: Because the Royal Malaysia Police (PDRM) CCID does not offer an official public real-time transactional REST API, Agent 3 operates strictly against a high-performance local in-memory and disk-persisted indexed threat cache (`backend/data/semakmule_cache.json`) hydrated by Agent 7.
+     - **Target Lookup Latency**: < 0.003 ms ($\mathcal{O}(1)$ hash set index).
+     - **Confirmed Hit**: Assigns threat score `S = 99`, overriding all other indicators and forcing immediate voucher freezing.
+     - **Cache Miss Semantics**: A miss designates `NOT_FOUND_IN_SNAPSHOT`, **never `CLEAN`**.
 
 ---
 
@@ -217,12 +218,12 @@ The multi-agent pipeline maps across ten discrete layers of defense to eliminate
   $$R = \max\left(S_{\text{SemakMule}}, \min\left(100, w_1 \cdot I_{\text{Ledger}} + w_2 \cdot I_{\text{Tool}} + w_3 \cdot I_{\text{Urgency}} + w_4 \cdot I_{\text{Auth}} + w_5 \cdot I_{\text{Context}}\right)\right)$$
 
   **Parameter Weight Configurations**:
-  - $w_1 = 75$ &rarr; $I_{\text{Ledger}}$: Discrepancy between PDF claim and Master Ledger ($1$ if mismatch, $0$ if exact match).
-  - $w_2 = 20$ &rarr; $I_{\text{Tool}}$: High-risk PDF editing tool or incremental splicing anomaly ($1$ if anomalous, $0$ if authentic ERP export or benign Canva/iLovePDF exception).
-  - $w_3 = 15$ &rarr; $I_{\text{Urgency}}$: Cognitive urgency score exceeding threshold ($1$ if normalized urgency $> 70$, $0$ otherwise).
-  - $w_4 = 25$ &rarr; $I_{\text{Auth}}$: Missing Purchase Order (PO) matching, missing Goods Received Note (GRN), or discrepancy in authorized PO prefix.
-  - $w_5 = 20$ &rarr; $I_{\text{Context}}$: Temporal anomaly, 7-day rolling spend velocity breach, or vendor dormancy exceeding 180 days.
-  - $S_{\text{SemakMule}} = 99$: Confirmed PDRM CCID commercial mule account match.
+  - **w₁ (`I_Ledger`) = 75**: Discrepancy between PDF claim and Master Ledger (`1` if mismatch, `0` if exact match).
+  - **w₂ (`I_Tool`) = 20**: High-risk PDF editing tool or incremental splicing anomaly (`1` if anomalous, `0` if authentic ERP export or benign Canva/iLovePDF exception).
+  - **w₃ (`I_Urgency`) = 15**: Cognitive urgency score exceeding threshold (`1` if normalized urgency > 70, `0` otherwise).
+  - **w₄ (`I_Auth`) = 25**: Missing Purchase Order (PO) matching, missing Goods Received Note (GRN), or discrepancy in authorized PO prefix.
+  - **w₅ (`I_Context`) = 20**: Temporal anomaly, 7-day rolling spend velocity breach, or vendor dormancy exceeding 180 days.
+  - **`S_SemakMule` = 99**: Confirmed PDRM CCID commercial mule account match.
 
 - **Finite State Machine & Disposition Thresholds**:
   ```
@@ -247,14 +248,14 @@ The multi-agent pipeline maps across ten discrete layers of defense to eliminate
                       Required           Police Dossier
   ```
 
-  1. **`VERIFIED` ($R < 50$)**:
+  1. **`VERIFIED` (`R < 50`)**:
      - *Condition*: Zero bank mismatches, exact ledger parity, zero SemakMule hits, valid PO reference, and all mandatory checks verified.
      - *Disposition*: Straight-through voucher preparation permitted under standard single-signoff accounting controls.
-  2. **`NEEDS_REVIEW` ($50 \le R < 80$)**:
-     - *Condition*: Discretionary threshold exceeded (e.g. invoice $>$ RM 20,000), dormancy warning, or mild urgency signals.
+  2. **`NEEDS_REVIEW` (`50 <= R < 80`)**:
+     - *Condition*: Discretionary threshold exceeded (e.g. invoice > RM 20,000), dormancy warning, or mild urgency signals.
      - *Disposition*: Payment voucher paused; mandatory 4-Eyes dual sign-off required.
-  3. **`LOCKED_CRITICAL` ($R \ge 80$ or Mandatory Failure)**:
-     - *Condition*: Bank account mismatch, SemakMule hit ($S=99$), PDF binary tampering, or `AI_COGNITIVE_UNAVAILABLE`.
+  3. **`LOCKED_CRITICAL` (`R >= 80` or Mandatory Failure)**:
+     - *Condition*: Bank account mismatch, SemakMule hit (`S = 99`), PDF binary tampering, or `AI_COGNITIVE_UNAVAILABLE`.
      - *Disposition*: Immediate automated payment freeze; voucher locked in accounting ledger; incident response dossier synthesized.
 
 ---
@@ -269,13 +270,14 @@ The multi-agent pipeline maps across ten discrete layers of defense to eliminate
      - Reporting SME Entity & SSM Identifier
      - Target Vendor Profile & Master Ledger Baseline
      - Fraudulent Payment Claims (Bank name, claimed account, claimed recipient name)
-     - Technical Evidence Log (SHA-256 digests, PDF metadata, modification delta $\Delta t$, email MIME headers)
+     - Technical Evidence Log (SHA-256 digests, PDF metadata, modification delta Δt, email MIME headers)
      - Reconciliation Findings & Extracted Coercion Indicators
   3. **In-Thread Vendor Dispute Response Draft**: Prepares a formal, non-accusatory email draft for the AP clerk requesting formal verification of banking details via registered landline channels.
   4. **Cryptographic Chained Audit Trail**:
      Constructs an immutable event log using recursive SHA-256 hashing:
-     `event_hash_n = SHA-256(canonical_event_n || event_hash_{n-1})`
-     Each record includes: `event_id`, `timestamp_utc`, `case_id`, `evidence_hashes`, `risk_score`, `disposition`, `operator_id`, and `prior_hash`.
+     $$\text{event\_hash}_n = \text{SHA-256}(\text{canonical\_event}_n \parallel \text{event\_hash}_{n-1})$$
+     Each record includes: `event_id`, `timestamp_utc` (ISO 8601 with `+08:00`), `timestamp_myt` (`YYYY-MM-DD HH:mm:ss MYT`), `case_id`, `evidence_hashes`, `risk_score`, `disposition`, `operator_id`, and `prior_hash`.
+     - **Timezone Standardization**: All audit events, timeline entries, and cockpit evidence cards are standardized to **Malaysian Standard Time (MYT / UTC+8 / Asia/Kuala_Lumpur)** to ensure compliance with the Malaysian Evidence Act 1950 (Section 90A).
 
 ---
 
@@ -287,13 +289,13 @@ The multi-agent pipeline maps across ten discrete layers of defense to eliminate
 - **Two-Stage Ingestion Pipeline**:
   - **Stage 1: Authenticity & Source Provenance Gate**:
     - The advisory payload is wrapped in `<UNTRUSTED_INTEL_STREAM>`.
-    - Validates source attribution against an allowlist of verified institutional domains (`*.rmp.gov.my`, `*.bnm.gov.my`, `*.nsrc.gov.my`, official banking security circulars).
-    - Rejects unverified forum posts, social media claims, or unauthenticated feeds.
+    - Evaluated by Gemini 2.5 Flash against an allowlist of verified institutional domains (`*.rmp.gov.my`, `*.bnm.gov.my`, `*.nsrc.gov.my`, official banking security circulars).
+    - Defends against threat cache poisoning by rejecting unverified forum posts, satire, social media rumors, or unauthenticated feeds with HTTP 400 (`SUSPECTED_FAKE_NEWS`).
   - **Stage 2: Schema Extraction & Atomic Cache Update**:
     - Extracts entity fields: `account_no`, `bank_name`, `entity_name`, `crime_category`, `source_url`, `observed_at`.
-    - Normalizes account digits (stripping hyphens and whitespace) and validates bank branch checksums.
+    - Normalizes account digits (stripping hyphens and whitespace) and canonicalizes bank names (`MAYBANK`, `CIMB`, `PUBLIC_BANK`, etc.).
     - Commits the updated threat cache using atomic temporary file replacement (`semakmule_cache.json.tmp` &rarr; `semakmule_cache.json`) to prevent partial read states.
-    - Refreshes the in-memory fast-lookup hash table ($O(1)$ lookup complexity, $< 0.003\text{ ms}$).
+    - Refreshes the in-memory fast-lookup hash table ($\mathcal{O}(1)$ lookup complexity, < 0.003 ms).
 
 ---
 
@@ -304,17 +306,37 @@ A primary attack vector in Business Email Compromise is the replacement of vendo
 - **Invoice Phone Suppression**: The system suppresses all phone numbers, contact names, and email addresses parsed from the untrusted invoice document.
 - **Registered Corporate Switchboard Display**: The cockpit displays exclusively the pre-verified corporate switchboard telephone number stored in the Master Procurement Ledger (e.g., `+60 3-7722 8841`).
 - **Mandatory Callback Logging**: The AP clerk must execute an independent telephone callback to the verified switchboard and record:
-  - Timestamp of call
+  - Timestamp of call (recorded in MYT)
   - Verified officer name & corporate title
   - Switchboard extension dialed
   - Verbal confirmation of banking remittance instructions
 
-### 4.2 Maker-Checker Dual Authorization Gate
-For any invoice flagged with $R \ge 50$, payment release cannot be executed by a single individual:
-1. **Maker (AP Clerk)**: Inspects discrepancy, records switchboard callback justification, and signs off.
-2. **Checker (Finance Manager / Controller)**: Must be a distinct, authenticated user identity. The approval action remains cryptographically disabled until the maker's callback log is committed to the audit trail.
-3. **Controlled Field Correction**: If a legitimate supplier bank change has occurred, the system records:
-   > **Audit Field Correction Record**:  
-   > `Verified Value: [approved account]` | `Original Value: ~~[untrusted account]~~` | `Status: Corrected`  
-   The modification requires documented maker-checker sign-off and is logged as an immutable audit event.
+### 4.2 State-Machine Action Gating & Operator Decision Flow
+The Right-Hand Decision Panel (`/case/[id]`) implements an explicit finite state-machine governing payment disposition:
 
+1. **Initial Gating on Uncorrected Defects**:
+   - When invoice status is `NEEDS_REVIEW`, `DEFECT`, or `LOCKED_CRITICAL` containing unaddressed discrepancies:
+     * **`Approve and Submit`**: Strictly **DISABLED** (opaque, non-clickable).
+     * **`Escalate`**: **ENABLED** (active, routes to wire freeze and containment).
+     * **Guiding Helper Copy**: *"Resolve or correct flagged defects before authorization is permitted."*
+   - Static dual sign-off text lines (`Clerk Sign-off: ...`, `Manager Approval: ...`) are **removed** in favor of live cryptographic state badges.
+
+2. **Operator Field Correction Workflow (`[✎ Correct...]`)**:
+   - If a legitimate supplier bank update or operational discrepancy is confirmed via registered switchboard callback:
+     * Operator clicks `[✎ Correct...]` on the discrepancy row and submits the verified value with callback justification.
+     * Persisted to backend via `POST /api/v1/queue/{case_id}/override`.
+     * Renders an inline visual badge directly inside the specific Agent card:
+       `[✎ Operator Corrected: <field_name> -> <new_value>] (<YYYY-MM-DD HH:mm:ss MYT>)`
+     * **Unlocks Decision Actions**: The operator is now permitted to select **either** `Approve and Submit` **OR** `Escalate` (mutually exclusive).
+
+3. **Status Transitions & Queue Table Presentation**:
+   - **`Approve and Submit`**: Mutates case state to `status = VERIFIED`, `decision = approved`, `resolved = true`, and appends `Payment Approved` to the SHA-256 audit trail. In `/queue`, the invoice moves to the **Resolved** view and renders a dual-status badge: `Verified` + `approved` sub-badge.
+   - **`Escalate`**: Mutates case state to `status = LOCKED_CRITICAL`, `decision = escalated`, `resolved = true`, triggers ERP hold payload, and appends `Escalated` to the audit trail. In `/queue`, renders `Locked Critical` + `escalated` sub-badge.
+   - **Settled Post-Action State**: Replaces action buttons with read-only indicators: `✓ Approved` or `🚨 Escalated`.
+
+---
+
+<p align="center">
+  <b>🛡️ SME-ScamGuard-AI</b><br>
+  <i>AI-Assisted · Deterministic by Design · Human-Controlled</i>
+</p>

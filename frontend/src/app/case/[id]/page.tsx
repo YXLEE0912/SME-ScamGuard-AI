@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
   ArrowLeft,
@@ -22,6 +22,7 @@ import {
 } from "@/services/api";
 import { ThreatSeverityBadge } from "@/components/ThreatSeverityBadge";
 import { MultiAgentPipeline } from "@/components/MultiAgentPipeline";
+import { formatReceivedMYT } from "@/lib/date";
 
 interface ComparisonFieldData {
   truth?: string;
@@ -44,10 +45,21 @@ interface UnifiedCase {
   certaintyConfidence: number;
   category: string;
   threatCategory?: string;
-  status: "VERIFIED" | "NEEDS_REVIEW" | "DEFECT" | "RESOLVED";
+  status: "VERIFIED" | "NEEDS_REVIEW" | "DEFECT" | "LOCKED_CRITICAL" | "RESOLVED";
   reasoning: string;
   files: string[];
   comparison: Record<string, ComparisonFieldData>;
+  decision?: string;
+  resolved?: boolean;
+  has_operator_override?: boolean;
+  corrected_fields?: Array<{
+    field: string;
+    value: string;
+    canonical_field?: string;
+    timestamp?: string;
+    clerk_id?: string;
+  }>;
+  defect_fields?: number;
 }
 
 const TOTAL_CASES = 50;
@@ -61,10 +73,8 @@ export default function CaseDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [showEmail, setShowEmail] = useState(false);
 
-  // 4-Eyes Dual Authorization state
-  const [clerkSigned, setClerkSigned] = useState(false);
-  const [managerSigned, setManagerSigned] = useState(false);
   const [voucherReleased, setVoucherReleased] = useState(false);
+  const [isActionLoading, setIsActionLoading] = useState(false);
 
   // Compute pagination index (0-indexed)
   const numMatch = caseId.match(/\d+/);
@@ -77,91 +87,118 @@ export default function CaseDetailPage() {
     router.push(`/case/${targetId}`);
   };
 
-  useEffect(() => {
-    async function loadRecord() {
-      setIsLoading(true);
-      try {
-        const live = await fetchInvoiceById(caseId);
-        if (live) {
-          adaptDemoInvoice(live);
-        } else {
-          setInvoice(null);
-        }
-      } catch (err) {
-        console.warn(`Failed to fetch case ${caseId} from live backend:`, err);
-        setInvoice(null);
-      } finally {
-        setIsLoading(false);
-      }
+  const adaptDemoInvoice = useCallback((raw: DemoInvoice) => {
+    const isApproved = raw.decision === "approved" || raw.is_approved === true || (raw.status === "VERIFIED" && Boolean(raw.resolved)) || (raw as unknown as Record<string, unknown>).decision === "PAYMENT_RELEASED";
+    const isEscalated = raw.decision === "escalated" || (Boolean(raw.resolved) && (raw.status === "LOCKED_CRITICAL" || raw.is_escalated)) || (raw as unknown as Record<string, unknown>).decision === "PAYMENT_LOCKED";
+    const isDefect = !isApproved && !isEscalated && (raw.status === "DEFECT" || raw.status === "LOCKED_CRITICAL" || raw.risk_score >= 80);
+    const isReview = !isApproved && !isEscalated && !isDefect && (raw.status === "NEEDS_REVIEW" || (raw.risk_score > 20 && raw.risk_score < 80));
+
+    if (isApproved) {
+      setVoucherReleased(true);
     }
 
-    function adaptDemoInvoice(raw: DemoInvoice) {
-      const isDefect = raw.status === "DEFECT" || raw.status === "LOCKED_CRITICAL" || raw.risk_score >= 80;
-      const isReview = raw.status === "NEEDS_REVIEW" || (raw.risk_score > 20 && raw.risk_score < 80);
+    const rawAmt = raw.comparison?.amount?.draft || "18500";
+    const parsedAmt = parseFloat(rawAmt.replace(/[^0-9.]/g, "")) || 18500;
+    const comp = (raw.comparison || {}) as Record<string, ComparisonFieldData>;
 
-      const rawAmt = raw.comparison?.amount?.draft || "18500";
-      const parsedAmt = parseFloat(rawAmt.replace(/[^0-9.]/g, "")) || 18500;
-      const comp = (raw.comparison || {}) as Record<string, ComparisonFieldData>;
+    const files = raw.files && raw.files.length > 0
+      ? raw.files
+      : [`${raw.id}_invoice.pdf`, "vendor_remittance.pdf"];
 
-      const files = raw.files && raw.files.length > 0
-        ? raw.files
-        : [`${raw.id}_invoice.pdf`, "vendor_remittance.pdf"];
+    const rawNum = raw.id.match(/\d+/)?.[0] || "001";
+    const emailId = raw.id;
 
-      const rawNum = raw.id.match(/\d+/)?.[0] || "001";
-      const emailId = raw.id.startsWith("email_") ? raw.id : `email_${rawNum.padStart(3, "0")}`;
+    const rawWithBody = raw as DemoInvoice & { email_body?: string; producer_tool?: string; certainty_confidence?: number };
+    const emailBody = rawWithBody.email_body || (isDefect
+      ? `Dear Finance,\n\nOur standard Maybank account is under annual audit and temporarily frozen.\nPlease remit the outstanding milestone claim of RM ${parsedAmt.toLocaleString()}.00 today to our backup account:\nBank: CIMB Bank\nAccount: 8009-4411-2299\n\nPayment must be made before 5:00 PM today to prevent work stoppage on site.\nDirect inquiries to mobile 012-3456789.\n\nRegards,\nAlex Tan\n${raw.sender_name || "Mega Logistics"} AP Team`
+      : `From: ${raw.sender_email}\nTo: finance-ap@sme-enterprise.com.my\nDate: ${formatReceivedMYT(raw.received_date)}\nSubject: ${raw.subject}\n\nDear Accounts Payable Team,\n\nPlease find attached our official tax invoice and milestone claim for verified procurement deliverables.\nAll banking details remain consistent with our verified Master Procurement Ledger.\nPayment terms: Net 30 Days.\n\nThank you,\n${raw.sender_name || "Commercial Billing Desk"}`);
 
-      const rawWithBody = raw as DemoInvoice & { email_body?: string; producer_tool?: string; certainty_confidence?: number };
-      const emailBody = rawWithBody.email_body || (isDefect
-        ? `Dear Finance,\n\nOur standard Maybank account is under annual audit and temporarily frozen.\nPlease remit the outstanding milestone claim of RM ${parsedAmt.toLocaleString()}.00 today to our backup account:\nBank: CIMB Bank\nAccount: 8009-4411-2299\n\nPayment must be made before 5:00 PM today to prevent work stoppage on site.\nDirect inquiries to mobile 012-3456789.\n\nRegards,\nAlex Tan\n${raw.sender_name || "Mega Logistics"} AP Team`
-        : `From: ${raw.sender_email}\nTo: finance-ap@sme-enterprise.com.my\nDate: ${raw.received_date}\nSubject: ${raw.subject}\n\nDear Accounts Payable Team,\n\nPlease find attached our official tax invoice and milestone claim for verified procurement deliverables.\nAll banking details remain consistent with our verified Master Procurement Ledger.\nPayment terms: Net 30 Days.\n\nThank you,\n${raw.sender_name || "Commercial Billing Desk"}`);
-
-      setInvoice({
-        id: emailId,
-        referenceId: raw.id.toUpperCase(),
-        vendorName: raw.sender_name || "Mega Logistics Sdn Bhd",
-        sender: raw.sender_email,
-        subject: raw.subject,
-        amountMyr: parsedAmt,
-        receivedDate: raw.received_date,
-        emailBody,
-        producerTool: rawWithBody.producer_tool || (isDefect ? "iLovePDF Spliced (Binary Desync)" : "AutoCount ERP / Acrobat Pro"),
-        riskScore: raw.risk_score,
-        certaintyConfidence: rawWithBody.certainty_confidence || (isDefect ? 98 : 96),
-        category: raw.category || "General Procurement",
-        threatCategory: raw.category || (isDefect ? "BEC Wire Scam" : "Routine Billing"),
-        status: isDefect ? "DEFECT" : isReview ? "NEEDS_REVIEW" : "VERIFIED",
-        reasoning: raw.banner_message || (isDefect
+    setInvoice({
+      id: emailId,
+      referenceId: raw.id.toUpperCase(),
+      vendorName: raw.sender_name || "Mega Logistics Sdn Bhd",
+      sender: raw.sender_email,
+      subject: raw.subject,
+      amountMyr: parsedAmt,
+      receivedDate: formatReceivedMYT(raw.received_date),
+      emailBody,
+      producerTool: rawWithBody.producer_tool || (isApproved ? "AutoCount ERP / Acrobat Pro" : isDefect ? "iLovePDF Spliced (Binary Desync)" : "AutoCount ERP / Acrobat Pro"),
+      riskScore: isApproved ? 0 : raw.risk_score,
+      certaintyConfidence: rawWithBody.certainty_confidence || (isDefect ? 98 : 96),
+      category: raw.category || "General Procurement",
+      threatCategory: raw.category || (isApproved ? "Routine Billing" : isDefect ? "BEC Wire Scam" : "Routine Billing"),
+      status: isApproved ? "VERIFIED" : (raw.status === "LOCKED_CRITICAL" ? "LOCKED_CRITICAL" : (isDefect ? "DEFECT" : isReview ? "NEEDS_REVIEW" : "VERIFIED")),
+      reasoning: isApproved
+        ? "Dual 4-Eyes authorization committed. Payment voucher released."
+        : (raw.banner_message || (isDefect
           ? "Discrepancy Trap: Inbound payment remittance details contradict Master Procurement Ledger baseline."
-          : "All verified fields match the Master Procurement Ledger with 100% confidence."),
-        files,
-        comparison: comp,
-      });
-    }
+          : "All verified fields match the Master Procurement Ledger with 100% confidence.")),
+      files,
+      comparison: comp,
+      decision: raw.decision,
+      resolved: raw.resolved,
+      has_operator_override: raw.has_operator_override,
+      corrected_fields: raw.corrected_fields,
+      defect_fields: raw.defect_fields,
+    });
+  }, []);
 
-    loadRecord();
-  }, [caseId]);
+  const loadRecord = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const live = await fetchInvoiceById(caseId);
+      if (live) {
+        adaptDemoInvoice(live);
+      } else {
+        setInvoice(null);
+      }
+    } catch (err) {
+      console.warn(`Failed to fetch case ${caseId} from live backend:`, err);
+      setInvoice(null);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [caseId, adaptDemoInvoice]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      loadRecord();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [loadRecord]);
 
   const handleHoldWire = async (reason: string) => {
     if (!invoice) return;
+    setIsActionLoading(true);
     try {
-      await escalateInvoice(invoice.id, reason || "Unauthorized bank account detected. Wire transfer frozen.");
-      setClerkSigned(true);
-    } catch {
-      setClerkSigned(true);
+      const res = await escalateInvoice(invoice.id, reason || "Unauthorized bank account detected. Wire transfer frozen.");
+      if (res.record) {
+        adaptDemoInvoice(res.record);
+      } else {
+        await loadRecord();
+      }
+    } catch (err) {
+      console.warn("Escalation API error:", err);
+    } finally {
+      setIsActionLoading(false);
     }
   };
 
   const handleReleasePayment = async () => {
     if (!invoice) return;
+    setIsActionLoading(true);
     try {
-      await approveInvoice(invoice.id, "Clerk & Controller dual 4-Eyes sign-off completed.");
-      setClerkSigned(true);
-      setManagerSigned(true);
+      const res = await approveInvoice(invoice.id, "AP-CLERK-MY01", "Operator verified & approved.");
       setVoucherReleased(true);
-    } catch {
-      setClerkSigned(true);
-      setManagerSigned(true);
-      setVoucherReleased(true);
+      if (res.record) {
+        adaptDemoInvoice(res.record);
+      } else {
+        await loadRecord();
+      }
+    } catch (err) {
+      console.warn("Approval API error:", err);
+    } finally {
+      setIsActionLoading(false);
     }
   };
 
@@ -181,6 +218,7 @@ export default function CaseDetailPage() {
       producer_tool: invoice.producerTool,
       audit_source: "Master Procurement Ledger Parity Engine",
       sha256_fingerprint: "8f4a13b9c7028e1d5e6a9928f01b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b",
+      comparison_fields: invoice.comparison,
     };
   }, [invoice]);
 
@@ -267,7 +305,7 @@ export default function CaseDetailPage() {
                     <span>{invoice.sender}</span>
                   </span>
                   <span className="text-slate-300 dark:text-slate-600">•</span>
-                  <span className="text-slate-500 dark:text-slate-400">Received {invoice.receivedDate}</span>
+                  <span className="text-slate-500 dark:text-slate-400">Received {formatReceivedMYT(invoice.receivedDate)}</span>
                 </div>
               </div>
 
@@ -356,65 +394,88 @@ export default function CaseDetailPage() {
           {/* 7-Agent Defense Pipeline */}
           <MultiAgentPipeline
             invoice={invoice}
-            clerkSigned={clerkSigned}
-            managerSigned={managerSigned}
             voucherReleased={voucherReleased}
+            onInvoiceUpdated={(rec) => adaptDemoInvoice(rec)}
           />
         </div>
 
         {/* Right Column (~28% width, sticky) */}
         <div className="w-full lg:w-[28%] lg:sticky lg:top-4 self-start space-y-4 shrink-0">
           {/* Task 5: DECIDE Actions Card */}
-          <div className="bg-white dark:bg-[#11131a] rounded-xl border border-slate-200/80 dark:border-white/10 p-4 space-y-3.5 shadow-[0_1px_3px_rgba(15,18,37,0.04)]">
-            <div>
-              <span className="text-[11px] font-semibold tracking-wider text-slate-400 uppercase block mb-1">
-                DECIDE
-              </span>
-              <p className="text-xs text-slate-600 dark:text-slate-300 leading-normal">
-                {invoice.status === "DEFECT"
-                  ? "Defect flags exceed threshold. Dual authorization required to release or immediate freeze recommended."
-                  : invoice.status === "NEEDS_REVIEW"
-                    ? "Confidence warning. Operator review required before releasing payment voucher."
-                    : "High confidence straight-through match. Ready for final payment authorization."}
-              </p>
-            </div>
+          {(() => {
+            const isApproved = invoice.decision === "approved" || voucherReleased || (invoice.status === "VERIFIED" && Boolean(invoice.resolved));
+            const isEscalated = invoice.decision === "escalated" || (Boolean(invoice.resolved) && (invoice.status === "LOCKED_CRITICAL" || invoice.status === "DEFECT"));
+            const hasDefects = (invoice.status === "DEFECT" || invoice.status === "LOCKED_CRITICAL" || invoice.status === "NEEDS_REVIEW") && (invoice.defect_fields ?? 1) > 0;
+            const hasOperatorOverride = Boolean(invoice.has_operator_override || (invoice.corrected_fields && invoice.corrected_fields.length > 0));
+            const canApprove = invoice.status === "VERIFIED" || hasOperatorOverride || !hasDefects;
 
-            <div className="space-y-2 pt-1">
-              <button
-                type="button"
-                onClick={handleReleasePayment}
-                disabled={voucherReleased}
-                className="w-full bg-[#0f1225] text-white hover:bg-[#1f4b8e] transition-colors font-medium py-2.5 rounded-lg text-xs disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
-              >
-                <CheckCircle2 size={14} />
-                <span>{voucherReleased ? "Payment Authorized" : "Approve & Authorize Payment"}</span>
-              </button>
+            return (
+              <div className="bg-white dark:bg-[#11131a] rounded-xl border border-slate-200/80 dark:border-white/10 p-4 space-y-3.5 shadow-[0_1px_3px_rgba(15,18,37,0.04)]">
+                <div>
+                  <span className="text-[11px] font-semibold tracking-wider text-slate-400 uppercase block mb-1">
+                    DECIDE
+                  </span>
+                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-normal">
+                    {isApproved
+                      ? "Payment voucher authorized and released."
+                      : isEscalated
+                        ? "Wire frozen and escalated for containment."
+                        : invoice.status === "DEFECT"
+                          ? "Defect flags exceed threshold. Resolve defects before authorization or escalate."
+                          : invoice.status === "NEEDS_REVIEW"
+                            ? "Confidence warning. Operator review required before releasing payment voucher."
+                            : "High confidence straight-through match. Ready for final payment authorization."}
+                  </p>
+                </div>
 
-              <button
-                type="button"
-                onClick={() => handleHoldWire("Unauthorized bank account desync flagged.")}
-                className="w-full border border-amber-300 dark:border-amber-800 text-amber-700 dark:text-amber-400 bg-amber-50/60 hover:bg-amber-100/60 dark:bg-amber-950/30 dark:hover:bg-amber-900/40 py-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-              >
-                <Flag size={14} />
-                <span>Escalate / Freeze Wire</span>
-              </button>
-            </div>
+                <div className="space-y-2 pt-1">
+                  {isApproved ? (
+                    <div className="w-full py-2.5 px-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 font-semibold text-xs flex items-center justify-center gap-2 shadow-2xs select-none">
+                      <CheckCircle2 size={15} className="text-emerald-600 dark:text-emerald-400 shrink-0" />
+                      <span>✓ Approved</span>
+                    </div>
+                  ) : isEscalated ? (
+                    <div className="w-full py-2.5 px-3 rounded-lg bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 font-semibold text-xs flex items-center justify-center gap-2 shadow-2xs select-none">
+                      <span className="text-sm">🚨</span>
+                      <span>Escalated</span>
+                    </div>
+                  ) : (
+                    <>
+                      {!canApprove && (
+                        <p className="text-[11px] text-amber-600 dark:text-amber-400 font-medium pb-0.5">
+                          Resolve or correct flagged defects before authorization is permitted.
+                        </p>
+                      )}
 
-            <div className="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-1.5 text-[11px]">
-              <div className="flex items-center justify-between text-slate-600 dark:text-slate-300">
-                <span>Clerk Sign-off:</span>
-                <span className={`font-mono font-medium ${clerkSigned ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400"}`}>
-                  {clerkSigned ? "Signed (Alex Tan)" : "Pending"}
-                </span>
+                      <button
+                        type="button"
+                        disabled={!canApprove || isActionLoading}
+                        onClick={handleReleasePayment}
+                        className={`w-full py-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition-colors ${
+                          canApprove
+                            ? "bg-[#0f1225] text-white hover:bg-[#1f4b8e] cursor-pointer"
+                            : "opacity-40 cursor-not-allowed bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 border border-slate-300/50 dark:border-slate-700/50"
+                        }`}
+                      >
+                        <CheckCircle2 size={14} />
+                        <span>Approve and Submit</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        disabled={isActionLoading}
+                        onClick={() => handleHoldWire("Unauthorized bank account desync flagged.")}
+                        className="w-full border border-amber-300 dark:border-amber-800 text-amber-700 dark:text-amber-400 bg-amber-50/60 hover:bg-amber-100/60 dark:bg-amber-950/30 dark:hover:bg-amber-900/40 py-2.5 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                      >
+                        <Flag size={14} />
+                        <span>Escalate</span>
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
-              <div className="flex items-center justify-between text-slate-600 dark:text-slate-300">
-                <span>Manager Approval:</span>
-                <span className={`font-mono font-medium ${managerSigned ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400"}`}>
-                  {managerSigned ? "Signed (Controller)" : "Pending"}
-                </span>
-              </div>
-            </div>
-          </div>
+            );
+          })()}
 
           {/* Task 5: SUBMISSION / FORENSIC EVIDENCE Card */}
           <div className="bg-white dark:bg-[#11131a] rounded-xl border border-slate-200/80 dark:border-white/10 p-4 space-y-3 shadow-[0_1px_3px_rgba(15,18,37,0.04)]">

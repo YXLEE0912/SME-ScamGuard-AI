@@ -28,7 +28,7 @@ Adapted from the human-in-the-loop operational ergonomics of the benchmark DocuV
 - **Monospace Typeface (`font-mono`)**: Reserved **exclusively** for technical identifiers:
   - Case / Email IDs (`email_001`)
   - Cryptographic Hashes (`SHA256: 7f8a91b...4c2d89e1`)
-  - Timestamps & Event Clocks (`Oct 31, 2026, 20:24:03 UTC`)
+  - Timestamps & Event Clocks (`2026-11-01 12:58:00 MYT` / Malaysian Standard Time, UTC+8)
   - Raw JSON submission payloads and email header blocks
   - Sender email domain subtext (`billing@company.com`)
 
@@ -142,6 +142,7 @@ The horizontal risk score gauge renders an inline track (`w-14 h-1.5 rounded-ful
 - **Bottom Profile**: Pinned to sidebar base with `FI` circular avatar, `Finance Ops`, and role `Operator`.
 
 ### 6.2 Verification Queue ([`QueuePage.tsx`](file:///c:/Users/SCSM11/Downloads/SME-ScamGuard-AI/frontend/src/app/queue/page.tsx))
+- **Active vs. Resolved View Tabs**: Prominent primary tabs at table head (`Active` with live item count pill vs. `Resolved`).
 - **Summary Filter Pill Bar**: Rendered above search bar as clean outlined buttons:
   `[ 50 All emails ]` `[ 13 Needs review ]` `[ 16 Defect ]` `[ 21 Verified ]`.
   Active pill rendered with high-contrast thin border `border-zinc-900 dark:border-white text-zinc-900 dark:text-white font-semibold`.
@@ -151,6 +152,7 @@ The horizontal risk score gauge renders an inline track (`w-14 h-1.5 rounded-ful
   - Status Dropdown: `h-9 px-3 rounded-lg border border-zinc-200 dark:border-white/10`.
 - **Table Data Grid (`table-fixed min-w-[960px]`)**:
   - Explicit Column Width Allocation: `EMAIL ID` (110px), `SENDER` (220px), `SUBJECT` (320px truncate), `CATEGORY` (160px), `STATUS` (170px), `RISK SCORE` (130px).
+  - Status Column Presentation: High-contrast semantic status pill (`ThreatSeverityBadge`) paired with secondary decision status badge (`approved` in emerald or `escalated` in rose) once actioned.
   - Category Column Presentation: Display business / procurement domain classifications (e.g., `Logistics`, `Manufacturing`, `Raw Materials`) with neutral slate badges (`bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300`). Never apply danger red/rose styling to benign business categories.
   - Vertical Centering: Strict `py-3.5 align-middle` on all table cells.
   - Initial Selection State: Initialized to `selectedId = null`. The first row (`email_001`) **must not** render with an active blue border on load.
@@ -170,7 +172,12 @@ The horizontal risk score gauge renders an inline track (`w-14 h-1.5 rounded-ful
 - **Case Stepper Pagination**: Compact inline stepper (`1 of 50 < >`) in the header for rapid serial incident review.
 - **Two-Column Cockpit Layout**:
   - **Left Column (~72% Width)**: Case Header Card &rarr; Inbound Claim vs. Master Ledger Parity Card with character-level diffing &rarr; 7-Agent Defense Pipeline with expandable accordions &rarr; Collapsible `Read the email` monospace disclosure.
-  - **Right Column (~28% Width, Sticky)**: Pinned `DECIDE` action card (Approve & Authorize Payment, Escalate / Freeze Wire, dual-signoff progress) and cryptographic submission evidence payload (`JSON.stringify`).
+  - **Right Column (~28% Width, Sticky)**: Pinned `DECIDE` action card (**`Approve and Submit`**, **`Escalate`**) and cryptographic submission evidence payload (`JSON.stringify`).
+- **State-Machine Action Gating (Decision Panel)**:
+  - When status is `NEEDS_REVIEW` or `DEFECT` containing unaddressed discrepancies, `Approve and Submit` is strictly **DISABLED** with helper text *"Resolve or correct flagged defects before authorization is permitted."*, while `Escalate` is active.
+  - Operator field correction via `[✎ Correct...]` persists override via `POST /api/v1/queue/{case_id}/override`, displays an inline visual badge inside the Agent card: `[✎ Operator Corrected: <field> -> <val>] (YYYY-MM-DD HH:mm:ss MYT)`, and unlocks choice between `Approve and Submit` or `Escalate`.
+  - Static dual sign-off text lines (`Clerk Sign-off: ...`, `Manager Approval: ...`) are **removed**.
+  - Settled post-action states render read-only indicators: `✓ Approved` or `🚨 Escalated`.
 - **7-Agent Defense Pipeline ([`MultiAgentPipeline.tsx`](file:///c:/Users/SCSM11/Downloads/SME-ScamGuard-AI/frontend/src/components/MultiAgentPipeline.tsx))**:
   - Vertical connected stepper with numbered circle badges (`01` through `07`). Redundant secondary icons are removed from step titles.
   - Expandable detail accordions with embedded Status Verification Card (Score gauge, human-review threshold tick at 85, and inline `[✎ Correct...]` override trigger).
@@ -179,7 +186,7 @@ The horizontal risk score gauge renders an inline track (`w-14 h-1.5 rounded-ful
 - **Header Alignment**: `Audit trail` title with event count pill, explanatory subtitle, and right-aligned `[Export CSV]` and `[Export JSON]` secondary buttons.
 - **Top Metrics Grid**: 3-column grid featuring Master Ledger Health (40 Verified Vendors), Forensic Chain Hash (SHA-256 HMAC signature), and Sync Master Ledger CSV drop card.
 - **Audit Filter Card**: Single full-width search card with search input, action filter dropdown, sort toggle (`[⇅ Newest first]`), and manual reload button.
-- **Audit Event Rows**: Chronologically ordered events featuring `#1` sequence numbers in monospace, `System note` action headers, inline UTC timestamps, and detailed descriptions with operator justifications.
+- **Audit Event Rows**: Chronologically ordered events featuring `#1` sequence numbers in monospace, action headers, inline Malaysian Standard Time timestamps (`YYYY-MM-DD HH:mm:ss MYT`), and detailed descriptions with operator justifications.
 
 ---
 
@@ -196,3 +203,9 @@ The horizontal risk score gauge renders an inline track (`w-14 h-1.5 rounded-ful
 6. **NO Monospace Font on General UI**: Monospace (`font-mono`) must never be applied to general headings, metrics, button text, or vendor titles. It is strictly for technical IDs, hashes, and timestamps.
 7. **NO Tampering with Fraud Triage Colors**: Never modify or theme the semantic Emerald, Amber, and Rose tokens used for security verification states.
 
+---
+
+<p align="center">
+  <b>🛡️ SME-ScamGuard-AI</b><br>
+  <i>AI-Assisted · Deterministic by Design · Human-Controlled</i>
+</p>

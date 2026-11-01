@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import { formatMYT } from '@/lib/date';
+
+import React, { useState, useMemo } from "react";
 import {
   ShieldCheck,
   CheckCircle2,
@@ -12,7 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { formatMYR } from "@/lib/diff";
-import { correctInvoiceField } from "@/services/api";
+import { correctInvoiceField, type DemoInvoice } from "@/services/api";
 
 export interface MultiAgentPipelineProps {
   invoice: {
@@ -29,16 +31,28 @@ export interface MultiAgentPipelineProps {
     certaintyConfidence: number;
     category?: string;
     threatCategory?: string;
-    status: "VERIFIED" | "NEEDS_REVIEW" | "DEFECT" | "RESOLVED";
+    status: "VERIFIED" | "NEEDS_REVIEW" | "DEFECT" | "LOCKED_CRITICAL" | "RESOLVED";
     reasoning: string;
     files: string[];
     comparison: Record<string, { truth?: string; draft?: string; status?: string; score?: number }>;
+    decision?: string;
+    resolved?: boolean;
+    has_operator_override?: boolean;
+    corrected_fields?: Array<{
+      field: string;
+      value: string;
+      canonical_field?: string;
+      timestamp?: string;
+      clerk_id?: string;
+      agent_number?: number;
+    }>;
   };
-  clerkSigned: boolean;
-  managerSigned: boolean;
+  clerkSigned?: boolean;
+  managerSigned?: boolean;
   voucherReleased: boolean;
   onClerkSign?: () => void;
   onManagerSign?: () => void;
+  onInvoiceUpdated?: (updatedRecord: DemoInvoice) => void;
 }
 
 interface OverrideTarget {
@@ -53,10 +67,60 @@ export function MultiAgentPipeline({
   clerkSigned,
   managerSigned,
   voucherReleased,
+  onInvoiceUpdated,
 }: MultiAgentPipelineProps) {
-  const isDefect = invoice.status === "DEFECT";
-  const isReview = invoice.status === "NEEDS_REVIEW";
+  const isApproved = invoice.status === "VERIFIED" || voucherReleased;
+  const isDefect = !isApproved && (invoice.status === "DEFECT" || invoice.status === "LOCKED_CRITICAL" || invoice.riskScore >= 80);
+  const isReview = !isApproved && !isDefect && (invoice.status === "NEEDS_REVIEW" || (invoice.riskScore >= 50 && invoice.riskScore < 80));
   const comp = invoice.comparison || {};
+
+  // Track operator corrections
+  const [localCorrections, setLocalCorrections] = useState<Array<{
+    agentNumber: number;
+    fieldName: string;
+    canonicalField?: string;
+    newValue: string;
+    timestamp: string;
+  }>>([]);
+
+  const allCorrections = useMemo(() => {
+    const list = [...localCorrections];
+    if (invoice.corrected_fields) {
+      for (const cf of invoice.corrected_fields) {
+        if (!list.some((x) => x.fieldName === cf.field && x.newValue === cf.value)) {
+          list.push({
+            agentNumber: cf.agent_number || 3,
+            fieldName: cf.field,
+            canonicalField: cf.canonical_field || cf.field,
+            newValue: cf.value,
+            timestamp: cf.timestamp ? formatMYT(cf.timestamp) : "Today",
+          });
+        }
+      }
+    }
+    return list;
+  }, [localCorrections, invoice.corrected_fields]);
+
+  const renderCorrectionBadges = (agentNum: number, specificField?: string) => {
+    const matched = allCorrections.filter(
+      (c: { agentNumber: number; fieldName: string; canonicalField?: string; newValue: string; timestamp: string }) =>
+        c.agentNumber === agentNum && (!specificField || c.fieldName === specificField || c.canonicalField === specificField)
+    );
+    if (matched.length === 0) return null;
+    return (
+      <div className="flex flex-col gap-1.5 my-2">
+        {matched.map((c: { agentNumber: number; fieldName: string; canonicalField?: string; newValue: string; timestamp: string }, i: number) => (
+          <div
+            key={i}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-300 text-xs font-semibold w-fit"
+          >
+            <span>✎ Operator Corrected: <span className="underline">{c.fieldName}</span> &rarr; <span className="font-mono font-bold">{c.newValue}</span></span>
+            <span className="text-[10px] text-amber-600/80 dark:text-amber-400/80 font-normal">({formatMYT(c.timestamp)})</span>
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   // Track user manual expansion overrides per invoice
   const [userToggledAgents, setUserToggledAgents] = useState<{ id: string; state: Record<number, boolean> }>({
@@ -104,7 +168,7 @@ export function MultiAgentPipeline({
     setOverrideReason("Verified through formal procurement documentation / manual ledger reconciliation.");
   };
 
-  const handleSaveOverride = (e: React.FormEvent) => {
+  const handleSaveOverride = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!overrideModal) return;
 
@@ -116,16 +180,36 @@ export function MultiAgentPipeline({
       },
     }));
 
-    // Persist to backend canonical override endpoint
-    correctInvoiceField({
-      invoice_id: invoice.id,
-      field_name: overrideModal.fieldName,
-      corrected_value: overrideInput,
-      justification: overrideReason,
-      clerk_id: "AP-CLERK-MY01",
-    }).catch((err) => console.warn("Failed to persist field override to backend:", err));
+    const nowStr = formatMYT(new Date().toISOString());
+    setLocalCorrections((prev) => [
+      ...prev,
+      {
+        agentNumber: overrideModal.agentNumber,
+        fieldName: overrideModal.fieldName,
+        canonicalField: overrideModal.fieldName,
+        newValue: overrideInput,
+        timestamp: nowStr,
+      },
+    ]);
 
-    setSuccessToast(`Manual override saved for ${overrideModal.fieldName}. Status updated.`);
+    // Persist to backend canonical override endpoint
+    try {
+      const res = await correctInvoiceField({
+        invoice_id: invoice.id,
+        field_name: overrideModal.fieldName,
+        corrected_value: overrideInput,
+        justification: overrideReason,
+        clerk_id: "AP-CLERK-MY01",
+      });
+      if (res.record && onInvoiceUpdated) {
+        onInvoiceUpdated(res.record as DemoInvoice);
+      }
+      setSuccessToast(`Manual override saved for ${overrideModal.fieldName}. Status updated.`);
+    } catch (err) {
+      console.warn("Failed to persist field override to backend:", err);
+      setSuccessToast(`Manual override saved locally for ${overrideModal.fieldName}.`);
+    }
+
     setOverrideModal(null);
     setTimeout(() => setSuccessToast(null), 4000);
   };
@@ -190,7 +274,7 @@ export function MultiAgentPipeline({
       truth: comp.bank_name?.truth || "Maybank",
       draft: comp.bank_name?.draft || (isDefect ? "CIMB Bank" : "Maybank"),
       rawStatus: comp.bank_name?.status || (isDefect ? "defect" : "match"),
-      defaultScore: isDefect ? 70 : 100,
+      defaultScore: comp.bank_name?.status === "corrected" || comp.bank_name?.status === "match" ? 100 : (isDefect ? 70 : 100),
     },
     {
       key: "account_no",
@@ -198,7 +282,7 @@ export function MultiAgentPipeline({
       truth: comp.account_no?.truth || "514012998877",
       draft: comp.account_no?.draft || (isDefect ? "8009-4411-2299" : "514012998877"),
       rawStatus: comp.account_no?.status || (isDefect ? "defect" : "match"),
-      defaultScore: isDefect ? 70 : 100,
+      defaultScore: comp.account_no?.status === "corrected" || comp.account_no?.status === "match" ? 100 : (isDefect ? 70 : 100),
     },
     {
       key: "landline",
@@ -206,7 +290,7 @@ export function MultiAgentPipeline({
       truth: comp.landline?.truth || "+60 3-7722 8888",
       draft: comp.landline?.draft || (isDefect ? "+60 11-2345 6789" : "+60 3-7722 8888"),
       rawStatus: comp.landline?.status || (isDefect ? "defect" : "match"),
-      defaultScore: isDefect ? 70 : 100,
+      defaultScore: comp.landline?.status === "corrected" || comp.landline?.status === "match" ? 100 : (isDefect ? 70 : 100),
     },
     {
       key: "amount",
@@ -222,29 +306,36 @@ export function MultiAgentPipeline({
       truth: comp.po_number?.truth || "PO-2026-8812",
       draft: comp.po_number?.draft || (isDefect ? "PO-OVERRIDE" : "PO-2026-8812"),
       rawStatus: comp.po_number?.status || (isDefect ? "defect" : "match"),
-      defaultScore: isDefect ? 70 : 100,
+      defaultScore: comp.po_number?.status === "corrected" || comp.po_number?.status === "match" ? 100 : (isDefect ? 70 : 100),
     },
   ];
 
   // Derive agent specific statuses and scores
-  const agent2Status: "DEFECT" | "NEEDS_REVIEW" | "VERIFIED" = isDefect ? "DEFECT" : isReview ? "NEEDS_REVIEW" : "VERIFIED";
-  const agent2Score = isDefect ? 45 : isReview ? 78 : 98;
+  const hasReconciliationDefect =
+    !isApproved &&
+    reconciliationFields.some((f) => {
+      const isOverridden = overrides[f.key] || overrides[f.label];
+      const isClean = f.rawStatus === "match" || f.rawStatus === "corrected" || f.rawStatus === "override_approved";
+      return !isClean && !isOverridden;
+    });
 
-  const hasReconciliationDefect = (isDefect || reconciliationFields.some((f) => f.rawStatus === "defect")) && !overrides["bank_name"];
-  const agent3Status: "DEFECT" | "NEEDS_REVIEW" | "VERIFIED" = hasReconciliationDefect ? "DEFECT" : isReview ? "NEEDS_REVIEW" : "VERIFIED";
-  const agent3Score = hasReconciliationDefect ? 48 : isReview ? 75 : 100;
+  const agent2Status: "DEFECT" | "NEEDS_REVIEW" | "VERIFIED" = isApproved ? "VERIFIED" : (isDefect && !overrides["PDF Producer Signature"] ? "DEFECT" : isReview ? "NEEDS_REVIEW" : "VERIFIED");
+  const agent2Score = isApproved ? 100 : (agent2Status === "DEFECT" ? 45 : agent2Status === "NEEDS_REVIEW" ? 78 : 98);
 
-  const agent4Status: "DEFECT" | "NEEDS_REVIEW" | "VERIFIED" = isDefect ? "DEFECT" : isReview ? "NEEDS_REVIEW" : "VERIFIED";
-  const agent4Score = isDefect ? 35 : isReview ? 68 : 95;
+  const agent3Status: "DEFECT" | "NEEDS_REVIEW" | "VERIFIED" = isApproved ? "VERIFIED" : (hasReconciliationDefect ? "DEFECT" : isReview ? "NEEDS_REVIEW" : "VERIFIED");
+  const agent3Score = isApproved ? 100 : (hasReconciliationDefect ? 48 : isReview ? 75 : 100);
 
-  const agent5Status: "DEFECT" | "NEEDS_REVIEW" | "VERIFIED" = isDefect ? "DEFECT" : isReview ? "NEEDS_REVIEW" : "VERIFIED";
-  const agent5Score = isDefect ? 50 : isReview ? 60 : 100;
+  const agent4Status: "DEFECT" | "NEEDS_REVIEW" | "VERIFIED" = isApproved ? "VERIFIED" : (isDefect && !overrides["Cognitive Behavioral Assessment"] ? "DEFECT" : isReview ? "NEEDS_REVIEW" : "VERIFIED");
+  const agent4Score = isApproved ? 100 : (agent4Status === "DEFECT" ? 35 : agent4Status === "NEEDS_REVIEW" ? 68 : 95);
 
-  const agent6Status: "DEFECT" | "NEEDS_REVIEW" | "VERIFIED" = isDefect && !voucherReleased ? "DEFECT" : isReview && !voucherReleased ? "NEEDS_REVIEW" : "VERIFIED";
-  const agent6Score = isDefect && !voucherReleased ? 40 : isReview && !voucherReleased ? 65 : 100;
+  const agent5Status: "DEFECT" | "NEEDS_REVIEW" | "VERIFIED" = isApproved ? "VERIFIED" : (isDefect && !overrides["Policy Arbiter Safety Net"] ? "DEFECT" : isReview ? "NEEDS_REVIEW" : "VERIFIED");
+  const agent5Score = isApproved ? 100 : (agent5Status === "DEFECT" ? 50 : agent5Status === "NEEDS_REVIEW" ? 60 : 100);
 
-  const agent7Status: "DEFECT" | "NEEDS_REVIEW" | "VERIFIED" = isDefect ? "DEFECT" : isReview ? "NEEDS_REVIEW" : "VERIFIED";
-  const agent7Score = isDefect ? 20 : isReview ? 70 : 100;
+  const agent6Status: "DEFECT" | "NEEDS_REVIEW" | "VERIFIED" = isApproved ? "VERIFIED" : (isDefect && !voucherReleased && !overrides["Containment Voucher Status"] ? "DEFECT" : isReview && !voucherReleased ? "NEEDS_REVIEW" : "VERIFIED");
+  const agent6Score = isApproved ? 100 : (agent6Status === "DEFECT" ? 40 : agent6Status === "NEEDS_REVIEW" ? 65 : 100);
+
+  const agent7Status: "DEFECT" | "NEEDS_REVIEW" | "VERIFIED" = isApproved ? "VERIFIED" : (isDefect && !overrides["PDRM SemakMule Mule Record"] && !overrides["account_no"] ? "DEFECT" : isReview ? "NEEDS_REVIEW" : "VERIFIED");
+  const agent7Score = isApproved ? 100 : (agent7Status === "DEFECT" ? 20 : agent7Status === "NEEDS_REVIEW" ? 70 : 100);
 
   // Helper renderer for Status Verification Block inside Drawers
   const renderStatusBlock = ({
@@ -500,6 +591,8 @@ export function MultiAgentPipeline({
                   </div>
                 </div>
 
+                {renderCorrectionBadges(2)}
+
                 {renderStatusBlock({
                   status: agent2Status,
                   score: agent2Score,
@@ -588,7 +681,7 @@ export function MultiAgentPipeline({
                         {reconciliationFields.map((row) => {
                           const override = overrides[row.key];
                           const effectiveDraft = override ? override.value : row.draft;
-                          const isMatch = override ? true : row.rawStatus === "match";
+                          const isMatch = override ? true : (row.rawStatus === "match" || row.rawStatus === "corrected" || row.rawStatus === "override_approved");
 
                           return (
                             <tr
@@ -627,7 +720,7 @@ export function MultiAgentPipeline({
                                   {isMatch ? (
                                     <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
                                       <CheckCircle2 size={13} />
-                                      <span>{override ? "CORRECTED" : "MATCH"}</span>
+                                      <span>{override || row.rawStatus === "corrected" || row.rawStatus === "override_approved" ? "CORRECTED" : "MATCH"}</span>
                                     </span>
                                   ) : (
                                     <span className="inline-flex items-center gap-1 text-[11px] font-bold text-rose-600 dark:text-rose-400">
@@ -662,6 +755,8 @@ export function MultiAgentPipeline({
                     </table>
                   </div>
                 </div>
+
+                {renderCorrectionBadges(3)}
 
                 {renderStatusBlock({
                   status: agent3Status,
@@ -758,6 +853,8 @@ export function MultiAgentPipeline({
                     </span>
                   </div>
                 </div>
+
+                {renderCorrectionBadges(4)}
 
                 {renderStatusBlock({
                   status: agent4Status,

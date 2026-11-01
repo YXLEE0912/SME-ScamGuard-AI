@@ -71,7 +71,7 @@ class DocumentExtractorService:
         self.client = None
         if self.api_key and self.api_key != "your_gemini_api_key_here":
             try:
-                self.client = genai.Client(api_key=self.api_key)
+                self.client = genai.Client(api_key=self.api_key, http_options=types.HttpOptions(timeout=10000))
             except Exception as e:
                 logger.warning(f"Could not initialize Google GenAI client: {e}")
 
@@ -85,9 +85,11 @@ class DocumentExtractorService:
         # Step 1: Run lightweight PDF forensic header check
         header_producer, forensic_reasons = inspect_pdf_forensic_headers(file_bytes)
 
-        # If client is not configured or in offline/mock environment, run deterministic heuristic fallback
+        # Always compute deterministic heuristic baseline
+        heuristic_res = self._heuristic_fallback(file_bytes, mime_type, forensic_reasons)
+
         if not self.client:
-            return self._heuristic_fallback(file_bytes, mime_type, forensic_reasons)
+            return heuristic_res
 
         system_prompt = (
             "You are a certified forensic Accounts Payable auditor. Analyze this invoice document "
@@ -118,6 +120,20 @@ class DocumentExtractorService:
             # Parse JSON response into Pydantic model
             if response.text:
                 data = json.loads(response.text)
+                # Fill in any missing or null fields from deterministic heuristic parser
+                if not data.get("vendor_name") and heuristic_res.vendor_name:
+                    data["vendor_name"] = heuristic_res.vendor_name
+                if not data.get("bank_name") and heuristic_res.bank_name:
+                    data["bank_name"] = heuristic_res.bank_name
+                if not data.get("bank_account_number") and heuristic_res.bank_account_number:
+                    data["bank_account_number"] = heuristic_res.bank_account_number
+                if (not data.get("total_amount") or data.get("total_amount") <= 0) and heuristic_res.total_amount:
+                    data["total_amount"] = heuristic_res.total_amount
+                if not data.get("invoice_number") and heuristic_res.invoice_number:
+                    data["invoice_number"] = heuristic_res.invoice_number
+                if not data.get("purchase_order_number") and heuristic_res.purchase_order_number:
+                    data["purchase_order_number"] = heuristic_res.purchase_order_number
+
                 # Combine Gemini review_reasons with PDF binary forensic findings
                 existing_reasons = data.get("review_reasons", [])
                 for fr in forensic_reasons:
@@ -201,9 +217,24 @@ class DocumentExtractorService:
         """Deterministic heuristic fallback when external AI is unavailable or offline."""
         text_content = ""
         try:
-            text_content = file_bytes.decode("latin1", errors="ignore")
+            from pypdf import PdfReader
+            import io
+            reader = PdfReader(io.BytesIO(file_bytes))
+            for page in reader.pages:
+                page_text = page.extract_text()
+                if page_text:
+                    text_content += page_text + "\n"
         except Exception:
             pass
+
+        if not text_content.strip():
+            raw = file_bytes.decode("latin1", errors="ignore")
+            # Extract content from uncompressed PDF stream objects if available
+            streams = re.findall(r"stream[\r\n]+(.*?)[\r\n]+endstream", raw, re.DOTALL)
+            if streams:
+                text_content = "\n".join(streams)
+            else:
+                text_content = raw
 
         return self._heuristic_text_fallback(text_content, forensic_reasons)
 
@@ -215,30 +246,81 @@ class DocumentExtractorService:
         """Deterministic regex parsing fallback."""
         reasons = list(initial_reasons or [])
 
-        # Vendor name regex
+        # 1. Vendor name extraction
         vendor_match = re.search(
-            r"([A-Z0-9][A-Za-z0-9\s&.,'-]+(?:Sdn\s*Bhd|Berhad|Enterprise|Holdings|Trading|LLC|Inc))",
+            r"(?:Vendor|Supplier|From|Company|Billed\s*By|Payee)\s*:\s*([A-Za-z0-9\s&.,'-]+)",
             text,
+            re.IGNORECASE,
         )
-        vendor_name = vendor_match.group(1).strip() if vendor_match else None
+        vendor_name = None
+        if vendor_match:
+            candidate = vendor_match.group(1).split("\n")[0].strip()
+            if len(candidate) > 2:
+                vendor_name = candidate
 
-        # Invoice number regex
+        if not vendor_name:
+            corp_match = re.search(
+                r"([A-Z0-9][A-Za-z0-9\s&.,'-]+(?:Sdn\s*Bhd|Berhad|Enterprise|Holdings|Trading|LLC|Inc))",
+                text,
+            )
+            if corp_match:
+                vendor_name = corp_match.group(1).strip()
+
+        # 2. Invoice number regex
         inv_match = re.search(r"(?:INVOICE|INV|CLAIM|BILL|TAX INVOICE)[-#:\s]+([A-Z0-9-]{3,25})", text, re.IGNORECASE)
         inv_number = inv_match.group(1).strip() if inv_match else None
 
-        # Bank account regex (10-16 digits)
-        acc_match = re.search(r"\b(\d{10,16})\b", text)
-        bank_account = acc_match.group(1).strip() if acc_match else None
+        # 3. Bank account extraction
+        acc_prefix_match = re.search(
+            r"(?:Beneficiary\s*Bank\s*Account|Beneficiary\s*Account|Account\s*(?:Number|No\.?)|Acc\s*No\.?|A/C\s*(?:No\.?)?|Bank\s*Acc)\s*[:#-]?\s*([0-9\s-]{8,24})",
+            text,
+            re.IGNORECASE,
+        )
+        bank_account = None
+        if acc_prefix_match:
+            digits = re.sub(r"[-\s]", "", acc_prefix_match.group(1))
+            if 8 <= len(digits) <= 20:
+                bank_account = digits
 
-        # Bank name detection
+        if not bank_account:
+            acc_match = re.search(r"\b(\d{10,16})\b", text)
+            bank_account = acc_match.group(1).strip() if acc_match else None
+
+        # 4. Bank name detection
         bank_name = None
-        for b in ["Maybank", "CIMB Bank", "Public Bank", "RHB Bank", "Hong Leong Bank", "AmBank", "Alliance Bank"]:
-            if re.search(re.escape(b), text, re.IGNORECASE):
-                bank_name = b
-                break
+        # Check explicit remittance label first to avoid matching preamble pretext
+        bank_label_match = re.search(
+            r"(?:Beneficiary\s*Bank|Bank\s*Name|Remit(?:tance)?\s*Bank|Disbursement\s*Bank|Target\s*Bank|Bank)\s*[:#-]?\s*([A-Za-z0-9\s&]+)",
+            text,
+            re.IGNORECASE,
+        )
+        if bank_label_match:
+            candidate_line = bank_label_match.group(1).split("\n")[0].strip()
+            for b in [
+                "CIMB Bank", "CIMB", "Public Bank", "RHB Bank", "RHB",
+                "Hong Leong Bank", "Hong Leong", "AmBank", "Alliance Bank",
+                "Maybank", "Malayan Banking", "Standard Chartered", "HSBC", "OCBC", "UOB"
+            ]:
+                if re.search(rf"\b{re.escape(b)}\b", candidate_line, re.IGNORECASE):
+                    bank_name = "Maybank" if "maybank" in b.lower() or "malayan" in b.lower() else b
+                    break
 
-        # Amount regex
-        amt_match = re.search(r"(?:RM|MYR|\$)\s*([\d,]+(?:\.\d{2})?)", text, re.IGNORECASE)
+        if not bank_name:
+            for b in [
+                "CIMB Bank", "CIMB", "Public Bank", "RHB Bank", "RHB",
+                "Hong Leong Bank", "Hong Leong", "AmBank", "Alliance Bank",
+                "Maybank", "Malayan Banking", "Standard Chartered", "HSBC", "OCBC", "UOB"
+            ]:
+                if re.search(rf"\b{re.escape(b)}\b", text, re.IGNORECASE):
+                    bank_name = "Maybank" if "maybank" in b.lower() or "malayan" in b.lower() else b
+                    break
+
+        # 5. Amount regex
+        amt_match = re.search(
+            r"(?:Total\s*Amount|Total\s*Due|Invoice\s*Total|Amount|Total|Balance\s*Due)\s*[:#-]?\s*(?:RM|MYR|\$)?\s*([\d,]+(?:\.\d{2})?)",
+            text,
+            re.IGNORECASE,
+        )
         total_amount = None
         if amt_match:
             try:
@@ -246,21 +328,29 @@ class DocumentExtractorService:
             except ValueError:
                 total_amount = None
 
-        # PO number regex
+        if total_amount is None:
+            amt_match2 = re.search(r"(?:RM|MYR|\$)\s*([\d,]+(?:\.\d{2})?)", text, re.IGNORECASE)
+            if amt_match2:
+                try:
+                    total_amount = float(amt_match2.group(1).replace(",", ""))
+                except ValueError:
+                    total_amount = None
+
+        # 6. PO number regex
         po_match = re.search(r"(?:PO|PURCHASE ORDER|P\.O\.)[-#:\s]+([A-Z0-9-]{3,25})", text, re.IGNORECASE)
         po_number = po_match.group(1).strip() if po_match else None
 
-        confidence = 0.90 if (bank_account and total_amount) else 0.65
+        confidence = 0.90 if (bank_account and total_amount) else (0.50 if (bank_account or total_amount) else 0.0)
         if not bank_account:
             reasons.append("Beneficiary account number could not be definitively extracted")
 
         return ExtractedInvoiceFields(
-            vendor_name=vendor_name or "Mega Logistics Sdn Bhd",
+            vendor_name=vendor_name,
             invoice_number=inv_number,
             po_number=po_number,
             total_amount=total_amount,
             currency="MYR",
-            bank_name=bank_name or "Maybank",
+            bank_name=bank_name,
             bank_account_number=bank_account,
             confidence_score=confidence,
             review_reasons=reasons,

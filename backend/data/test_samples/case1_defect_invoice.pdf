@@ -1,0 +1,38 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 613 >>
+stream
+BT /F1 11 Tf 50 750 Td
+(TAX INVOICE: INV-ML-2026-9921) Tj T*
+(Vendor: Mega Logistics Sdn Bhd) Tj T*
+(SSM Registration: 201801012345) Tj T*
+(Date: 2026-10-30) Tj T*
+(Purchase Order: PO-ML-2026-8812) Tj T*
+() Tj T*
+(Description                                    Amount [MYR]) Tj T*
+(Inter-State Container Haulage [Port Klang]        14,500.00) Tj T*
+(Terminal Handling Charges                          4,000.00) Tj T*
+(Total Amount: RM 18,500.00) Tj T*
+() Tj T*
+(REMITTANCE INSTRUCTIONS:) Tj T*
+(Beneficiary Bank: CIMB Bank) Tj T*
+(Account Number: 800199882233) Tj T*
+(Payment Terms: Immediate Settlement) Tj T*
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+trailer
+<< /Root 1 0 R >>
+%%EOF

@@ -27,6 +27,17 @@ export interface DemoInvoice {
   can_extract_live: boolean;
   is_approved?: boolean;
   is_escalated?: boolean;
+  decision?: "approved" | "escalated" | string;
+  resolved?: boolean;
+  has_operator_override?: boolean;
+  corrected_fields?: Array<{
+    field: string;
+    value: string;
+    canonical_field?: string;
+    timestamp?: string;
+    clerk_id?: string;
+    agent_number?: number;
+  }>;
   sha256?: string;
   is_duplicate_submission?: boolean;
   email_body?: string;
@@ -137,7 +148,7 @@ export async function correctInvoiceField(payload: {
   justification: string;
   clerk_id: string;
   official_landline_dialed?: string;
-}): Promise<Record<string, unknown>> {
+}): Promise<{ status: string; record?: DemoInvoice; audit_event?: Record<string, unknown>;[key: string]: unknown }> {
   const res = await fetch(`${API_BASE}/api/v1/queue/${payload.invoice_id}/override`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -159,8 +170,10 @@ export async function correctInvoiceField(payload: {
 export async function approveInvoice(
   invoiceId: string,
   clerkId: string = "AP-CLERK-MY01",
-  notes?: string
-): Promise<Record<string, unknown>> {
+  notes?: string,
+  managerId: string = "FM-CONTROLLER-MY01",
+  managerToken: string = "MGR-TOKEN-SECURE-2026"
+): Promise<{ status: string; decision: string; record?: DemoInvoice; audit_event?: Record<string, unknown> }> {
   const res = await fetch(`${API_BASE}/api/v1/queue/${invoiceId}/decide`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -168,6 +181,8 @@ export async function approveInvoice(
       action: "APPROVE",
       clerk_id: clerkId,
       reason: notes || "Pre-disbursement 3-way reconciliation verified.",
+      manager_id: managerId,
+      manager_token: managerToken,
     }),
   });
   if (!res.ok) {
@@ -181,7 +196,7 @@ export async function escalateInvoice(
   invoiceId: string,
   reason: string,
   clerkId: string = "AP-CLERK-MY01"
-): Promise<Record<string, unknown>> {
+): Promise<{ status: string; decision: string; record?: DemoInvoice; audit_event?: Record<string, unknown> }> {
   const res = await fetch(`${API_BASE}/api/v1/queue/${invoiceId}/decide`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

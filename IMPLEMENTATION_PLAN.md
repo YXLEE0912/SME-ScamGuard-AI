@@ -69,7 +69,7 @@ This blueprint specifies the end-to-end engineering tasks required to build, ver
   2. `InboundInvoiceClaim`: Represents raw or parsed email/PDF payment claims (`claimed_vendor`, `claimed_bank`, `claimed_account`, `amount`, `po_number`, `invoice_ref`).
   3. `BinaryForensicResult`: Output of PDF byte inspection (`producer`, `creation_date`, `mod_date`, `delta_seconds`, `eof_count`, `is_spliced`).
   4. `CognitiveExtractionResult`: Structured schema returned by Gemini 2.5 Flash (`urgency_score`, `coercion_detected`, `procedural_bypass_requested`, `extraction_confidence`).
-  5. `PipelineDispositionPayload`: Complete audit record containing risk score $R$, assigned tier (`VERIFIED`, `NEEDS_REVIEW`, `LOCKED_CRITICAL`), evidence cues, and callback switchboard vouchers.
+  5. PipelineDispositionPayload: Complete audit record containing risk score R, assigned tier (VERIFIED, NEEDS_REVIEW, LOCKED_CRITICAL), evidence cues, and callback switchboard vouchers.
 
 ---
 
@@ -94,7 +94,7 @@ This blueprint specifies the end-to-end engineering tasks required to build, ver
   2. Extract metadata keys: `/Producer`, `/Creator`, `/CreationDate`, `/ModDate`.
   3. Calculate modification delta:
      $$\Delta t = |T_{\text{Modification}} - T_{\text{Creation}}|$$
-     Flag as anomalous if $\Delta t > 3600\text{ seconds}$ (1 hour).
+     Flag as anomalous if Δt > 3600 seconds (1 hour).
   4. Perform raw byte-level scan for `%%EOF` markers. Flag incremental updates if `raw_bytes.count(b"%%EOF") > 1`.
   5. **Dual-Factor Benign Tooling Invariant**:
      ```python
@@ -116,8 +116,8 @@ This blueprint specifies the end-to-end engineering tasks required to build, ver
      - `Check B (PDF vs. Ledger)`: If `pdf_account != ledger_account`, flag `UNAUTHORIZED_BANK_CHANGE`.
   2. **Local SemakMule Threat Cache Index**:
      - Maintain an in-memory hash set of known commercial mule accounts compiled from PDRM CCID advisories (`data/threat_intelligence.json`).
-     - Query latency target: $< 0.003\text{ ms}$.
-     - Confirmed hit: Assign threat score $S_{\text{SemakMule}} = 99$, overriding all other indicators and forcing immediate lock.
+     - Query latency target: < 0.003 ms ($\mathcal{O}(1)$ in-memory hash set index; cache miss designates `NOT_FOUND_IN_SNAPSHOT`, never `CLEAN`).
+     - Confirmed hit: Assign threat score S = 99, overriding all other indicators and forcing immediate lock.
      - Miss: Flag as `NOT_FOUND_IN_SNAPSHOT`, never `CLEAN`.
 
 ### 2.4 Velocity Store & Recency Tracking
@@ -171,27 +171,31 @@ This blueprint specifies the end-to-end engineering tasks required to build, ver
 
 ## Phase 4: Policy Arbiter, Cryptographic Audit & Incident Response (Tier 3)
 
-### 4.1 Declarative Policy Arbiter
-- **Objective**: Calculate mathematical risk score $R$ and transition invoice state deterministically.
-- **File Target**: `backend/services/policy_arbiter.py`
+### 4.1 Declarative Policy Arbiter & Action-Gated State Machine
+- **Objective**: Calculate mathematical risk score R and transition invoice state deterministically.
+- **File Target**: `backend/services/policy_arbiter.py` / `backend/app/routers/queue.py`
 - **Implementation**:
   1. Evaluate the formal risk formula:
      $$R = \max\left(S_{\text{SemakMule}}, \min\left(100, 75 \cdot I_{\text{Ledger}} + 20 \cdot I_{\text{Tool}} + 15 \cdot I_{\text{Urgency}} + 25 \cdot I_{\text{Auth}} + 20 \cdot I_{\text{Context}}\right)\right)$$
   2. Determine disposition:
      - `VERIFIED`: $R < 50$ and all mandatory checks satisfied.
      - `NEEDS_REVIEW`: $50 \le R < 80$. Voucher held for 4-Eyes review.
-     - `LOCKED_CRITICAL`: $R \ge 80$, confirmed SemakMule hit ($S=99$), or `AI_COGNITIVE_UNAVAILABLE`.
-  3. Emit an immutable `PipelineDispositionPayload`.
+     - `LOCKED_CRITICAL`: $R \ge 80$, confirmed SemakMule hit ($S = 99$), bank account mismatch, or `AI_COGNITIVE_UNAVAILABLE`.
+  3. State-Machine Action Gating:
+     - Uncorrected defect cases strictly disable `Approve and Submit` until operator correction is committed.
+     - `Escalate` remains enabled for immediate containment.
+  4. Emit an immutable `PipelineDispositionPayload`.
 
-### 4.2 Cryptographic Chained Audit Trail
-- **Objective**: Guarantee audit trail tamper-evidence.
+### 4.2 Cryptographic Chained Audit Trail & Malaysian Standard Time
+- **Objective**: Guarantee audit trail tamper-evidence compliant with Evidence Act 1950 (Section 90A).
 - **File Target**: `backend/services/audit_service.py`
 - **Implementation**:
   1. Read the most recent event hash from `data/audits.json` (or initialize genesis block if empty).
-  2. Construct the canonical event payload $E_n$.
-  3. Calculate recursive SHA-256 event hash:
-     `event_hash_n = SHA-256(canonical_event_n || event_hash_{n-1})`
-  4. Atomically append the record to `data/audits.json`.
+  2. Construct canonical event payload $E_n$.
+  3. Standardize timestamps to **Malaysian Standard Time (MYT / UTC+8 / Asia/Kuala_Lumpur)** with ISO 8601 offset (`+08:00`) and human-readable `timestamp_myt` (`YYYY-MM-DD HH:mm:ss MYT`).
+  4. Calculate recursive SHA-256 event hash:
+     $$\text{event\_hash}_n = \text{SHA-256}(\text{canonical\_event}_n \parallel \text{event\_hash}_{n-1})$$
+  5. Atomically append the record to `data/audits.json`.
 
 ### 4.3 Incident Response & Statutory Artifact Synthesis
 - **Objective**: Prepare immediate containment and police referral packages.
@@ -232,15 +236,15 @@ This blueprint specifies the end-to-end engineering tasks required to build, ver
 ## Phase 6: Frontend REST API Wiring & Pipeline Contract Alignment
 
 ### 6.1 FastAPI REST Endpoint Specifications
-- **File Target**: `backend/app/main.py` / `app/api/routes.py`
+- **File Target**: `backend/app/routers/queue.py`, `backend/app/routers/mule_intel.py`, `backend/app/routers/ledger.py`
 - **Endpoints to Wire**:
-  1. `GET /api/v1/queue`: Returns unified invoice verification queue records with risk scores, categories, and triage states.
+  1. `GET /api/v1/queue`: Returns unified invoice verification queue records with risk scores, categories, decision flags, and triage states. Supports active vs. resolved views.
   2. `GET /api/v1/queue/{case_id}`: Returns complete 3-way reconciliation details, PDF metadata, character-level diffs, and 7-Agent Defense Pipeline step states.
-  3. `POST /api/v1/verify`: Ingests an uploaded invoice PDF and optional supporting email, executes the pipeline, and returns the inspection report.
-  4. `POST /api/v1/queue/{case_id}/override`: Records an operator correction with switchboard callback justification and updates the audit chain.
-  5. `POST /api/v1/queue/{case_id}/decide`: Commits clerk and manager dual-authorization sign-offs or triggers wire freeze.
-  6. `POST /api/v1/intel/ingest-police-alert`: Ingests verified police alerts and atomically updates `semakmule_cache.json`.
-  7. `GET /api/v1/audit/trail`: Returns the cryptographically chained event log.
+  3. `POST /api/v1/verify`: Ingests uploaded invoice PDF bytes and optional supporting email, executes 7-Agent pipeline, enforces fail-closed invariants on discrepancies, and commits audit event.
+  4. `POST /api/v1/queue/{case_id}/override`: Records operator correction with switchboard callback justification, renders inline badge on Agent card, unlocks decision choices, and chains audit event.
+  5. `POST /api/v1/queue/{case_id}/decide`: Commits operator decision (`Approve and Submit` or `Escalate`). Rejects unauthorized approval if defects remain unaddressed.
+  6. `POST /api/v1/intel/ingest-police-alert`: Ingests and verifies police alerts using Gemini 2.5 Flash, extracts mule bank accounts, and atomically hydrates `semakmule_cache.json`.
+  7. `GET /api/v1/audit/trail`: Returns complete SHA-256 chained event log sorted newest-first in Malaysian Standard Time (MYT).
 
 ### 6.2 Critical Frontend Design System Preservation
 - **Location**: `frontend/src/`
@@ -272,3 +276,9 @@ This blueprint specifies the end-to-end engineering tasks required to build, ver
 - **Failure Mode & Isolation**:
   - All network listener failures, expired tokens, or API rate limits must fail gracefully without disrupting the offline file ingestion and manual verification workflows.
 
+---
+
+<p align="center">
+  <b>🛡️ SME-ScamGuard-AI</b><br>
+  <i>AI-Assisted · Deterministic by Design · Human-Controlled</i>
+</p>

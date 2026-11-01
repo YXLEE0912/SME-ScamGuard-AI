@@ -34,7 +34,7 @@ All verification workflows enforce strict separation between probabilistic cogni
 1. **Tier 1: Deterministic Engine (Sub-Millisecond Verification)**:
    - **In-Memory Privacy Sanitizer (RAM Layer)**: Volatile heap redaction (`io.BytesIO`) for Malaysian MyKad (`\b\d{6}-\d{2}-\d{4}\b`) and mobile numbers (`\b01[0-9]-?[0-9]{7,8}\b`), ensuring full PDPA 2010 Section 10 compliance. Zero raw disk writes.
    - **Deterministic Binary Forensics (Byte Layer)**: Static ISO 32000-1 structural PDF inspection (`pypdf`). Checks metadata (`/Producer`, `/Creator`, `/ModDate`), flags modification time deltas `Δt > 3600s`, scans for multiple `%%EOF` incremental trailers, and enforces the **Dual-Factor Benign Tooling Invariant**.
-   - **Ground-Truth Registry & Threat Cache (Relational Layer)**: 3-way reconciliation (Email Claim vs. PDF Remittance vs. Master Ledger) and $O(1)$ local SemakMule police blacklist lookup (`< 0.003 ms`). Confirmed mule hits assign threat score `S = 99`, triggering an unconditional lock.
+   - **Ground-Truth Registry & Threat Cache (Relational Layer)**: 3-way reconciliation (Email Claim vs. PDF Remittance vs. Master Ledger) and $\mathcal{O}(1)$ local SemakMule police blacklist lookup (`< 0.003 ms`). Confirmed mule hits assign threat score `S = 99`, triggering an unconditional lock.
 2. **Tier 2: Cognitive Perception Sandbox (Gemini 2.5 Flash)**:
    - Evaluates linguistic coercion, urgency spikes, and procedural bypass requests.
    - Sandboxed inside `<UNTRUSTED_INBOUND_DOC>` XML blocks to defeat OWASP LLM01 Prompt Injections.
@@ -95,8 +95,12 @@ Micro-SMEs commonly use Canva or iLovePDF for legitimate billing. To prevent fal
 For any invoice flagged with `NEEDS_REVIEW` or `LOCKED_CRITICAL`:
 1. **Invoice Phone Suppression**: Untrusted contact numbers printed on invoices are strictly suppressed.
 2. **Out-of-Band Switchboard Display**: Cockpit displays exclusively the verified corporate switchboard telephone number from the Master Ledger (e.g. `+60 3-7722 8841`).
-3. **Mandatory Callback Logging**: AP Clerk (Maker) must call the switchboard, record call timestamp, extension, and officer title.
-4. **Dual Sign-Off Gate**: A separate Finance Manager (Checker) must review and countersign before any voucher hold can be released.
+3. **Mandatory Callback Logging**: AP Clerk (Maker) must call the switchboard, record call timestamp in Malaysian Standard Time (MYT), extension, and officer title.
+4. **State-Machine Action Gating & Decision Actions**:
+   - Actions in cockpit: **`Approve and Submit`** and **`Escalate`** (static clerk/manager text lines are removed).
+   - On initial defect state, `Approve and Submit` is strictly **disabled** with helper copy *"Resolve or correct flagged defects before authorization is permitted."*, while `Escalate` is active.
+   - Operator field correction via `[✎ Correct...]` submits verified value to `POST /api/v1/queue/{case_id}/override`, renders an inline badge on the Agent card `[✎ Operator Corrected: <field> -> <value>] (YYYY-MM-DD HH:mm:ss MYT)`, and unlocks choice between `Approve and Submit` or `Escalate`.
+   - Settled state displays finalized indicator `✓ Approved` or `🚨 Escalated`.
 5. **Audit Field Correction Record**: If an approved bank update is accepted:
    `Verified Value: [approved account]` | `Original Value: ~~[untrusted account]~~` | `Status: Corrected`
    Logged immutably to the SHA-256 HMAC cryptographic audit chain (`data/audits.json`).
@@ -138,3 +142,10 @@ Every invoice evaluation emits a structured schema conforming to:
   }
 }
 ```
+
+---
+
+<p align="center">
+  <b>🛡️ SME-ScamGuard-AI</b><br>
+  <i>AI-Assisted · Deterministic by Design · Human-Controlled</i>
+</p>

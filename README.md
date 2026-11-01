@@ -2,17 +2,35 @@
 
 ### Autonomous Accounts Payable BEC Interdiction & Multi-Agent Financial Defense Framework
 
-[![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12-blue?logo=python&logoColor=white)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![Next.js](https://img.shields.io/badge/Next.js-15.5-black?logo=next.js&logoColor=white)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4+-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![Gemini 2.5 Flash](https://img.shields.io/badge/Google_Gemini-2.5_Flash-8E75C2?logo=google&logoColor=white)](https://ai.google.dev/)
-[![Tests](https://img.shields.io/badge/Pytest-75%2F75%20Passed-emerald)](https://docs.pytest.org/)
-[![Benchmark](https://img.shields.io/badge/400--Case_Benchmark-100%25_Recall-brightgreen)](backend/scripts/benchmark_eval.py)
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.11%20%7C%203.12-blue?logo=python&logoColor=white" alt="Python" />
+  <img src="https://img.shields.io/badge/FastAPI-0.115+-009688?logo=fastapi&logoColor=white" alt="FastAPI" />
+  <img src="https://img.shields.io/badge/Next.js-16.3-black?logo=next.js&logoColor=white" alt="Next.js" />
+  <img src="https://img.shields.io/badge/TypeScript-5.0+-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-4.0+-06B6D4?logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/Google_Gemini-2.5_Flash-8E75C2?logo=google&logoColor=white" alt="Gemini 2.5 Flash" />
+  <img src="https://img.shields.io/badge/Pytest-75%2F75%20Passed-emerald" alt="Tests" />
+  <img src="https://img.shields.io/badge/400--Case_Benchmark-100%25_Recall-brightgreen" alt="Benchmark" />
+</p>
 
 > **"Email authenticity ≠ Payment authenticity."**  
 > *Stop Business Email Compromise (BEC) and invoice redirection fraud before the wire transfer leaves your bank.*
+
+---
+
+## 📑 Table of Contents
+
+- [Executive Summary & Mission](#-executive-summary--mission)
+- [Master 3-Tier Supervision Architecture](#-master-3-tier-supervision-architecture)
+- [The 7 Defense Agents](#-the-7-defense-agents)
+- [Formal Mathematical Risk Scoring Model](#-formal-mathematical-risk-scoring-model)
+- [Live Verification Cockpit](#-live-verification-cockpit-zero-clutter-high-contrast-ui)
+- [Benchmark Evaluation (400 Scenarios)](#-benchmark-evaluation-400-scenarios--100-recall--000-fpr)
+- [Repository Structure](#-repository-structure--directory-isolation)
+- [Quickstart Guide](#-quickstart-guide-for-judges--developers)
+- [Comprehensive Verification & Test Execution](#-comprehensive-verification--test-execution)
+- [Malaysian Statutory Compliance](#-malaysian-statutory-compliance--regulatory-alignment)
+- [Hackathon Submission Metadata](#-hackathon-submission-metadata)
 
 ---
 
@@ -22,7 +40,7 @@ Malaysian Small and Medium Enterprises (SMEs) face a catastrophic threat vector:
 
 The attacker then attaches a subtly altered PDF invoice requesting urgent payment to an alternate commercial "mule" bank account under the pretext of an annual statutory audit, branch migration, or SST tax settlement. Without dedicated cybersecurity teams, Accounts Payable (AP) clerks disburse funds into attacker-controlled accounts. In Malaysia alone, commercial scams and BEC divert hundreds of millions of Ringgit annually.
 
-**SME-ScamGuard-AI** is a local-first, multi-agent defense architecture that interdicts payments **between invoice receipt and bank disbursement**. By decoupling unprivileged AI perception from deterministic financial state mutation, the platform enforces strict mathematical risk invariants, sub-millisecond 3-way relational reconciliation, volatile-RAM privacy preservation, and human-in-the-loop 4-Eyes dual governance.
+**SME-ScamGuard-AI** is a multi-agent defense architecture that interdicts payments **between invoice receipt and bank disbursement**. By decoupling unprivileged AI perception from deterministic financial state mutation, the platform enforces strict mathematical risk invariants, sub-millisecond 3-way relational reconciliation, volatile-RAM privacy preservation, and human-in-the-loop 4-Eyes dual governance.
 
 ---
 
@@ -31,45 +49,45 @@ The attacker then attaches a subtly altered PDF invoice requesting urgent paymen
 SME-ScamGuard-AI establishes an application-layer financial interdiction boundary between untrusted external communications (supplier mailboxes, inbound PDF invoices, vendor claim updates) and outbound ERP disbursement systems (AutoCount, SAP, SQL Account).
 
 ```
-                              ┌────────────────────────────────────────────────────────┐
-                              │                    INGESTION LAYER                     │
-                              │  RFC 5322 MIME Streams · Raw PDF Payloads · CSV Ledger │
-                              └───────────────────────────┬────────────────────────────┘
-                                                          │
-                                                          ▼
-┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ TIER 1: DETERMINISTIC ENGINE (Sub-millisecond static & relational verification; avg latency: 0.021 ms)                │
-│  ├─ Agent 1: In-Memory Privacy Sanitizer (RAM Layer — volatile heap, PDPA regex redaction)                          │
-│  ├─ Agent 2: Deterministic Binary Forensics (Byte Layer — ISO 32000-1 trailer/xref, %%EOF, Δt timestamp delta)       │
-│  └─ Agent 3: Ground-Truth Registry & Threat Cache (Relational Layer — 3-way reconciliation & indexed SemakMule)      │
-└─────────────────────────────────────────────────────────┬────────────────────────────────────────────────────────────┘
-                                                          │ Validated evidence & claims
-                                                          ▼
-┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ TIER 2: COGNITIVE INVESTIGATION (Perception Layer — Gemini 2.5 Flash)                                                │
-│  ├─ Agent 4: Cognitive Behavioral Investigator (Unprivileged sandbox, prompt injection fences, urgency extraction)   │
-│  └─ Agent 7: OSINT Police Threat Intelligence Ingestion (Hydration Layer — provenance validation, atomic cache update)│
-└─────────────────────────────────────────────────────────┬────────────────────────────────────────────────────────────┘
-                                                          │ Structured claims (no execution authority)
-                                                          ▼
-┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
-│ TIER 3: POLICY ARBITRATION & INCIDENT RESPONSE (Governance & Response Layers)                                       │
-│  ├─ Agent 5: Declarative Policy Arbiter & Fail-Closed Safety Net (Formal Risk Scoring R, State Machine)             │
-│  └─ Agent 6: Containment & Statutory Artifact Synthesis (ERP lock request, NSRC 997 dossier, SHA-256 audit chain)   │
-└─────────────────────────────────────────────────────────┬────────────────────────────────────────────────────────────┘
-                                                          │
-                                                          ▼
-                              ┌────────────────────────────────────────────────────────┐
-                              │         HUMAN-IN-THE-LOOP 4-EYES GOVERNANCE            │
-                              │  Registered Switchboard Callback · Manager Dual-Sign   │
-                              └───────────┬────────────────────────────────┬───────────┘
-                                          │                                │
-                                          ▼                                ▼
-                              ┌──────────────────────┐         ┌───────────────────────┐
-                              │       VERIFIED       │         │    LOCKED_CRITICAL    │
-                              │  Ledger Parity Match │         │ Voucher Frozen in ERP │
-                              │ Standard AP Release  │         │ NSRC 997 Referral Pkg │
-                              └──────────────────────┘         └───────────────────────┘
+                     ┌─────────────────────────────────────────┐
+                     │            INGESTION LAYER              │
+                     │  RFC 5322 MIME · PDF Bytes · Master CSV │
+                     └────────────────────┬────────────────────┘
+                                          │
+                                          ▼
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ TIER 1: DETERMINISTIC ENGINE (Static & Relational · Latency: 0.021 ms)       │
+│  ├─ Agent 1: In-Memory Privacy Sanitizer (RAM Layer — PDPA Regex Redaction)  │
+│  ├─ Agent 2: Deterministic Binary Forensics (Byte Layer — ISO 32000-1 Δt)    │
+│  └─ Agent 3: Ground-Truth Registry & Threat Cache (3-Way Match & SemakMule)  │
+└─────────────────────────────────────┬────────────────────────────────────────┘
+                                      │ Validated evidence
+                                      ▼
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ TIER 2: COGNITIVE INVESTIGATION (Perception Layer — Gemini 2.5 Flash)        │
+│  ├─ Agent 4: Cognitive Behavioral Investigator (Unprivileged Sandbox)        │
+│  └─ Agent 7: OSINT Police Threat Ingestion (Provenance Gate & Cache Hydration)│
+└─────────────────────────────────────┬────────────────────────────────────────┘
+                                      │ Structured claims (no execution rights)
+                                      ▼
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ TIER 3: POLICY ARBITRATION & INCIDENT RESPONSE (Governance & Response)       │
+│  ├─ Agent 5: Declarative Policy Arbiter (Formal Risk Scoring R, Arbiter FSM) │
+│  └─ Agent 6: Containment & Artifact Synthesis (ERP Hold, NSRC 997, SHA-256)  │
+└─────────────────────────────────────┬────────────────────────────────────────┘
+                                      │
+                                      ▼
+                     ┌─────────────────────────────────────────┐
+                     │    HUMAN-IN-THE-LOOP 4-EYES GOVERNANCE  │
+                     │   Switchboard Callback · Action Gating  │
+                     └────────────┬───────────────┬────────────┘
+                                  │               │
+                                  ▼               ▼
+                      ┌────────────────┐    ┌─────────────────┐
+                      │    VERIFIED    │    │ LOCKED_CRITICAL │
+                      │  Standard AP   │    │  Voucher Frozen │
+                      │  Disbursement  │    │  NSRC Referral  │
+                      └────────────────┘    └─────────────────┘
 ```
 
 ### Strict Separation of Authority (The Core Safety Invariant)
@@ -83,14 +101,14 @@ SME-ScamGuard-AI establishes an application-layer financial interdiction boundar
 ## 🤖 The 7 Defense Agents
 
 | Agent | Name & Layer | Operational Mandate | SLA / Latency |
-|---|---|---|---|
+|:---|:---|:---|:---:|
 | **Agent 1** | **In-Memory Privacy Sanitizer** *(RAM Layer)* | Strips Malaysian MyKad (`\b\d{6}-\d{2}-\d{4}\b`) and mobile numbers (`\b01[0-9]-?[0-9]{7,8}\b`) in volatile heap buffers (`io.BytesIO`). Strictly zero persistence to physical disk storage, fully complying with Section 10 of Malaysia's Personal Data Protection Act 2010 (Act 709). | < 5 ms |
-| **Agent 2** | **Deterministic Binary Forensics** *(Byte Layer)* | Conducts ISO 32000-1 static inspection of invoice PDF byte streams using `pypdf` and byte offsets. Detects modification timestamp desync (Δt > 3600s), multiple `%%EOF` incremental splicing, and applies the **Dual-Factor Benign Tooling Invariant** (`Canva`/`iLovePDF` penalty neutralized *only* if bank account matches Master Ledger). | < 35 ms |
-| **Agent 3** | **Ground-Truth Registry & Threat Cache** *(Relational Layer)* | Executes 3-way relational reconciliation between Email Body Claims, PDF Remittance Instructions, and the Master Procurement Ledger snapshot. Queries destination accounts against the local PDRM CCID SemakMule commercial mule cache (O(1) lookup, S=99 override). | < 2 ms (Lookup: < 0.003 ms) |
+| **Agent 2** | **Deterministic Binary Forensics** *(Byte Layer)* | Conducts ISO 32000-1 static inspection of invoice PDF byte streams using `pypdf` and byte offsets. Detects modification timestamp desync ($\Delta t > 3600\text{s}$), multiple `%%EOF` incremental splicing, and applies the **Dual-Factor Benign Tooling Invariant** (`Canva`/`iLovePDF` penalty neutralized *only* if bank account matches Master Ledger). | < 35 ms |
+| **Agent 3** | **Ground-Truth Registry & Threat Cache** *(Relational Layer)* | Executes 3-way relational reconciliation between Email Body Claims, PDF Remittance Instructions, and the Master Procurement Ledger snapshot. Queries destination accounts against the local PDRM CCID SemakMule commercial mule cache ($\mathcal{O}(1)$ lookup, $S=99$ override). Confirms miss as `NOT_FOUND_IN_SNAPSHOT`, never `CLEAN`. | < 2 ms (Lookup: < 0.003 ms) |
 | **Agent 4** | **Cognitive Behavioral Investigator** *(Perception Layer)* | Analyzes natural language in email bodies and invoice notes for contextual deception, social engineering, and artificial urgency. Sandboxed inside `<UNTRUSTED_INBOUND_DOC>` demarcated XML blocks to defeat OWASP LLM01 Prompt Injections. Output restricted to strict Pydantic JSON schema. | ~800 ms (Offline: < 1 ms) |
-| **Agent 5** | **Declarative Policy Arbiter & Fail-Closed Safety Net** *(Governance Layer)* | Evaluates multi-factor risk formula `R` (0–100) across deterministic checks, cognitive scores, temporal markers, and velocity metrics. Enforces strict state boundaries:<br>• `R < 50` &rarr; `VERIFIED`<br>• `50 <= R < 80` &rarr; `NEEDS_REVIEW`<br>• `R >= 80` &rarr; `LOCKED_CRITICAL` | < 1 ms |
-| **Agent 6** | **Containment & Statutory Artifact Synthesis** *(Response Layer)* | Synthesizes immediate ERP disbursement hold requests, generates pre-filled Royal Malaysia Police (PDRM) NSRC 997 referral packages, drafts in-thread vendor dispute notices, and records tamper-evident SHA-256 HMAC cryptographic event chains (Evidence Act 1950 Section 90A). | < 15 ms |
-| **Agent 7** | **OSINT Police Threat Intelligence Ingestion** *(Hydration Layer)* | Ingests real-time PDRM CCID scam news advisories via a 2-stage provenance gate (`POST /api/v1/intel/ingest-police-alert`), normalizes account digits, and atomically updates `semakmule_cache.json` without downtime. | < 50 ms |
+| **Agent 5** | **Declarative Policy Arbiter & Fail-Closed Safety Net** *(Governance Layer)* | Evaluates multi-factor risk formula $R$ (0–100) across deterministic checks, cognitive scores, temporal markers, and velocity metrics. Enforces strict state boundaries:<br>• $R < 50$ &rarr; `VERIFIED`<br>• $50 \le R < 80$ &rarr; `NEEDS_REVIEW`<br>• $R \ge 80$ &rarr; `LOCKED_CRITICAL` | < 1 ms |
+| **Agent 6** | **Containment & Statutory Artifact Synthesis** *(Response Layer)* | Synthesizes immediate ERP disbursement hold requests, generates pre-filled Royal Malaysia Police (PDRM) NSRC 997 referral packages, drafts in-thread vendor dispute notices, and records tamper-evident SHA-256 HMAC cryptographic event chains (Evidence Act 1950 Section 90A) in Malaysian Standard Time (`MYT`). | < 15 ms |
+| **Agent 7** | **OSINT Police Threat Intelligence Ingestion** *(Hydration Layer)* | Ingests real-time PDRM CCID scam news advisories via a 2-stage Gemini 2.5 Flash provenance gate (`POST /api/v1/intel/ingest-police-alert`), defends against threat cache poisoning, normalizes account digits, and atomically updates `semakmule_cache.json` without downtime. | < 50 ms |
 
 ---
 
@@ -103,66 +121,72 @@ $$R = \max\Big(S_{\text{SemakMule}}, \min\big(100, w_1 \cdot I_{\text{Ledger}} +
 ### Configured Parameter Weights
 
 | Parameter | Weight | Indicator Description | Evaluation Condition |
-|---|---:|---|---|
-| **w₁ (`I_Ledger`)** | **75** | Master Procurement Ledger Parity Breach | `1` if inbound PDF bank account does not match Master Ledger; `0` if exact match. |
-| **w₂ (`I_Tool`)** | **20** | PDF Tooling Anomaly or Splicing Marker | `1` if anomalous tool without ledger match or incremental trailer splicing detected; `0` otherwise. |
-| **w₃ (`I_Urgency`)** | **15** | Cognitive Coercion & Urgency Threshold | `1` if normalized urgency score > 70; `0` otherwise. |
-| **w₄ (`I_Auth`)** | **25** | In-Transit Transport / Channel Divergence | `1` if Email Claim contradicts PDF Document (`BEC_IN_TRANSIT_DIVERSION`); `0` otherwise. |
-| **w₅ (`I_Context`)** | **20** | Temporal & Velocity Spend Breach | `1` if vendor dormant > 180 days, 7-day spend cap breached, or PO missing/invalid; `0` otherwise. |
-| **`S_SemakMule`** | **99** | PDRM CCID Commercial Mule Account Hit | Confirmed match in local threat cache forces immediate voucher freeze (`R = 99`). |
+|:---|:---:|:---|:---|
+| **$w_1$ (`I_Ledger`)** | **75** | Master Procurement Ledger Parity Breach | `1` if inbound PDF bank account does not match Master Ledger; `0` if exact match. |
+| **$w_2$ (`I_Tool`)** | **20** | PDF Tooling Anomaly or Splicing Marker | `1` if anomalous tool without ledger match or incremental trailer splicing detected; `0` otherwise. |
+| **$w_3$ (`I_Urgency`)** | **15** | Cognitive Coercion & Urgency Threshold | `1` if normalized urgency score > 70; `0` otherwise. |
+| **$w_4$ (`I_Auth`)** | **25** | In-Transit Transport / Channel Divergence | `1` if Email Claim contradicts PDF Document (`BEC_IN_TRANSIT_DIVERSION`); `0` otherwise. |
+| **$w_5$ (`I_Context`)** | **20** | Temporal & Velocity Spend Breach | `1` if vendor dormant > 180 days, 7-day spend cap breached, or PO missing/invalid; `0` otherwise. |
+| **$S_{\text{SemakMule}}$** | **99** | PDRM CCID Commercial Mule Account Hit | Confirmed match in local threat cache forces immediate voucher freeze ($R = 99$). |
 
 ### State Transitions & Disposition Invariants
 
 ```
-                             [ INCOMING INVOICE CLAIMS ]
-                                          │
-                                          ▼
-                                  ┌───────────────┐
-                                  │ Compute R &   │
-                                  │ Mandatory Invs│
-                                  └───────┬───────┘
-                                          │
-                       ┌──────────────────┼──────────────────┐
-                       ▼                  ▼                  ▼
-                   [ R < 50 ]     [ 50 <= R < 80 ]       [ R >= 80 ]
-                All Checks Pass   Discrepancy / Risk   Mule Hit / Mismatch
-                       │                  │                  │
-                       ▼                  ▼                  ▼
-                 ┌───────────┐     ┌──────────────┐   ┌────────────────┐
-                 │ VERIFIED  │     │ NEEDS_REVIEW │   │LOCKED_CRITICAL │
-                 └───────────┘     └──────────────┘   └────────────────┘
-                Standard Release    Dual Sign-off      Voucher Quarantined
-                                    Required           Police Dossier
+                          [ INCOMING INVOICE CLAIMS ]
+                                       │
+                                       ▼
+                               ┌───────────────┐
+                               │ Compute R &   │
+                               │ Mandatory Invs│
+                               └───────┬───────┘
+                                       │
+                    ┌──────────────────┼──────────────────┐
+                    ▼                  ▼                  ▼
+                [ R < 50 ]     [ 50 <= R < 80 ]       [ R >= 80 ]
+             All Checks Pass   Discrepancy / Risk   Mule Hit / Mismatch
+                    │                  │                  │
+                    ▼                  ▼                  ▼
+              ┌───────────┐     ┌──────────────┐   ┌────────────────┐
+              │ VERIFIED  │     │ NEEDS_REVIEW │   │LOCKED_CRITICAL │
+              └───────────┘     └──────────────┘   └────────────────┘
+             Standard Release    Dual Sign-off      Voucher Quarantined
+                                 Required           Police Dossier
 ```
 
 ---
 
 ## 🖥️ Live Verification Cockpit (Zero-Clutter High-Contrast UI)
 
-The frontend is crafted strictly according to [`frontend/DESIGN_SYSTEM.md`](frontend/DESIGN_SYSTEM.md) — a high-contrast corporate defense cockpit using Geist/Inter sans-serif, tight tracking, locked column geometries, and true-black OLED dark mode (`#090a0f`).
+The frontend is crafted strictly according to [`frontend/DESIGN_SYSTEM.md`](frontend/DESIGN_SYSTEM.md) — a high-contrast corporate defense cockpit using Inter sans-serif, tight tracking, locked column geometries, and true-black OLED dark mode (`#090a0f`).
 
 ### 1. Verification Queue (`/queue`)
-- **Summary Scope Pill Bar**: Instant one-click filtering by operational status (`All Emails`, `Needs Review`, `Defect`, `Verified`).
+- **Active vs. Resolved View Tabs**: Instant tab switching between `Active` (with live defect/review counter) and `Resolved` archives.
+- **Summary Scope Pill Bar**: Filter active invoices by operational status (`All Emails`, `Needs Review`, `Defect`, `Verified`).
 - **Unified Search & Category Filter**: Search by vendor name, invoice reference, bank account, or amount. Dynamic category filter derives business categories directly from backend records (`Logistics`, `Hardware`, `Manufacturing`, `Raw Materials`).
 - **Locked Column Grid (`table-fixed min-w-[960px]`)**:
   - `EMAIL ID` (110px, monospace `font-mono text-xs`)
   - `SENDER` (220px, vendor title + monospace email subtext)
   - `SUBJECT` (320px, clean truncation with tooltip)
   - `CATEGORY` (160px, neutral slate badges `bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300`)
-  - `STATUS` (170px, high-contrast semantic triage badges: `VERIFIED ✓`, `NEEDS REVIEW ●`, `DEFECT DETECTED ▲`)
+  - `STATUS` (170px, high-contrast semantic triage badges: `VERIFIED ✓`, `NEEDS REVIEW ●`, `DEFECT DETECTED ▲` paired with secondary decision status indicators: `approved` in emerald or `escalated` in rose)
   - `RISK SCORE` (130px, horizontal gauge with threshold tick marker at 80%)
 
 ### 2. Case Inspection Cockpit (`/case/[id]`)
-- **2-Column Layout**: Left column (~72% width) for deep forensic investigation; right column (~28% sticky) for decision governance.
+- **2-Column Cockpit Layout**: Left column (~72% width) for deep forensic investigation; right column (~28% sticky) for decision governance.
 - **Inbound Claim vs. Master Ledger Parity**: Character-level diffing highlighting exact bank account discrepancies in amber/rose.
 - **Interactive 7-Agent Defense Stepper**: Numbered status accordions (`01` through `07`) with individual confidence gauges and inline `[✎ Correct...]` human override workflows.
 - **Out-of-Band Switchboard Shield**: The cockpit suppresses untrusted phone numbers printed on invoices and presents exclusively the verified corporate switchboard number from the Master Ledger (e.g., `+60 3-7722 8841`).
-- **4-Eyes Dual Authorization**: Mandatory maker-checker workflow requiring AP Clerk callback confirmation and Finance Controller dual sign-off before releasing frozen vouchers.
+- **State-Machine Action Gating (Decision Panel)**:
+  - Action buttons: **`Approve and Submit`** and **`Escalate`** (static clerk/manager text lines are eliminated in favor of live cryptographic state).
+  - Unaddressed defect cases (`DEFECT`, `LOCKED_CRITICAL`, `NEEDS_REVIEW`): `Approve and Submit` is strictly **disabled** with helper copy *"Resolve or correct flagged defects before authorization is permitted."*, while `Escalate` remains active.
+  - Operator field correction via `[✎ Correct...]`: Submits verified value with callback justification via `POST /api/v1/queue/{case_id}/override`, rendering an inline visual badge `[✎ Operator Corrected: <field> -> <val>] (YYYY-MM-DD HH:mm:ss MYT)` on the specific Agent card, and unlocks choice between `Approve and Submit` or `Escalate`.
+  - Settled state displays finalized indicators: `✓ Approved` or `🚨 Escalated`.
 
 ### 3. Master Ledger & Cryptographic Audit Trail (`/audit`)
 - **Master Ledger Health**: Real-time synchronization card tracking approved supplier records (40 canonical Malaysian vendors) with SHA-256 fingerprint verification.
-- **Tamper-Evident Hash Chain**: Every operator inspection, field override, and decision action is chained into an immutable SHA-256 HMAC event ledger (`E_n = SHA-256(E_n || E_{n-1})`).
-- **Statutory Export**: One-click export to CSV and JSON for external regulatory audits.
+- **Tamper-Evident Hash Chain**: Every operator inspection, field override, and decision action is chained into an immutable SHA-256 HMAC event ledger ($\text{event\_hash}_n = \text{SHA-256}(\text{canonical\_event}_n \parallel \text{event\_hash}_{n-1})$).
+- **Timezone Standardization**: All audit events, timeline timestamps, and CSV/JSON export records are canonicalized in **Malaysian Standard Time (`YYYY-MM-DD HH:mm:ss MYT` / `Asia/Kuala_Lumpur`)**.
+- **Statutory Export**: One-click export to CSV and JSON formatted for statutory compliance under Evidence Act 1950 (Section 90A).
 
 ### 4. AP Insights Dashboard (`/insights`)
 - Real-time intercepted financial fraud loss counter (`RM 420,000+ Prevented`).
@@ -175,12 +199,12 @@ The frontend is crafted strictly according to [`frontend/DESIGN_SYSTEM.md`](fron
 The core deterministic engine was evaluated against a comprehensive 400-scenario operational and adversarial test matrix across 8 declared cohorts:
 
 | Cohort | Scenarios | Attack / Claim Type | Expected Verdict | Result | Target Assertion |
-|---|---:|---|---|:---:|---|
+|:---|---:|:---|:---:|:---:|:---|
 | **Cohort 1** | 100 | Legitimate Routine Billing Invoices | `VERIFIED` | ✅ | 100% Straight-Through Pass Rate |
 | **Cohort 2** | 50 | Legitimate Canva / iLovePDF Micro-SME Invoices | `VERIFIED` | ✅ | 0.00% False Positive Rate (Dual-Factor Rule) |
 | **Cohort 3** | 50 | BEC In-Transit Email Diversions (Email ≠ PDF) | `LOCKED_CRITICAL` | 🚨 | 100% Intercepted (`BEC_IN_TRANSIT_DIVERSION`) |
 | **Cohort 4** | 50 | Tampered PDF Invoices (Unauthorized Bank Redirect) | `LOCKED_CRITICAL` | 🚨 | 100% Intercepted (`UNAUTHORIZED_BANK_CHANGE`) |
-| **Cohort 5** | 50 | PDRM CCID SemakMule Blacklisted Accounts | `LOCKED_CRITICAL` | 🚨 | 100% Intercepted (`S = 99` Override) |
+| **Cohort 5** | 50 | PDRM CCID SemakMule Blacklisted Accounts | `LOCKED_CRITICAL` | 🚨 | 100% Intercepted ($S = 99$ Override) |
 | **Cohort 6** | 35 | Dormant Vendor Hijacks (>180 Days Inactivity) | `NEEDS_REVIEW` | ⚠️ | 100% Escalated for Dual Reauthorization |
 | **Cohort 7** | 35 | Velocity Smurfing / Split-Invoice Structuring | `NEEDS_REVIEW` | ⚠️ | 100% Escalated (7-Day Rolling Cap Breach) |
 | **Cohort 8** | 30 | Ghost Invoices / Missing PO / Invalid GRN Prefix | `NEEDS_REVIEW` | ⚠️ | 100% Held for Procurement Reconciliation |
@@ -195,66 +219,31 @@ The core deterministic engine was evaluated against a comprehensive 400-scenario
 
 ```
 SME-ScamGuard-AI/
-├── .agent/                             # Antigravity skill definitions (ap-audit)
-├── backend/                            # Isolated Backend Service (FastAPI)
-│   ├── app/                            # Application entry point & API routers
-│   │   ├── main.py                     # FastAPI application factory & CORS configuration
-│   │   ├── config.py                   # System thresholds & known constants
-│   │   ├── models.py                   # Request & response Pydantic schemas
-│   │   ├── orchestrator.py             # 7-Agent execution pipeline coordinator
-│   │   ├── layers/                     # Core forensic & cognitive layers (Layers 1-6)
-│   │   ├── routers/                    # Canonical REST API routes
-│   │   │   ├── queue.py                # Queue inspection, override, decide endpoints
-│   │   │   ├── ledger.py               # Master Ledger CSV sync & status endpoints
-│   │   │   ├── demo.py                 # Simulated operational mailbox & live audit
-│   │   │   └── mule_intel.py           # PDRM OSINT police alert ingestion endpoint
-│   │   ├── schemas/                    # Pydantic v2 domain schemas
-│   │   └── services/                   # Business logic & services
-│   ├── data/                           # Canonical ground-truth datasets & caches
-│   │   ├── vendor_ledger.csv           # 40-vendor Master Procurement Ledger snapshot
-│   │   ├── demo_mailbox.json           # 50 operational Malaysian demo cases
-│   │   ├── semakmule_cache.json        # Indexed PDRM CCID commercial mule account cache
-│   │   ├── audits.json                 # Active cryptographic HMAC SHA-256 audit log
-│   │   ├── benchmark_results.json      # 400-case evaluation benchmark results
-│   │   └── eval_cases.json             # Synthetic test cases for regression testing
-│   ├── models/                         # Domain models & schema validators
-│   ├── scripts/                        # Automated benchmark & evaluation runners
-│   │   ├── benchmark_eval.py           # 400-scenario evaluation benchmark suite
-│   │   └── generate_demo_mailbox.py    # Synthetic operational demo generator
-│   ├── services/                       # Standalone forensic, audit & policy engines
-│   │   ├── audit_service.py            # Cryptographic event chaining (Evidence Act 1950)
-│   │   ├── incident_response.py        # NSRC 997 dossier & dispute synthesis
-│   │   ├── ledger_sync.py              # On-premise CSV zero-disk parser
-│   │   ├── osint_mule_ingestion.py     # 2-stage PDRM alert ingestion pipeline
-│   │   ├── pdf_forensics.py            # ISO 32000-1 binary structural inspector
-│   │   ├── policy_arbiter.py           # Mathematical risk scoring engine & state machine
-│   │   ├── privacy_sanitizer.py        # Volatile RAM regex PII redaction (PDPA 2010)
-│   │   ├── reconciliation.py           # 3-way forensic relational reconciliation
-│   │   ├── threat_cache.py             # In-memory SemakMule fast-lookup hash table
-│   │   └── velocity_store.py           # 7-day rolling window spend velocity tracker
-│   ├── tests/                          # 75-suite Pytest verification tests
-│   ├── pyproject.toml                  # Backend project specification & pytest config
-│   └── requirements.txt                # Python package dependencies
-├── frontend/                           # Isolated Frontend Application (Next.js 15)
-│   ├── public/                         # Static icons & brand assets
-│   ├── src/                            # Next.js App Router source
-│   │   ├── app/                        # Route pages (/queue, /case/[id], /audit, /insights)
-│   │   ├── components/                 # Unified cockpit components & design system UI
-│   │   ├── hooks/                      # Hotkey navigation & custom hooks
-│   │   ├── lib/                        # Diff algorithms & formatters
-│   │   └── services/                   # REST API client & auth layer
-│   ├── DESIGN_SYSTEM.md                # Authoritative Frontend Design Contract
-│   ├── next.config.ts                  # Next.js runtime configuration
-│   ├── package.json                    # Frontend package dependencies & scripts
-│   └── tsconfig.json                   # TypeScript strict compiler configuration
-├── .env.example                        # Template environment variables
-├── .gitignore                          # Repository exclusion definitions
-├── AGENTS.md                           # Authoritative 7-Agent Architecture Specification
-├── IMPLEMENTATION_PLAN.md              # Authoritative Master Roadmap & Phase Tracking
-├── pyproject.toml                      # Root-level Python tool configuration
-├── README.md                           # Authoritative Project Documentation (This Document)
-├── requirements.txt                    # Root-level Python requirements
-└── uv.lock                             # Hermetic lockfile
+├── .agent/skills/ap-audit/    # Antigravity skill definitions
+├── backend/                   # Isolated Backend Service (FastAPI)
+│   ├── app/
+│   │   ├── layers/            # Core forensic & cognitive defense layers (1-6)
+│   │   ├── routers/           # queue.py, ledger.py, demo.py, mule_intel.py
+│   │   ├── schemas/           # Pydantic v2 data models
+│   │   ├── main.py            # FastAPI application factory & CORS configuration
+│   │   └── orchestrator.py    # 7-Agent execution pipeline coordinator
+│   ├── data/                  # vendor_ledger.csv, semakmule_cache.json, audits.json
+│   ├── scripts/               # benchmark_eval.py (400 scenarios), generate_demo_mailbox.py
+│   ├── services/              # audit_service, incident_response, pdf_forensics, privacy_sanitizer
+│   ├── tests/                 # 75-suite Pytest verification tests
+│   └── requirements.txt       # Backend package dependencies
+├── frontend/                  # Isolated Frontend Application (Next.js 16 Webpack)
+│   ├── src/
+│   │   ├── app/               # Routes: /queue, /case/[id], /audit, /insights
+│   │   ├── components/        # MultiAgentPipeline, Shell, ThreatSeverityBadge
+│   │   ├── lib/               # date.ts (MYT standardization), diff.ts
+│   │   └── services/          # api.ts (REST client)
+│   ├── DESIGN_SYSTEM.md       # Authoritative Frontend Design Contract
+│   └── package.json           # Frontend package dependencies & scripts
+├── AGENTS.md                  # Authoritative 7-Agent Architecture Specification
+├── IMPLEMENTATION_PLAN.md      # Authoritative Master Roadmap & Phase Tracking
+├── README.md                  # Authoritative Project Documentation (This Document)
+└── requirements.txt           # Root-level Python requirements
 ```
 
 ---
@@ -376,5 +365,5 @@ SME-ScamGuard-AI is engineered specifically to satisfy Malaysian statutory and f
 
 <p align="center">
   <b>🛡️ SME-ScamGuard-AI</b><br>
-  <i>AI-Assisted · Deterministic by Design · Human-Controlled · Local-First</i>
+  <i>AI-Assisted · Deterministic by Design · Human-Controlled</i>
 </p>
