@@ -117,21 +117,11 @@ export default function AuditTrailPage() {
 
   return (
     <div className="space-y-4">
-      {/* Task 5: Page Header & Action Alignment (Match Image 6) */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight">
-              Audit trail
-            </h1>
-            <span className="font-mono text-xs text-zinc-500 dark:text-zinc-400 font-medium px-2 py-0.5 rounded-full bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-white/10">
-              {events.length}
-            </span>
-          </div>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-1">
-            Every correction, approval and escalation from this session, in order. Held in memory: export to keep a copy.
-          </p>
-        </div>
+      {/* Subtitle & Action Alignment */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          Every correction, approval and escalation from this session, in order. Held in memory: export to keep a copy.
+        </p>
 
         <div className="flex items-center gap-2 shrink-0">
           <button
