@@ -69,7 +69,7 @@ This blueprint specifies the end-to-end engineering tasks required to build, ver
   2. `InboundInvoiceClaim`: Represents raw or parsed email/PDF payment claims (`claimed_vendor`, `claimed_bank`, `claimed_account`, `amount`, `po_number`, `invoice_ref`).
   3. `BinaryForensicResult`: Output of PDF byte inspection (`producer`, `creation_date`, `mod_date`, `delta_seconds`, `eof_count`, `is_spliced`).
   4. `CognitiveExtractionResult`: Structured schema returned by Gemini 2.5 Flash (`urgency_score`, `coercion_detected`, `procedural_bypass_requested`, `extraction_confidence`).
-  5. `PipelineDispositionPayload`: Complete audit record containing risk score $R$, assigned tier (`VERIFIED`, `NEEDS_REVIEW`, `LOCKED_CRITICAL`), evidence cues, and callback switchboard vouchers.
+  5. PipelineDispositionPayload: Complete audit record containing risk score R, assigned tier (VERIFIED, NEEDS_REVIEW, LOCKED_CRITICAL), evidence cues, and callback switchboard vouchers.
 
 ---
 
@@ -94,7 +94,7 @@ This blueprint specifies the end-to-end engineering tasks required to build, ver
   2. Extract metadata keys: `/Producer`, `/Creator`, `/CreationDate`, `/ModDate`.
   3. Calculate modification delta:
      $$\Delta t = |T_{\text{Modification}} - T_{\text{Creation}}|$$
-     Flag as anomalous if $\Delta t > 3600\text{ seconds}$ (1 hour).
+     Flag as anomalous if Δt > 3600 seconds (1 hour).
   4. Perform raw byte-level scan for `%%EOF` markers. Flag incremental updates if `raw_bytes.count(b"%%EOF") > 1`.
   5. **Dual-Factor Benign Tooling Invariant**:
      ```python
@@ -116,8 +116,8 @@ This blueprint specifies the end-to-end engineering tasks required to build, ver
      - `Check B (PDF vs. Ledger)`: If `pdf_account != ledger_account`, flag `UNAUTHORIZED_BANK_CHANGE`.
   2. **Local SemakMule Threat Cache Index**:
      - Maintain an in-memory hash set of known commercial mule accounts compiled from PDRM CCID advisories (`data/threat_intelligence.json`).
-     - Query latency target: $< 0.003\text{ ms}$.
-     - Confirmed hit: Assign threat score $S_{\text{SemakMule}} = 99$, overriding all other indicators and forcing immediate lock.
+     - Query latency target: < 0.003 ms.
+     - Confirmed hit: Assign threat score S = 99, overriding all other indicators and forcing immediate lock.
      - Miss: Flag as `NOT_FOUND_IN_SNAPSHOT`, never `CLEAN`.
 
 ### 2.4 Velocity Store & Recency Tracking
@@ -172,23 +172,23 @@ This blueprint specifies the end-to-end engineering tasks required to build, ver
 ## Phase 4: Policy Arbiter, Cryptographic Audit & Incident Response (Tier 3)
 
 ### 4.1 Declarative Policy Arbiter
-- **Objective**: Calculate mathematical risk score $R$ and transition invoice state deterministically.
+- **Objective**: Calculate mathematical risk score R and transition invoice state deterministically.
 - **File Target**: `backend/services/policy_arbiter.py`
 - **Implementation**:
   1. Evaluate the formal risk formula:
      $$R = \max\left(S_{\text{SemakMule}}, \min\left(100, 75 \cdot I_{\text{Ledger}} + 20 \cdot I_{\text{Tool}} + 15 \cdot I_{\text{Urgency}} + 25 \cdot I_{\text{Auth}} + 20 \cdot I_{\text{Context}}\right)\right)$$
   2. Determine disposition:
-     - `VERIFIED`: $R < 50$ and all mandatory checks satisfied.
-     - `NEEDS_REVIEW`: $50 \le R < 80$. Voucher held for 4-Eyes review.
-     - `LOCKED_CRITICAL`: $R \ge 80$, confirmed SemakMule hit ($S=99$), or `AI_COGNITIVE_UNAVAILABLE`.
-  3. Emit an immutable `PipelineDispositionPayload`.
+     - VERIFIED: R < 50 and all mandatory checks satisfied.
+     - NEEDS_REVIEW: 50 <= R < 80. Voucher held for 4-Eyes review.
+     - LOCKED_CRITICAL: R >= 80, confirmed SemakMule hit (S = 99), or AI_COGNITIVE_UNAVAILABLE.
+  3. Emit an immutable PipelineDispositionPayload.
 
 ### 4.2 Cryptographic Chained Audit Trail
 - **Objective**: Guarantee audit trail tamper-evidence.
 - **File Target**: `backend/services/audit_service.py`
 - **Implementation**:
   1. Read the most recent event hash from `data/audits.json` (or initialize genesis block if empty).
-  2. Construct the canonical event payload $E_n$.
+  2. Construct the canonical event payload E_n.
   3. Calculate recursive SHA-256 event hash:
      `event_hash_n = SHA-256(canonical_event_n || event_hash_{n-1})`
   4. Atomically append the record to `data/audits.json`.

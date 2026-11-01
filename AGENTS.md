@@ -137,7 +137,7 @@ The multi-agent pipeline maps across ten discrete layers of defense to eliminate
   1. **Metadata Dictionary Extraction**: Parses `/Producer`, `/Creator`, `/CreationDate`, `/ModDate`, `/Title`, and document ID hashes.
   2. **Timestamp Delta Anomaly**: Computes elapsed time between creation and modification:
      $$\Delta t = |T_{\text{Modification}} - T_{\text{Creation}}|$$
-     If $\Delta t > 3600\text{ seconds}$ (1 hour), an anomaly indicator is recorded to detect post-export tampering.
+     If $\Delta t > 3600$ seconds (1 hour), an anomaly indicator is recorded to detect post-export tampering.
   3. **Trailer & Splicing Markers**: Scans the raw byte stream for incremental revision trailers (`%%EOF`). The presence of multiple `%%EOF` markers indicates incremental updates or post-generation page splicing.
   4. **Font Subset & Object Stream Consistency**: Detects synthetic form overlay streams placed on top of rendered base text.
 - **Dual-Factor Benign Tooling Rule**:
@@ -169,8 +169,8 @@ The multi-agent pipeline maps across ten discrete layers of defense to eliminate
      `Result = UNAUTHORIZED_BANK_CHANGE`
   3. **Check C (Local SemakMule Fraud Threat Cache Lookup)**:
      Queries the normalized destination bank account against the indexed in-memory cache of commercial mule accounts compiled by the Royal Malaysia Police (PDRM) CCID.
-     - Target Lookup Latency: $< 0.003\text{ ms}$.
-     - Confirmed Hit: Assigns threat score $S_{\text{SemakMule}} = 99$, overriding all other indicators and forcing immediate voucher freezing.
+     - Target Lookup Latency: < 0.003 ms.
+     - Confirmed Hit: Assigns threat score `S = 99`, overriding all other indicators and forcing immediate voucher freezing.
      - Cache Miss Semantics: A miss designates `NOT_FOUND_IN_SNAPSHOT`, **never `CLEAN`**.
 
 ---
@@ -217,12 +217,12 @@ The multi-agent pipeline maps across ten discrete layers of defense to eliminate
   $$R = \max\left(S_{\text{SemakMule}}, \min\left(100, w_1 \cdot I_{\text{Ledger}} + w_2 \cdot I_{\text{Tool}} + w_3 \cdot I_{\text{Urgency}} + w_4 \cdot I_{\text{Auth}} + w_5 \cdot I_{\text{Context}}\right)\right)$$
 
   **Parameter Weight Configurations**:
-  - $w_1 = 75$ &rarr; $I_{\text{Ledger}}$: Discrepancy between PDF claim and Master Ledger ($1$ if mismatch, $0$ if exact match).
-  - $w_2 = 20$ &rarr; $I_{\text{Tool}}$: High-risk PDF editing tool or incremental splicing anomaly ($1$ if anomalous, $0$ if authentic ERP export or benign Canva/iLovePDF exception).
-  - $w_3 = 15$ &rarr; $I_{\text{Urgency}}$: Cognitive urgency score exceeding threshold ($1$ if normalized urgency $> 70$, $0$ otherwise).
-  - $w_4 = 25$ &rarr; $I_{\text{Auth}}$: Missing Purchase Order (PO) matching, missing Goods Received Note (GRN), or discrepancy in authorized PO prefix.
-  - $w_5 = 20$ &rarr; $I_{\text{Context}}$: Temporal anomaly, 7-day rolling spend velocity breach, or vendor dormancy exceeding 180 days.
-  - $S_{\text{SemakMule}} = 99$: Confirmed PDRM CCID commercial mule account match.
+  - **w₁ (`I_Ledger`) = 75**: Discrepancy between PDF claim and Master Ledger (`1` if mismatch, `0` if exact match).
+  - **w₂ (`I_Tool`) = 20**: High-risk PDF editing tool or incremental splicing anomaly (`1` if anomalous, `0` if authentic ERP export or benign Canva/iLovePDF exception).
+  - **w₃ (`I_Urgency`) = 15**: Cognitive urgency score exceeding threshold (`1` if normalized urgency > 70, `0` otherwise).
+  - **w₄ (`I_Auth`) = 25**: Missing Purchase Order (PO) matching, missing Goods Received Note (GRN), or discrepancy in authorized PO prefix.
+  - **w₅ (`I_Context`) = 20**: Temporal anomaly, 7-day rolling spend velocity breach, or vendor dormancy exceeding 180 days.
+  - **`S_SemakMule` = 99**: Confirmed PDRM CCID commercial mule account match.
 
 - **Finite State Machine & Disposition Thresholds**:
   ```
@@ -247,14 +247,14 @@ The multi-agent pipeline maps across ten discrete layers of defense to eliminate
                       Required           Police Dossier
   ```
 
-  1. **`VERIFIED` ($R < 50$)**:
+  1. **`VERIFIED` (`R < 50`)**:
      - *Condition*: Zero bank mismatches, exact ledger parity, zero SemakMule hits, valid PO reference, and all mandatory checks verified.
      - *Disposition*: Straight-through voucher preparation permitted under standard single-signoff accounting controls.
-  2. **`NEEDS_REVIEW` ($50 \le R < 80$)**:
-     - *Condition*: Discretionary threshold exceeded (e.g. invoice $>$ RM 20,000), dormancy warning, or mild urgency signals.
+  2. **`NEEDS_REVIEW` (`50 <= R < 80`)**:
+     - *Condition*: Discretionary threshold exceeded (e.g. invoice > RM 20,000), dormancy warning, or mild urgency signals.
      - *Disposition*: Payment voucher paused; mandatory 4-Eyes dual sign-off required.
-  3. **`LOCKED_CRITICAL` ($R \ge 80$ or Mandatory Failure)**:
-     - *Condition*: Bank account mismatch, SemakMule hit ($S=99$), PDF binary tampering, or `AI_COGNITIVE_UNAVAILABLE`.
+  3. **`LOCKED_CRITICAL` (`R >= 80` or Mandatory Failure)**:
+     - *Condition*: Bank account mismatch, SemakMule hit (`S = 99`), PDF binary tampering, or `AI_COGNITIVE_UNAVAILABLE`.
      - *Disposition*: Immediate automated payment freeze; voucher locked in accounting ledger; incident response dossier synthesized.
 
 ---
@@ -269,7 +269,7 @@ The multi-agent pipeline maps across ten discrete layers of defense to eliminate
      - Reporting SME Entity & SSM Identifier
      - Target Vendor Profile & Master Ledger Baseline
      - Fraudulent Payment Claims (Bank name, claimed account, claimed recipient name)
-     - Technical Evidence Log (SHA-256 digests, PDF metadata, modification delta $\Delta t$, email MIME headers)
+     - Technical Evidence Log (SHA-256 digests, PDF metadata, modification delta Δt, email MIME headers)
      - Reconciliation Findings & Extracted Coercion Indicators
   3. **In-Thread Vendor Dispute Response Draft**: Prepares a formal, non-accusatory email draft for the AP clerk requesting formal verification of banking details via registered landline channels.
   4. **Cryptographic Chained Audit Trail**:
@@ -293,7 +293,7 @@ The multi-agent pipeline maps across ten discrete layers of defense to eliminate
     - Extracts entity fields: `account_no`, `bank_name`, `entity_name`, `crime_category`, `source_url`, `observed_at`.
     - Normalizes account digits (stripping hyphens and whitespace) and validates bank branch checksums.
     - Commits the updated threat cache using atomic temporary file replacement (`semakmule_cache.json.tmp` &rarr; `semakmule_cache.json`) to prevent partial read states.
-    - Refreshes the in-memory fast-lookup hash table ($O(1)$ lookup complexity, $< 0.003\text{ ms}$).
+    - Refreshes the in-memory fast-lookup hash table (O(1) lookup complexity, < 0.003 ms).
 
 ---
 
@@ -310,7 +310,7 @@ A primary attack vector in Business Email Compromise is the replacement of vendo
   - Verbal confirmation of banking remittance instructions
 
 ### 4.2 Maker-Checker Dual Authorization Gate
-For any invoice flagged with $R \ge 50$, payment release cannot be executed by a single individual:
+For any invoice flagged with `R >= 50`, payment release cannot be executed by a single individual:
 1. **Maker (AP Clerk)**: Inspects discrepancy, records switchboard callback justification, and signs off.
 2. **Checker (Finance Manager / Controller)**: Must be a distinct, authenticated user identity. The approval action remains cryptographically disabled until the maker's callback log is committed to the audit trail.
 3. **Controlled Field Correction**: If a legitimate supplier bank change has occurred, the system records:

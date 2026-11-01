@@ -12,7 +12,7 @@ import {
   X,
 } from "lucide-react";
 import { formatMYR } from "@/lib/diff";
-import { correctInvoiceField } from "@/services/api";
+import { correctInvoiceField, type DemoInvoice } from "@/services/api";
 
 export interface MultiAgentPipelineProps {
   invoice: {
@@ -39,6 +39,7 @@ export interface MultiAgentPipelineProps {
   voucherReleased: boolean;
   onClerkSign?: () => void;
   onManagerSign?: () => void;
+  onInvoiceUpdated?: (updatedRecord: DemoInvoice) => void;
 }
 
 interface OverrideTarget {
@@ -53,6 +54,7 @@ export function MultiAgentPipeline({
   clerkSigned,
   managerSigned,
   voucherReleased,
+  onInvoiceUpdated,
 }: MultiAgentPipelineProps) {
   const isDefect = invoice.status === "DEFECT";
   const isReview = invoice.status === "NEEDS_REVIEW";
@@ -104,7 +106,7 @@ export function MultiAgentPipeline({
     setOverrideReason("Verified through formal procurement documentation / manual ledger reconciliation.");
   };
 
-  const handleSaveOverride = (e: React.FormEvent) => {
+  const handleSaveOverride = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!overrideModal) return;
 
@@ -117,15 +119,23 @@ export function MultiAgentPipeline({
     }));
 
     // Persist to backend canonical override endpoint
-    correctInvoiceField({
-      invoice_id: invoice.id,
-      field_name: overrideModal.fieldName,
-      corrected_value: overrideInput,
-      justification: overrideReason,
-      clerk_id: "AP-CLERK-MY01",
-    }).catch((err) => console.warn("Failed to persist field override to backend:", err));
+    try {
+      const res = await correctInvoiceField({
+        invoice_id: invoice.id,
+        field_name: overrideModal.fieldName,
+        corrected_value: overrideInput,
+        justification: overrideReason,
+        clerk_id: "AP-CLERK-MY01",
+      });
+      if (res.record && onInvoiceUpdated) {
+        onInvoiceUpdated(res.record as DemoInvoice);
+      }
+      setSuccessToast(`Manual override saved for ${overrideModal.fieldName}. Status updated.`);
+    } catch (err) {
+      console.warn("Failed to persist field override to backend:", err);
+      setSuccessToast(`Manual override saved locally for ${overrideModal.fieldName}.`);
+    }
 
-    setSuccessToast(`Manual override saved for ${overrideModal.fieldName}. Status updated.`);
     setOverrideModal(null);
     setTimeout(() => setSuccessToast(null), 4000);
   };

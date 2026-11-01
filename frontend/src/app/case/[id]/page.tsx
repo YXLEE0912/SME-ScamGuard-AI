@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
   ArrowLeft,
@@ -77,76 +77,91 @@ export default function CaseDetailPage() {
     router.push(`/case/${targetId}`);
   };
 
-  useEffect(() => {
-    async function loadRecord() {
-      setIsLoading(true);
-      try {
-        const live = await fetchInvoiceById(caseId);
-        if (live) {
-          adaptDemoInvoice(live);
-        } else {
-          setInvoice(null);
-        }
-      } catch (err) {
-        console.warn(`Failed to fetch case ${caseId} from live backend:`, err);
+  const adaptDemoInvoice = useCallback((raw: DemoInvoice) => {
+    const isDefect = raw.status === "DEFECT" || raw.status === "LOCKED_CRITICAL" || raw.risk_score >= 80;
+    const isReview = raw.status === "NEEDS_REVIEW" || (raw.risk_score > 20 && raw.risk_score < 80);
+    const isApproved = raw.is_approved === true || raw.status === "VERIFIED";
+
+    if (isApproved) {
+      setVoucherReleased(true);
+      setClerkSigned(true);
+      setManagerSigned(true);
+    } else if (raw.status === "LOCKED_CRITICAL" || raw.is_escalated) {
+      setClerkSigned(true);
+    }
+
+    const rawAmt = raw.comparison?.amount?.draft || "18500";
+    const parsedAmt = parseFloat(rawAmt.replace(/[^0-9.]/g, "")) || 18500;
+    const comp = (raw.comparison || {}) as Record<string, ComparisonFieldData>;
+
+    const files = raw.files && raw.files.length > 0
+      ? raw.files
+      : [`${raw.id}_invoice.pdf`, "vendor_remittance.pdf"];
+
+    const rawNum = raw.id.match(/\d+/)?.[0] || "001";
+    const emailId = raw.id.startsWith("email_") ? raw.id : `email_${rawNum.padStart(3, "0")}`;
+
+    const rawWithBody = raw as DemoInvoice & { email_body?: string; producer_tool?: string; certainty_confidence?: number };
+    const emailBody = rawWithBody.email_body || (isDefect
+      ? `Dear Finance,\n\nOur standard Maybank account is under annual audit and temporarily frozen.\nPlease remit the outstanding milestone claim of RM ${parsedAmt.toLocaleString()}.00 today to our backup account:\nBank: CIMB Bank\nAccount: 8009-4411-2299\n\nPayment must be made before 5:00 PM today to prevent work stoppage on site.\nDirect inquiries to mobile 012-3456789.\n\nRegards,\nAlex Tan\n${raw.sender_name || "Mega Logistics"} AP Team`
+      : `From: ${raw.sender_email}\nTo: finance-ap@sme-enterprise.com.my\nDate: ${raw.received_date}\nSubject: ${raw.subject}\n\nDear Accounts Payable Team,\n\nPlease find attached our official tax invoice and milestone claim for verified procurement deliverables.\nAll banking details remain consistent with our verified Master Procurement Ledger.\nPayment terms: Net 30 Days.\n\nThank you,\n${raw.sender_name || "Commercial Billing Desk"}`);
+
+    setInvoice({
+      id: emailId,
+      referenceId: raw.id.toUpperCase(),
+      vendorName: raw.sender_name || "Mega Logistics Sdn Bhd",
+      sender: raw.sender_email,
+      subject: raw.subject,
+      amountMyr: parsedAmt,
+      receivedDate: raw.received_date,
+      emailBody,
+      producerTool: rawWithBody.producer_tool || (isDefect ? "iLovePDF Spliced (Binary Desync)" : "AutoCount ERP / Acrobat Pro"),
+      riskScore: raw.risk_score,
+      certaintyConfidence: rawWithBody.certainty_confidence || (isDefect ? 98 : 96),
+      category: raw.category || "General Procurement",
+      threatCategory: raw.category || (isDefect ? "BEC Wire Scam" : "Routine Billing"),
+      status: isDefect ? "DEFECT" : isReview ? "NEEDS_REVIEW" : "VERIFIED",
+      reasoning: raw.banner_message || (isDefect
+        ? "Discrepancy Trap: Inbound payment remittance details contradict Master Procurement Ledger baseline."
+        : "All verified fields match the Master Procurement Ledger with 100% confidence."),
+      files,
+      comparison: comp,
+    });
+  }, []);
+
+  const loadRecord = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const live = await fetchInvoiceById(caseId);
+      if (live) {
+        adaptDemoInvoice(live);
+      } else {
         setInvoice(null);
-      } finally {
-        setIsLoading(false);
       }
+    } catch (err) {
+      console.warn(`Failed to fetch case ${caseId} from live backend:`, err);
+      setInvoice(null);
+    } finally {
+      setIsLoading(false);
     }
+  }, [caseId, adaptDemoInvoice]);
 
-    function adaptDemoInvoice(raw: DemoInvoice) {
-      const isDefect = raw.status === "DEFECT" || raw.status === "LOCKED_CRITICAL" || raw.risk_score >= 80;
-      const isReview = raw.status === "NEEDS_REVIEW" || (raw.risk_score > 20 && raw.risk_score < 80);
-
-      const rawAmt = raw.comparison?.amount?.draft || "18500";
-      const parsedAmt = parseFloat(rawAmt.replace(/[^0-9.]/g, "")) || 18500;
-      const comp = (raw.comparison || {}) as Record<string, ComparisonFieldData>;
-
-      const files = raw.files && raw.files.length > 0
-        ? raw.files
-        : [`${raw.id}_invoice.pdf`, "vendor_remittance.pdf"];
-
-      const rawNum = raw.id.match(/\d+/)?.[0] || "001";
-      const emailId = raw.id.startsWith("email_") ? raw.id : `email_${rawNum.padStart(3, "0")}`;
-
-      const rawWithBody = raw as DemoInvoice & { email_body?: string; producer_tool?: string; certainty_confidence?: number };
-      const emailBody = rawWithBody.email_body || (isDefect
-        ? `Dear Finance,\n\nOur standard Maybank account is under annual audit and temporarily frozen.\nPlease remit the outstanding milestone claim of RM ${parsedAmt.toLocaleString()}.00 today to our backup account:\nBank: CIMB Bank\nAccount: 8009-4411-2299\n\nPayment must be made before 5:00 PM today to prevent work stoppage on site.\nDirect inquiries to mobile 012-3456789.\n\nRegards,\nAlex Tan\n${raw.sender_name || "Mega Logistics"} AP Team`
-        : `From: ${raw.sender_email}\nTo: finance-ap@sme-enterprise.com.my\nDate: ${raw.received_date}\nSubject: ${raw.subject}\n\nDear Accounts Payable Team,\n\nPlease find attached our official tax invoice and milestone claim for verified procurement deliverables.\nAll banking details remain consistent with our verified Master Procurement Ledger.\nPayment terms: Net 30 Days.\n\nThank you,\n${raw.sender_name || "Commercial Billing Desk"}`);
-
-      setInvoice({
-        id: emailId,
-        referenceId: raw.id.toUpperCase(),
-        vendorName: raw.sender_name || "Mega Logistics Sdn Bhd",
-        sender: raw.sender_email,
-        subject: raw.subject,
-        amountMyr: parsedAmt,
-        receivedDate: raw.received_date,
-        emailBody,
-        producerTool: rawWithBody.producer_tool || (isDefect ? "iLovePDF Spliced (Binary Desync)" : "AutoCount ERP / Acrobat Pro"),
-        riskScore: raw.risk_score,
-        certaintyConfidence: rawWithBody.certainty_confidence || (isDefect ? 98 : 96),
-        category: raw.category || "General Procurement",
-        threatCategory: raw.category || (isDefect ? "BEC Wire Scam" : "Routine Billing"),
-        status: isDefect ? "DEFECT" : isReview ? "NEEDS_REVIEW" : "VERIFIED",
-        reasoning: raw.banner_message || (isDefect
-          ? "Discrepancy Trap: Inbound payment remittance details contradict Master Procurement Ledger baseline."
-          : "All verified fields match the Master Procurement Ledger with 100% confidence."),
-        files,
-        comparison: comp,
-      });
-    }
-
+  useEffect(() => {
     loadRecord();
-  }, [caseId]);
+  }, [loadRecord]);
 
   const handleHoldWire = async (reason: string) => {
     if (!invoice) return;
     try {
-      await escalateInvoice(invoice.id, reason || "Unauthorized bank account detected. Wire transfer frozen.");
+      const res = await escalateInvoice(invoice.id, reason || "Unauthorized bank account detected. Wire transfer frozen.");
       setClerkSigned(true);
-    } catch {
+      if (res.record) {
+        adaptDemoInvoice(res.record);
+      } else {
+        await loadRecord();
+      }
+    } catch (err) {
+      console.warn("Escalation API error:", err);
       setClerkSigned(true);
     }
   };
@@ -154,11 +169,17 @@ export default function CaseDetailPage() {
   const handleReleasePayment = async () => {
     if (!invoice) return;
     try {
-      await approveInvoice(invoice.id, "Clerk & Controller dual 4-Eyes sign-off completed.");
+      const res = await approveInvoice(invoice.id, "AP-CLERK-MY01", "Clerk & Controller dual 4-Eyes sign-off completed.");
       setClerkSigned(true);
       setManagerSigned(true);
       setVoucherReleased(true);
-    } catch {
+      if (res.record) {
+        adaptDemoInvoice(res.record);
+      } else {
+        await loadRecord();
+      }
+    } catch (err) {
+      console.warn("Approval API error:", err);
       setClerkSigned(true);
       setManagerSigned(true);
       setVoucherReleased(true);
@@ -359,6 +380,7 @@ export default function CaseDetailPage() {
             clerkSigned={clerkSigned}
             managerSigned={managerSigned}
             voucherReleased={voucherReleased}
+            onInvoiceUpdated={(rec) => adaptDemoInvoice(rec)}
           />
         </div>
 

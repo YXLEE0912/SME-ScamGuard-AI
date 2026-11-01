@@ -34,7 +34,7 @@ All verification workflows enforce strict separation between probabilistic cogni
 1. **Tier 1: Deterministic Engine (Sub-Millisecond Verification)**:
    - **In-Memory Privacy Sanitizer (RAM Layer)**: Volatile heap redaction (`io.BytesIO`) for Malaysian MyKad (`\b\d{6}-\d{2}-\d{4}\b`) and mobile numbers (`\b01[0-9]-?[0-9]{7,8}\b`), ensuring full PDPA 2010 Section 10 compliance. Zero raw disk writes.
    - **Deterministic Binary Forensics (Byte Layer)**: Static ISO 32000-1 structural PDF inspection (`pypdf`). Checks metadata (`/Producer`, `/Creator`, `/ModDate`), flags modification time deltas `Δt > 3600s`, scans for multiple `%%EOF` incremental trailers, and enforces the **Dual-Factor Benign Tooling Invariant**.
-   - **Ground-Truth Registry & Threat Cache (Relational Layer)**: 3-way reconciliation (Email Claim vs. PDF Remittance vs. Master Ledger) and $O(1)$ local SemakMule police blacklist lookup (`< 0.003 ms`). Confirmed mule hits assign threat score `S = 99`, triggering an unconditional lock.
+   - **Ground-Truth Registry & Threat Cache (Relational Layer)**: 3-way reconciliation (Email Claim vs. PDF Remittance vs. Master Ledger) and $OO(1) local SemakMule police blacklist lookup (`< 0.003 ms`). Confirmed mule hits assign threat score `S = 99`, triggering an unconditional lock.
 2. **Tier 2: Cognitive Perception Sandbox (Gemini 2.5 Flash)**:
    - Evaluates linguistic coercion, urgency spikes, and procedural bypass requests.
    - Sandboxed inside `<UNTRUSTED_INBOUND_DOC>` XML blocks to defeat OWASP LLM01 Prompt Injections.

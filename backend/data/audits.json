@@ -688,5 +688,93 @@
     },
     "prior_hash": "70366bc7deab4cd6f79fd2239baf8af9ee93eb3547d1d25f0894126159b5ad4f",
     "event_hash": "8a743f7919ead4a3bd828d3b1dc3222ffc4e8dae48a1048eaa442af05befc39b"
+  },
+  {
+    "event_id": "EVT-1793499354338-0038",
+    "timestamp_utc": "2026-11-01T02:15:54.340073+00:00",
+    "case_id": "email_047",
+    "action": "Clerk Correction",
+    "disposition": "LOCKED_CRITICAL",
+    "risk_score": 99,
+    "operator_id": "AP-CLERK-MY01",
+    "evidence_hashes": [],
+    "details": {
+      "field": "PDF Producer Signature",
+      "corrected_to": "AutoCount ERP / Acrobat Pro",
+      "justification": "Verified through formal procurement documentation / manual ledger reconciliation.",
+      "switchboard_dialed": null
+    },
+    "prior_hash": "8a743f7919ead4a3bd828d3b1dc3222ffc4e8dae48a1048eaa442af05befc39b",
+    "event_hash": "fcc50aa39e8e26cd20322c169e6f0b1110cbfd369f14ac0a6d55d5bfefe232d5"
+  },
+  {
+    "event_id": "EVT-1793499358331-0039",
+    "timestamp_utc": "2026-11-01T02:15:58.331324+00:00",
+    "case_id": "email_047",
+    "action": "Clerk Correction",
+    "disposition": "LOCKED_CRITICAL",
+    "risk_score": 99,
+    "operator_id": "AP-CLERK-MY01",
+    "evidence_hashes": [],
+    "details": {
+      "field": "PDF Producer Signature",
+      "corrected_to": "AutoCount ERP / Acrobat Pro",
+      "justification": "Verified through formal procurement documentation / manual ledger reconciliation.",
+      "switchboard_dialed": null
+    },
+    "prior_hash": "fcc50aa39e8e26cd20322c169e6f0b1110cbfd369f14ac0a6d55d5bfefe232d5",
+    "event_hash": "5b2ca5783b9611194ad0d066859148dbb0ec87476137ad303bf72d5700954c97"
+  },
+  {
+    "event_id": "EVT-1793499408549-0040",
+    "timestamp_utc": "2026-11-01T02:16:48.549365+00:00",
+    "case_id": "email_001",
+    "action": "Clerk Correction",
+    "disposition": "VERIFIED",
+    "risk_score": 0,
+    "operator_id": "AP-CLERK-MY01",
+    "evidence_hashes": [],
+    "details": {
+      "field": "Relational Ledger Reconciliation",
+      "corrected_to": "test",
+      "justification": "test",
+      "switchboard_dialed": null
+    },
+    "prior_hash": "5b2ca5783b9611194ad0d066859148dbb0ec87476137ad303bf72d5700954c97",
+    "event_hash": "e22588d034883fd5c4707dd730f2a6c5014161f61cc55414439de2244bb6a96a"
+  },
+  {
+    "event_id": "EVT-1793501058409-0041",
+    "timestamp_utc": "2026-11-01T02:44:18.412456+00:00",
+    "case_id": "email_001",
+    "action": "Clerk Correction",
+    "disposition": "VERIFIED",
+    "risk_score": 0,
+    "operator_id": "AP-CLERK-MY01",
+    "evidence_hashes": [],
+    "details": {
+      "field": "PDRM SemakMule Mule Record",
+      "corrected_to": "[TEST]Verified Legitimate Account",
+      "justification": "[TEST]Verified through formal procurement documentation / manual ledger reconciliation.",
+      "switchboard_dialed": null
+    },
+    "prior_hash": "e22588d034883fd5c4707dd730f2a6c5014161f61cc55414439de2244bb6a96a",
+    "event_hash": "fbab809f988b427527e18160806851e5305de9f1e9477da175fdec9a273f4b79"
+  },
+  {
+    "event_id": "EVT-1793501068119-0042",
+    "timestamp_utc": "2026-11-01T02:44:28.119793+00:00",
+    "case_id": "email_001",
+    "action": "Payment Approved",
+    "disposition": "VERIFIED",
+    "risk_score": 0,
+    "operator_id": "Clerk & Controller dual 4-Eyes sign-off completed.",
+    "evidence_hashes": [],
+    "details": {
+      "manager_id": "FM-CONTROLLER-MY01",
+      "notes": "Pre-disbursement 3-way reconciliation verified."
+    },
+    "prior_hash": "fbab809f988b427527e18160806851e5305de9f1e9477da175fdec9a273f4b79",
+    "event_hash": "84bb1cd39ec08f4bf9f71ff2b32742ebc4dd203c3641ac9d31848fa8c734ed6c"
   }
 ]

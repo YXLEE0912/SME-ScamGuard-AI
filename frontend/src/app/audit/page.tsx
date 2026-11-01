@@ -76,10 +76,12 @@ export default function AuditTrailPage() {
       );
     })
     .sort((a, b) => {
-      if (sortOrder === "oldest") {
-        return a.id.localeCompare(b.id);
+      const timeA = new Date(a.timestamp).getTime() || 0;
+      const timeB = new Date(b.timestamp).getTime() || 0;
+      if (timeA !== timeB) {
+        return sortOrder === "oldest" ? timeA - timeB : timeB - timeA;
       }
-      return b.id.localeCompare(a.id);
+      return sortOrder === "oldest" ? a.id.localeCompare(b.id) : b.id.localeCompare(a.id);
     });
 
   const handleExportCsv = () => {
