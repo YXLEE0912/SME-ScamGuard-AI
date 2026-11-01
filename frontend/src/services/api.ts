@@ -27,6 +27,17 @@ export interface DemoInvoice {
   can_extract_live: boolean;
   is_approved?: boolean;
   is_escalated?: boolean;
+  decision?: "approved" | "escalated" | string;
+  resolved?: boolean;
+  has_operator_override?: boolean;
+  corrected_fields?: Array<{
+    field: string;
+    value: string;
+    canonical_field?: string;
+    timestamp?: string;
+    clerk_id?: string;
+    agent_number?: number;
+  }>;
   sha256?: string;
   is_duplicate_submission?: boolean;
   email_body?: string;

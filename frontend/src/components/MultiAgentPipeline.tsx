@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   ShieldCheck,
   CheckCircle2,
@@ -33,9 +33,20 @@ export interface MultiAgentPipelineProps {
     reasoning: string;
     files: string[];
     comparison: Record<string, { truth?: string; draft?: string; status?: string; score?: number }>;
+    decision?: string;
+    resolved?: boolean;
+    has_operator_override?: boolean;
+    corrected_fields?: Array<{
+      field: string;
+      value: string;
+      canonical_field?: string;
+      timestamp?: string;
+      clerk_id?: string;
+      agent_number?: number;
+    }>;
   };
-  clerkSigned: boolean;
-  managerSigned: boolean;
+  clerkSigned?: boolean;
+  managerSigned?: boolean;
   voucherReleased: boolean;
   onClerkSign?: () => void;
   onManagerSign?: () => void;
@@ -60,6 +71,54 @@ export function MultiAgentPipeline({
   const isDefect = !isApproved && (invoice.status === "DEFECT" || invoice.status === "LOCKED_CRITICAL" || invoice.riskScore >= 80);
   const isReview = !isApproved && !isDefect && (invoice.status === "NEEDS_REVIEW" || (invoice.riskScore >= 50 && invoice.riskScore < 80));
   const comp = invoice.comparison || {};
+
+  // Track operator corrections
+  const [localCorrections, setLocalCorrections] = useState<Array<{
+    agentNumber: number;
+    fieldName: string;
+    canonicalField?: string;
+    newValue: string;
+    timestamp: string;
+  }>>([]);
+
+  const allCorrections = useMemo(() => {
+    const list = [...localCorrections];
+    if (invoice.corrected_fields) {
+      for (const cf of invoice.corrected_fields) {
+        if (!list.some((x) => x.fieldName === cf.field && x.newValue === cf.value)) {
+          list.push({
+            agentNumber: cf.agent_number || 3,
+            fieldName: cf.field,
+            canonicalField: cf.canonical_field || cf.field,
+            newValue: cf.value,
+            timestamp: cf.timestamp || "Today",
+          });
+        }
+      }
+    }
+    return list;
+  }, [localCorrections, invoice.corrected_fields]);
+
+  const renderCorrectionBadges = (agentNum: number, specificField?: string) => {
+    const matched = allCorrections.filter(
+      (c: { agentNumber: number; fieldName: string; canonicalField?: string; newValue: string; timestamp: string }) =>
+        c.agentNumber === agentNum && (!specificField || c.fieldName === specificField || c.canonicalField === specificField)
+    );
+    if (matched.length === 0) return null;
+    return (
+      <div className="flex flex-col gap-1.5 my-2">
+        {matched.map((c: { agentNumber: number; fieldName: string; canonicalField?: string; newValue: string; timestamp: string }, i: number) => (
+          <div
+            key={i}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-300 text-xs font-semibold w-fit"
+          >
+            <span>✎ Operator Corrected: <span className="underline">{c.fieldName}</span> &rarr; <span className="font-mono font-bold">{c.newValue}</span></span>
+            <span className="text-[10px] text-amber-600/80 dark:text-amber-400/80 font-normal">({c.timestamp})</span>
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   // Track user manual expansion overrides per invoice
   const [userToggledAgents, setUserToggledAgents] = useState<{ id: string; state: Record<number, boolean> }>({
@@ -118,6 +177,18 @@ export function MultiAgentPipeline({
         reason: overrideReason,
       },
     }));
+
+    const nowStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    setLocalCorrections((prev) => [
+      ...prev,
+      {
+        agentNumber: overrideModal.agentNumber,
+        fieldName: overrideModal.fieldName,
+        canonicalField: overrideModal.fieldName,
+        newValue: overrideInput,
+        timestamp: nowStr,
+      },
+    ]);
 
     // Persist to backend canonical override endpoint
     try {
@@ -518,6 +589,8 @@ export function MultiAgentPipeline({
                   </div>
                 </div>
 
+                {renderCorrectionBadges(2)}
+
                 {renderStatusBlock({
                   status: agent2Status,
                   score: agent2Score,
@@ -681,6 +754,8 @@ export function MultiAgentPipeline({
                   </div>
                 </div>
 
+                {renderCorrectionBadges(3)}
+
                 {renderStatusBlock({
                   status: agent3Status,
                   score: agent3Score,
@@ -776,6 +851,8 @@ export function MultiAgentPipeline({
                     </span>
                   </div>
                 </div>
+
+                {renderCorrectionBadges(4)}
 
                 {renderStatusBlock({
                   status: agent4Status,

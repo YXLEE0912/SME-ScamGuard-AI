@@ -776,5 +776,65 @@
     },
     "prior_hash": "fbab809f988b427527e18160806851e5305de9f1e9477da175fdec9a273f4b79",
     "event_hash": "84bb1cd39ec08f4bf9f71ff2b32742ebc4dd203c3641ac9d31848fa8c734ed6c"
+  },
+  {
+    "event_id": "EVT-1793509005134-0043",
+    "timestamp_utc": "2026-11-01T04:56:45.134044+00:00",
+    "case_id": "email_001",
+    "action": "Escalated",
+    "disposition": "LOCKED_CRITICAL",
+    "risk_score": 0,
+    "operator_id": "AP-CLERK-MY01",
+    "evidence_hashes": [],
+    "details": {
+      "instruction_type": "ERP_PAYMENT_VOUCHER_FREEZE",
+      "voucher_hold_id": "VCH-HOLD-2026-il_001",
+      "case_id": "email_001",
+      "status": "PAYMENT_LOCKED",
+      "held_amount_myr": 0.0,
+      "freeze_reason": "Unauthorized bank account desync flagged.",
+      "erp_system_target": "AutoCount / SAP / SQL Account Financial Gateway",
+      "effective_timestamp_utc": "2026-11-01T04:56:45.121729+00:00"
+    },
+    "prior_hash": "84bb1cd39ec08f4bf9f71ff2b32742ebc4dd203c3641ac9d31848fa8c734ed6c",
+    "event_hash": "38335503461c8407b31c06472e183b1874b09205b90a6e563b9dcc1a8b49577d"
+  },
+  {
+    "event_id": "EVT-1793509059471-0044",
+    "timestamp_utc": "2026-11-01T04:57:39.471879+00:00",
+    "case_id": "email_031",
+    "action": "OPERATOR_CORRECTION",
+    "disposition": "VERIFIED",
+    "risk_score": 0,
+    "operator_id": "AP-CLERK-MY01",
+    "evidence_hashes": [],
+    "details": {
+      "field": "amount",
+      "canonical_field": "amount",
+      "corrected_to": "\u2264 RM 5,000.00 (Weekly Cap Exceeded)",
+      "justification": "Verified through formal procurement documentation / manual ledger reconciliation.",
+      "switchboard_dialed": null
+    },
+    "prior_hash": "38335503461c8407b31c06472e183b1874b09205b90a6e563b9dcc1a8b49577d",
+    "event_hash": "c403e44ceb0846aec180efb6b3a0af71c48f1ecae13566f8888eed37cc805b74"
+  },
+  {
+    "event_id": "EVT-1793509080765-0045",
+    "timestamp_utc": "2026-11-01T04:58:00.765991+00:00",
+    "case_id": "email_002",
+    "action": "OPERATOR_CORRECTION",
+    "disposition": "VERIFIED",
+    "risk_score": 0,
+    "operator_id": "AP-CLERK-MY01",
+    "evidence_hashes": [],
+    "details": {
+      "field": "Relational Ledger Reconciliation",
+      "canonical_field": "Relational Ledger Reconciliation",
+      "corrected_to": "Baseline Maybank 514012998877",
+      "justification": "Verified through formal procurement documentation / manual ledger reconciliation.",
+      "switchboard_dialed": null
+    },
+    "prior_hash": "c403e44ceb0846aec180efb6b3a0af71c48f1ecae13566f8888eed37cc805b74",
+    "event_hash": "c78cb64dc796251faafb5215a1942276cdae0fb90a19e9681cef9cf81e980a5c"
   }
 ]

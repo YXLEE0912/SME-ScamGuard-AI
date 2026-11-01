@@ -27,6 +27,8 @@ interface UnifiedInvoice {
   masterAccount: string;
   discrepancyNote: string;
   receivedTime: string;
+  decision?: string;
+  resolved?: boolean;
 }
 
 type Scope = "ALL" | "NEEDS_REVIEW" | "DEFECT" | "VERIFIED";
@@ -36,6 +38,7 @@ function QueuePageContent() {
 
   const [invoices, setInvoices] = useState<UnifiedInvoice[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<"ACTIVE" | "RESOLVED">("ACTIVE");
   const [activeScope, setActiveScope] = useState<Scope>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("ALL");
@@ -72,6 +75,11 @@ function QueuePageContent() {
             const num = numMatch ? parseInt(numMatch[0], 10) : idx + 1;
             const emailId = inv.id.startsWith("email_") ? inv.id : `email_${String(num).padStart(3, "0")}`;
 
+            const isApproved = inv.decision === "approved" || inv.is_approved === true || (inv.status === "VERIFIED" && Boolean(inv.resolved));
+            const isEscalated = inv.decision === "escalated" || (Boolean(inv.resolved) && (inv.status === "LOCKED_CRITICAL" || inv.is_escalated));
+            const isResolved = isApproved || isEscalated || Boolean(inv.resolved);
+            const decisionStr = inv.decision || (isApproved ? "approved" : (isEscalated ? "escalated" : undefined));
+
             return {
               id: emailId,
               referenceId: inv.id.toUpperCase(),
@@ -79,7 +87,7 @@ function QueuePageContent() {
               sender: inv.sender_email,
               subject: inv.subject,
               category: inv.category || "General Procurement",
-              status: isDefect ? "DEFECT" : isReview ? "NEEDS_REVIEW" : "VERIFIED",
+              status: isApproved ? "VERIFIED" : (isDefect ? "DEFECT" : isReview ? "NEEDS_REVIEW" : "VERIFIED"),
               riskScore: inv.risk_score,
               amountMyr: parsedAmt,
               claimedBank: claimedB,
@@ -88,6 +96,8 @@ function QueuePageContent() {
               masterAccount: masterA,
               discrepancyNote: inv.banner_message || "Master Procurement Ledger cross-reference evaluated.",
               receivedTime: inv.received_date,
+              decision: decisionStr,
+              resolved: isResolved,
             };
           });
 
@@ -111,13 +121,30 @@ function QueuePageContent() {
     return () => window.removeEventListener("scamguard:verification-created", handleCreated);
   }, []);
 
-  // Filtered rows
+  const activeInvoices = useMemo(() => invoices.filter((i) => !i.resolved), [invoices]);
+  const resolvedInvoices = useMemo(() => invoices.filter((i) => i.resolved), [invoices]);
+
+  // Reactive counts
+  const counts = useMemo(() => {
+    return {
+      activeAll: activeInvoices.length,
+      activeNeedsReview: activeInvoices.filter((x) => x.status === "NEEDS_REVIEW").length,
+      activeDefect: activeInvoices.filter((x) => x.status === "DEFECT").length,
+      activeVerified: activeInvoices.filter((x) => x.status === "VERIFIED").length,
+      resolvedTotal: resolvedInvoices.length,
+    };
+  }, [activeInvoices, resolvedInvoices]);
+
+  // Filtered rows based on active vs resolved tab
   const filteredRows = useMemo(() => {
-    return invoices.filter((item) => {
-      // Scope filter
-      if (activeScope === "NEEDS_REVIEW" && item.status !== "NEEDS_REVIEW") return false;
-      if (activeScope === "DEFECT" && item.status !== "DEFECT") return false;
-      if (activeScope === "VERIFIED" && item.status !== "VERIFIED") return false;
+    const baseList = activeTab === "ACTIVE" ? activeInvoices : resolvedInvoices;
+    return baseList.filter((item) => {
+      // Scope filter (when in ACTIVE tab)
+      if (activeTab === "ACTIVE") {
+        if (activeScope === "NEEDS_REVIEW" && item.status !== "NEEDS_REVIEW") return false;
+        if (activeScope === "DEFECT" && item.status !== "DEFECT") return false;
+        if (activeScope === "VERIFIED" && item.status !== "VERIFIED") return false;
+      }
 
       // Category filter
       if (categoryFilter !== "ALL" && item.category !== categoryFilter) return false;
@@ -131,23 +158,14 @@ function QueuePageContent() {
           item.sender.toLowerCase().includes(q) ||
           item.subject.toLowerCase().includes(q) ||
           item.claimedAccount.toLowerCase().includes(q) ||
-          item.claimedBank.toLowerCase().includes(q);
+          item.claimedBank.toLowerCase().includes(q) ||
+          item.amountMyr.toString().includes(q);
         if (!matches) return false;
       }
 
       return true;
     });
-  }, [invoices, activeScope, categoryFilter, searchQuery]);
-
-  // Counts
-  const counts = useMemo(() => {
-    return {
-      all: invoices.length,
-      needsReview: invoices.filter((x) => x.status === "NEEDS_REVIEW").length,
-      defect: invoices.filter((x) => x.status === "DEFECT").length,
-      verified: invoices.filter((x) => x.status === "VERIFIED").length,
-    };
-  }, [invoices]);
+  }, [activeTab, activeInvoices, resolvedInvoices, activeScope, categoryFilter, searchQuery]);
 
   // Derived unique categories for filter dropdown
   const availableCategories = useMemo(() => {
@@ -213,56 +231,95 @@ function QueuePageContent() {
         </p>
       </div>
 
-      {/* Task 4: Summary Filter Pill Bar (Match Image 5) */}
-      <div className="flex flex-wrap items-center gap-2">
+      {/* Active vs Resolved View Tabs */}
+      <div className="flex items-center gap-4 border-b border-zinc-200 dark:border-white/10 pb-2">
         <button
           type="button"
-          onClick={() => setActiveScope("ALL")}
-          className={`px-3 py-1.5 rounded-lg border text-xs font-medium flex items-center gap-2 cursor-pointer transition-colors ${activeScope === "ALL"
-            ? "border-zinc-900 dark:border-white bg-white dark:bg-[#11131a] text-zinc-900 dark:text-white font-semibold shadow-xs"
-            : "border-zinc-200 dark:border-white/10 bg-white dark:bg-[#11131a] text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-[#161a24]"
-            }`}
+          onClick={() => { setActiveTab("ACTIVE"); setActiveScope("ALL"); }}
+          className={`pb-1 text-xs font-semibold flex items-center gap-2 border-b-2 transition-colors cursor-pointer ${
+            activeTab === "ACTIVE"
+              ? "border-zinc-900 dark:border-white text-zinc-900 dark:text-white"
+              : "border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200"
+          }`}
         >
-          <span className="font-mono text-zinc-400 dark:text-zinc-500">{counts.all}</span>
-          <span>All emails</span>
+          <span>Active</span>
+          <span className="font-mono text-[11px] px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
+            {counts.activeAll}
+          </span>
         </button>
 
         <button
           type="button"
-          onClick={() => setActiveScope("NEEDS_REVIEW")}
-          className={`px-3 py-1.5 rounded-lg border text-xs font-medium flex items-center gap-2 cursor-pointer transition-colors ${activeScope === "NEEDS_REVIEW"
-            ? "border-zinc-900 dark:border-white bg-white dark:bg-[#11131a] text-zinc-900 dark:text-white font-semibold shadow-xs"
-            : "border-zinc-200 dark:border-white/10 bg-white dark:bg-[#11131a] text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-[#161a24]"
-            }`}
+          onClick={() => { setActiveTab("RESOLVED"); }}
+          className={`pb-1 text-xs font-semibold flex items-center gap-2 border-b-2 transition-colors cursor-pointer ${
+            activeTab === "RESOLVED"
+              ? "border-zinc-900 dark:border-white text-zinc-900 dark:text-white"
+              : "border-transparent text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200"
+          }`}
         >
-          <span className="font-mono text-amber-600 dark:text-amber-400 font-semibold">{counts.needsReview}</span>
-          <span>Needs review</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveScope("DEFECT")}
-          className={`px-3 py-1.5 rounded-lg border text-xs font-medium flex items-center gap-2 cursor-pointer transition-colors ${activeScope === "DEFECT"
-            ? "border-zinc-900 dark:border-white bg-white dark:bg-[#11131a] text-zinc-900 dark:text-white font-semibold shadow-xs"
-            : "border-zinc-200 dark:border-white/10 bg-white dark:bg-[#11131a] text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-[#161a24]"
-            }`}
-        >
-          <span className="font-mono text-rose-600 dark:text-rose-400 font-semibold">{counts.defect}</span>
-          <span>Defect</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveScope("VERIFIED")}
-          className={`px-3 py-1.5 rounded-lg border text-xs font-medium flex items-center gap-2 cursor-pointer transition-colors ${activeScope === "VERIFIED"
-            ? "border-zinc-900 dark:border-white bg-white dark:bg-[#11131a] text-zinc-900 dark:text-white font-semibold shadow-xs"
-            : "border-zinc-200 dark:border-white/10 bg-white dark:bg-[#11131a] text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-[#161a24]"
-            }`}
-        >
-          <span className="font-mono text-emerald-600 dark:text-emerald-400 font-semibold">{counts.verified}</span>
-          <span>Verified</span>
+          <span>Resolved</span>
+          <span className="font-mono text-[11px] px-1.5 py-0.2 rounded-full bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300">
+            {counts.resolvedTotal}
+          </span>
         </button>
       </div>
+
+      {/* Scope Filter Pill Bar (shown in Active view) */}
+      {activeTab === "ACTIVE" && (
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setActiveScope("ALL")}
+            className={`px-3 py-1.5 rounded-lg border text-xs font-medium flex items-center gap-2 cursor-pointer transition-colors ${
+              activeScope === "ALL"
+                ? "border-zinc-900 dark:border-white bg-white dark:bg-[#11131a] text-zinc-900 dark:text-white font-semibold shadow-xs"
+                : "border-zinc-200 dark:border-white/10 bg-white dark:bg-[#11131a] text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-[#161a24]"
+            }`}
+          >
+            <span className="font-mono text-zinc-400 dark:text-zinc-500">{counts.activeAll}</span>
+            <span>All emails</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveScope("NEEDS_REVIEW")}
+            className={`px-3 py-1.5 rounded-lg border text-xs font-medium flex items-center gap-2 cursor-pointer transition-colors ${
+              activeScope === "NEEDS_REVIEW"
+                ? "border-zinc-900 dark:border-white bg-white dark:bg-[#11131a] text-zinc-900 dark:text-white font-semibold shadow-xs"
+                : "border-zinc-200 dark:border-white/10 bg-white dark:bg-[#11131a] text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-[#161a24]"
+            }`}
+          >
+            <span className="font-mono text-amber-600 dark:text-amber-400 font-semibold">{counts.activeNeedsReview}</span>
+            <span>Needs review</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveScope("DEFECT")}
+            className={`px-3 py-1.5 rounded-lg border text-xs font-medium flex items-center gap-2 cursor-pointer transition-colors ${
+              activeScope === "DEFECT"
+                ? "border-zinc-900 dark:border-white bg-white dark:bg-[#11131a] text-zinc-900 dark:text-white font-semibold shadow-xs"
+                : "border-zinc-200 dark:border-white/10 bg-white dark:bg-[#11131a] text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-[#161a24]"
+            }`}
+          >
+            <span className="font-mono text-rose-600 dark:text-rose-400 font-semibold">{counts.activeDefect}</span>
+            <span>Defect</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveScope("VERIFIED")}
+            className={`px-3 py-1.5 rounded-lg border text-xs font-medium flex items-center gap-2 cursor-pointer transition-colors ${
+              activeScope === "VERIFIED"
+                ? "border-zinc-900 dark:border-white bg-white dark:bg-[#11131a] text-zinc-900 dark:text-white font-semibold shadow-xs"
+                : "border-zinc-200 dark:border-white/10 bg-white dark:bg-[#11131a] text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-[#161a24]"
+            }`}
+          >
+            <span className="font-mono text-emerald-600 dark:text-emerald-400 font-semibold">{counts.activeVerified}</span>
+            <span>Verified</span>
+          </button>
+        </div>
+      )}
 
       {/* Task 4: Unified Search & Filter Bar (Match Image 5) */}
       <div className="bg-white dark:bg-[#11131a] border border-zinc-200/80 dark:border-white/10 rounded-xl p-2 flex flex-wrap items-center gap-2 shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
@@ -397,9 +454,22 @@ function QueuePageContent() {
                         </span>
                       </td>
 
-                      {/* Status Badge */}
+                      {/* Status Badge with Decision Sub-badge */}
                       <td className="py-3.5 px-3 align-middle text-left whitespace-nowrap">
-                        <ThreatSeverityBadge status={item.status} />
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <ThreatSeverityBadge status={item.status} />
+                          {item.decision && (
+                            <span
+                              className={`text-[10px] uppercase font-mono px-1.5 py-0.5 rounded border font-semibold tracking-wide ${
+                                item.decision.toLowerCase() === "approved"
+                                  ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-700 dark:text-emerald-300"
+                                  : "bg-rose-500/10 border-rose-500/20 text-rose-700 dark:text-rose-300"
+                              }`}
+                            >
+                              {item.decision.toLowerCase()}
+                            </span>
+                          )}
+                        </div>
                       </td>
 
                       {/* Risk Score Column with Gauge Indicator */}
