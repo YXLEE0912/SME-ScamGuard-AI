@@ -22,7 +22,7 @@ Malaysian Small and Medium Enterprises (SMEs) face a catastrophic threat vector:
 
 The attacker then attaches a subtly altered PDF invoice requesting urgent payment to an alternate commercial "mule" bank account under the pretext of an annual statutory audit, branch migration, or SST tax settlement. Without dedicated cybersecurity teams, Accounts Payable (AP) clerks disburse funds into attacker-controlled accounts. In Malaysia alone, commercial scams and BEC divert hundreds of millions of Ringgit annually.
 
-**SME-ScamGuard-AI** is a local-first, multi-agent defense architecture that interdicts payments **between invoice receipt and bank disbursement**. By decoupling unprivileged AI perception from deterministic financial state mutation, the platform enforces strict mathematical risk invariants, sub-millisecond 3-way relational reconciliation, volatile-RAM privacy preservation, and human-in-the-loop 4-Eyes dual governance.
+**SME-ScamGuard-AI** is a multi-agent defense architecture that interdicts payments **between invoice receipt and bank disbursement**. By decoupling unprivileged AI perception from deterministic financial state mutation, the platform enforces strict mathematical risk invariants, sub-millisecond 3-way relational reconciliation, volatile-RAM privacy preservation, and human-in-the-loop 4-Eyes dual governance.
 
 ---
 
@@ -376,5 +376,5 @@ SME-ScamGuard-AI is engineered specifically to satisfy Malaysian statutory and f
 
 <p align="center">
   <b>🛡️ SME-ScamGuard-AI</b><br>
-  <i>AI-Assisted · Deterministic by Design · Human-Controlled · Local-First</i>
+  <i>AI-Assisted · Deterministic by Design · Human-Controlled</i>
 </p>
