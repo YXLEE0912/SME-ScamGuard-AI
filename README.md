@@ -13,6 +13,7 @@
   <img src="https://img.shields.io/badge/400--Case_Benchmark-100%25_Recall-brightgreen" alt="Benchmark" />
 </p>
 
+**Demo**:https://www.youtube.com/watch?v=mcAw3grFD0A 
 > **"Email authenticity ≠ Payment authenticity."**  
 > *Stop Business Email Compromise (BEC) and invoice redirection fraud before the wire transfer leaves your bank.*
 
